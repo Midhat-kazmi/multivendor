@@ -26,9 +26,11 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 // Import routes
 const user = require("./controller/user");
 const shop = require("./controller/shop");
+const product = require("./controller/product");
 
 // Register routes
 app.use("/api/v2/user", user);
 app.use("/api/v2/shop", shop);
+app.use("/api/v2/product", product);
 
 module.exports = app;

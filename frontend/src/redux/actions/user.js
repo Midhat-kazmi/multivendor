@@ -33,7 +33,7 @@ export const loadSeller = () => async (dispatch) => {
     });
     dispatch({
       type: "LoadSellerSuccess",
-      payload: data.seller,
+      payload: data.shop,
     });
   } catch (error) {
     dispatch({

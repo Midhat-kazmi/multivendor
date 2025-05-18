@@ -62,3 +62,13 @@ exports.isSeller = async (req, res, next) => {
     return res.status(401).json({ success: false, message: 'Authentication failed. Please login again.' });
   }
 };
+
+
+exports.isAdmin = (...roles) => {
+    return (req,res,next) => {
+        if(!roles.includes(req.user.role)){
+            return next(new ErrorHandler(`${req.user.role} can not access this resources!`))
+        };
+        next();
+    }
+}
