@@ -32,7 +32,7 @@ const DashboardSideBar = ({ active, isOwner }) => {
         <SidebarItem to="/dashboard-withdraw-money" icon={<CiMoneyBill size={30} />} label="Withdraw Money" active={active === 7} />
       )}
       <SidebarItem to="/dashboard-messages" icon={<BiMessageSquareDetail size={30} />} label="Shop Inbox" active={active === 8} />
-      <SidebarItem to="/dashboard-coupouns" icon={<AiOutlineGift size={30} />} label="Discount Codes" active={active === 9} />
+      <SidebarItem to="/dashboard-coupons" icon={<AiOutlineGift size={30} />} label="Discount Codes" active={active === 9} />
       <SidebarItem to="/dashboard-refunds" icon={<HiOutlineReceiptRefund size={30} />} label="Refunds" active={active === 10} />
       {isOwner && (
         <SidebarItem to="/settings" icon={<CiSettings size={30} />} label="Settings" active={active === 11} />

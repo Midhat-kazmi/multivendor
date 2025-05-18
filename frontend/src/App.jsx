@@ -20,7 +20,7 @@ import {
   SellerActivationPage,
   ShopLoginPage,
 } from "./routes/Routes";
-import { ShopDashboardPage, ShopCreateProduct } from "./routes/ShopRoutes";
+import { ShopDashboardPage, ShopCreateProduct, ShopAllProducts } from "./routes/ShopRoutes";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Bounce } from "react-toastify";
@@ -98,6 +98,14 @@ const App = () => {
             element={
               <SellerProtectedRoute>
                 <ShopCreateProduct />
+              </SellerProtectedRoute>
+            }
+          />
+          <Route
+            path="/dashboard-products"
+            element={
+              <SellerProtectedRoute>
+                <ShopAllProducts/>
               </SellerProtectedRoute>
             }
           />

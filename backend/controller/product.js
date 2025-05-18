@@ -63,7 +63,7 @@ router.get(
 router.delete(
   "/delete-shop-product/:id",
   isSeller,
-  (async (req, res, next) => {
+  async (req, res, next) => {
     try {
       const product = await Product.findById(req.params.id);
 
@@ -71,9 +71,7 @@ router.delete(
         return res.status(404).json({ success: false, message: "Product not found" });
       }
 
-      // Optionally: remove local image files here if needed using fs.unlink
-
-      await product.remove();
+      await Product.deleteOne({ _id: req.params.id });
 
       res.status(200).json({
         success: true,
@@ -82,8 +80,9 @@ router.delete(
     } catch (error) {
       return next(error);
     }
-  })
+  }
 );
+
 
 // Get all products
 router.get(
