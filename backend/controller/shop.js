@@ -7,6 +7,7 @@ const upload = require("../utils/multer");
 const sendMail = require("../utils/sendMail");
 const sendShopToken = require("../utils/sendShopToken");
 require("dotenv").config();
+const { isSeller } = require('../middleware/auth');
 
 // ✅ Create Shop & Send Activation Link
 const createShop = async (req, res) => {
@@ -219,7 +220,7 @@ const logoutShop = async (req, res) => {
 router.post("/create-shop", upload.single("file"), createShop);
 router.post("/activation", activateShop);
 router.post("/login-shop", loginShop);
-router.get("/getSeller", getSeller);
+router.get("/getSeller", isSeller, getSeller);
 router.get("/logout", logoutShop);
 
 module.exports = router;

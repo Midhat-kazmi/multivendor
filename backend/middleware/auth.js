@@ -36,33 +36,29 @@ exports.isAuthenticated = async (req, res, next) => {
 
 
 
-//exports.isSeller = async (req, res, next) => {
-  // try {
-    // Get token from cookies
-    // const { seller_token } = req.cookies;
+// middleware/auth.js
 
-    // If no token, return an error
-    // if (!seller_token) {
-      // return res.status(401).json({ success: false, message: 'Please login to access this resource' });
-    // }
 
-    // Verify the token
-    // const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+exports.isSeller = async (req, res, next) => {
+  try {
+    const { seller_token } = req.cookies;
 
-    // Find user by decoded ID (make sure this matches the key used when signing the JWT)
-    // req.seller = await User.findById(decoded.id); // Ensure 'id' matches what's in your JWT payload
+    if (!seller_token) {
+      return res.status(401).json({ success: false, message: 'Please login to access this resource' });
+    }
 
-    // If user not found
-    // if (!req.user) {
-      // return res.status(404).json({ success: false, message: 'User not found' });
-    //}
+    const decoded = jwt.verify(seller_token, process.env.JWT_SECRET_KEY);
 
-    // Proceed to the next middleware
-  //  / next();
+    // Use Shop model for sellers
+    req.user = await Shop.findById(decoded.id);
 
- // } catch (error) {
-    // Handle errors from JWT verification or user fetching
-    // console.error("Authentication Error:", error);
-    // return res.status(401).json({ success: false, message: 'Authentication failed. Please login again.' });
-  // }
-// };
+    if (!req.user) {
+      return res.status(404).json({ success: false, message: 'Seller not found' });
+    }
+
+    next();
+  } catch (error) {
+    console.error("Seller Authentication Error:", error);
+    return res.status(401).json({ success: false, message: 'Authentication failed. Please login again.' });
+  }
+};

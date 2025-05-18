@@ -19,17 +19,7 @@ const DashboardSideBar = ({ active, isOwner }) => {
   return (
     <div className="w-full h-[90vh] bg-white shadow-sm overflow-y-scroll sticky top-0 left-0 z-10">
       {/* Avatar Section */}
-      <div className="flex justify-center items-center p-4 border-b">
-        <img
-          src={avatarUrl}
-          alt="Seller Avatar"
-          className="w-16 h-16 rounded-full object-cover"
-          onError={(e) => {
-            e.currentTarget.onerror = null; // Prevent infinite loop
-            e.currentTarget.src = "https://via.placeholder.com/50"; // fallback URL
-          }}
-        />
-      </div>
+      
 
       {/* Sidebar items */}
       <SidebarItem to="/dashboard" icon={<RxDashboard size={30} />} label="Dashboard" active={active === 1} />
