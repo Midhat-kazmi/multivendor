@@ -2,8 +2,10 @@ import React from "react";
 import { Link } from "react-router-dom";
 import styles from "../../styles/styles";
 import Loader from "../Layout/Loader";
+import axios from "axios";
+import { server } from "../../server"; // make sure this path is correct
 
-const ShopInfo = ({ isOwner, isLoading, data, products, logoutHandler }) => {
+const ShopInfo = ({ isOwner, isLoading, data, products }) => {
   // Calculate total reviews count
   const totalReviewsLength =
     products?.reduce((acc, product) => acc + product.reviews.length, 0) || 0;
@@ -17,7 +19,9 @@ const ShopInfo = ({ isOwner, isLoading, data, products, logoutHandler }) => {
     ) || 0;
 
   // Calculate average rating (handle division by zero)
-  const averageRating = totalRatings / totalReviewsLength || 0;
+  const averageRating = totalReviewsLength
+    ? totalRatings / totalReviewsLength
+    : 0;
 
   // Placeholder values
   const placeholderAddress = "123 Random St, Some City";
@@ -25,6 +29,17 @@ const ShopInfo = ({ isOwner, isLoading, data, products, logoutHandler }) => {
   const placeholderDescription = "This is a default shop description.";
   const placeholderName = "Default Shop Name";
   const placeholderDate = "2023-01-01";
+
+  const logoutHandler = async () => {
+    try {
+      await axios.get(`${server}/shop/logout`, {
+        withCredentials: true,
+      });
+      window.location.reload();
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
 
   return (
     <>

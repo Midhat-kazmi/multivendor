@@ -1,33 +1,41 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteProduct, getAllProductsShop } from "../../redux/actions/product";
 import { AiOutlineDelete, AiOutlineEye } from "react-icons/ai";
-import Loader from "../Layout/Loader";
 import { DataGrid } from "@mui/x-data-grid";
 import { Link } from "react-router-dom";
+import Loader from "../Layout/Loader";
+import {
+  deleteEvent,
+  getAllEventsShop,
+} from "../../redux/actions/event";
 
-const AllProducts = () => {
-  const { products, isLoading } = useSelector((state) => state.products);
-  const { seller } = useSelector((state) => state.seller);
-
+const AllEvents = () => {
   const dispatch = useDispatch();
+  const { seller } = useSelector((state) => state.seller);
+  const { events, isLoading } = useSelector((state) => state.events);
 
   useEffect(() => {
     if (seller?._id) {
-      dispatch(getAllProductsShop(seller._id));
+      dispatch(getAllEventsShop(seller._id));
     }
   }, [dispatch, seller]);
 
   const handleDelete = (id) => {
-    dispatch(deleteProduct(id));
+    dispatch(deleteEvent(id));
   };
 
   const columns = [
     {
       field: "id",
-      headerName: "Product ID",
+      headerName: "Event ID",
       minWidth: 150,
       flex: 0.7,
+    },
+    {
+      field: "name",
+      headerName: "Event Name",
+      minWidth: 180,
+      flex: 1,
     },
     {
       field: "price",
@@ -36,21 +44,21 @@ const AllProducts = () => {
       flex: 0.7,
     },
     {
-      field: "sold",
-      headerName: "Sold out",
-      minWidth: 150,
+      field: "stock",
+      headerName: "Stock",
+      minWidth: 100,
       flex: 0.7,
     },
     {
       field: "preview",
-      headerName: "Preview", 
+      headerName: "Preview",
       flex: 0.8,
       sortable: false,
       renderCell: (params) => {
-        const d = params.row.name || "product";
-        const product_name = d.replace(/[^a-zA-Z0-9]/g, "_");
+        const d = params.row.name || "event";
+        const event_name = d.replace(/[^a-zA-Z0-9]/g, "_");
         return (
-          <Link to={`/product/${product_name}`}>
+          <Link to={`/event/${event_name}`}>
             <button>
               <AiOutlineEye size={20} />
             </button>
@@ -60,7 +68,7 @@ const AllProducts = () => {
     },
     {
       field: "delete",
-      headerName: "Delete", // ✅ added header
+      headerName: "Delete",
       flex: 0.8,
       minWidth: 120,
       sortable: false,
@@ -73,14 +81,13 @@ const AllProducts = () => {
   ];
 
   const rows = [];
-  products &&
-    products.forEach((item) => {
+  events &&
+    events.forEach((item) => {
       rows.push({
         id: item._id,
         name: item.name,
         price: "US$" + item.discountPrice,
-        sold: item.sold || 10,
-        stock: item.stock || 0,
+        stock: item.stock,
       });
     });
 
@@ -95,7 +102,7 @@ const AllProducts = () => {
             columns={columns}
             pageSize={10}
             disableSelectionOnClick
-            
+            autoHeight
           />
         </div>
       )}
@@ -103,4 +110,4 @@ const AllProducts = () => {
   );
 };
 
-export default AllProducts;
+export default AllEvents;
