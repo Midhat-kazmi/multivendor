@@ -6,7 +6,7 @@ import axios from "axios";
 import { server } from "../../server";
 import styles from "../../styles/styles";
 
-const CouponCode = () => {
+const AllCoupons = () => {
   const [open, setOpen] = useState(false);
   const [coupouns, setCoupouns] = useState([]);
   const [name, setName] = useState("");
@@ -205,4 +205,4 @@ const CouponCode = () => {
   );
 };
 
-export default CouponCode;
+export default AllCoupons;
