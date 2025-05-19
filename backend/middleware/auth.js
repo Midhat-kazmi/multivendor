@@ -49,10 +49,9 @@ exports.isSeller = async (req, res, next) => {
 
     const decoded = jwt.verify(seller_token, process.env.JWT_SECRET_KEY);
 
-    // Use Shop model for sellers
-    req.user = await Shop.findById(decoded.id);
+    req.seller = await Shop.findById(decoded.id); // assign to req.seller
 
-    if (!req.user) {
+    if (!req.seller) {
       return res.status(404).json({ success: false, message: 'Seller not found' });
     }
 
@@ -64,10 +63,11 @@ exports.isSeller = async (req, res, next) => {
 };
 
 
+
 exports.isAdmin = (...roles) => {
     return (req,res,next) => {
         if(!roles.includes(req.user.role)){
-            return next(new ErrorHandler(`${req.user.role} can not access this resources!`))
+            return next(`${req.user.role} can not access this resources!`)
         };
         next();
     }

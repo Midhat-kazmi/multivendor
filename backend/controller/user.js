@@ -96,6 +96,7 @@ const activateUser = async (req, res) => {
 
 
 // ✅ Login User
+// ✅ Login User
 const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -114,6 +115,12 @@ const loginUser = async (req, res) => {
       return res.status(401).json({ success: false, message: "Invalid email or password" });
     }
 
+    // ✅ Fix avatar path for frontend
+    if (user.avatar && user.avatar.url) {
+      const filename = path.basename(user.avatar.url.replace(/\\/g, "/"));
+      user.avatar.url = `/uploads/${filename}`;
+    }
+
     const token = user.getJwtToken();
 
     res.cookie("token", token, {
@@ -127,13 +134,14 @@ const loginUser = async (req, res) => {
       success: true,
       message: "Login successful",
       user,
-      token, // Add this line
+      token,
     });
   } catch (error) {
     console.error("Login Error:", error);
     return res.status(500).json({ success: false, message: "Login failed" });
   }
 };
+
 
 // ✅ Load User
 router.get("/getuser", isAuthenticated, async (req, res) => {

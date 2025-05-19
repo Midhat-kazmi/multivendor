@@ -163,7 +163,8 @@ const loginShop = async (req, res) => {
 // ✅ Get Shop Details
 const getSeller = async (req, res) => {
   try {
-    const shop = await Shop.findById(req.user.id);
+    // Use req.seller instead of req.user
+    const shop = await Shop.findById(req.seller.id);
 
     if (!shop) {
       return res.status(404).json({
@@ -192,6 +193,7 @@ const getSeller = async (req, res) => {
     });
   }
 };
+
 
 // ✅ Logout Shop
 const logoutShop = async (req, res) => {

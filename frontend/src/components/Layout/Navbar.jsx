@@ -10,27 +10,27 @@ const Navbar = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-  const fetchUserData = async () => {
-    try {
-      const response = await axios.get(`${server}/user/getuser`, {
-        withCredentials: true,
-      });
-      const userData = response.data.user;
-      setUser(userData);
-      console.log("Navbar", userData);
+    const fetchUserData = async () => {
+      try {
+        const response = await axios.get(`${server}/user/getuser`, {
+          withCredentials: true,
+        });
+        
+        const userData = response.data.user;
+        setUser(userData);
+        console.log("Navbar", userData);
 
-      // Save full user object in localStorage (not just the name)
-      localStorage.setItem("user", JSON.stringify(userData));
-    } catch (err) {
-      setError(
-        err.response ? err.response.data.message : "An error occurred"
-      );
-    }
-  };
+        // Save full user object in localStorage (not just the name)
+        localStorage.setItem("user", JSON.stringify(userData));
+      } catch (err) {
+        setError(
+          err.response ? err.response.data.message : "An error occurred"
+        );
+      }
+    };
 
-  fetchUserData();
-}, []);
-
+    fetchUserData();
+  }, []);
 
   if (error) return <div>Error: {error}</div>;
 
