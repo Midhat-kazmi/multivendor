@@ -5,8 +5,8 @@ const router = express.Router();
 const Shop = require("../model/shop");
 const upload = require("../utils/multer");
 const sendMail = require("../utils/sendMail");
-require("dotenv").config();
 const sendShopToken = require("../utils/sendShopToken");
+require("dotenv").config();
 
 // ✅ Create Shop & Send Activation Link
 const createShop = async (req, res) => {
@@ -37,7 +37,7 @@ const createShop = async (req, res) => {
       address,
       avatar: {
         public_id: file.filename,
-        url: "", // will be constructed on activation
+        url: "", // placeholder, will be updated after activation
       },
       role: "seller",
     };
@@ -50,7 +50,7 @@ const createShop = async (req, res) => {
 
     await sendMail({
       email,
-      subject: "Activate your account",
+      subject: "Activate your shop account",
       message: `Hello ${shopName},\n\nClick the link to activate your account:\n${activationUrl}`,
     });
 
@@ -60,41 +60,65 @@ const createShop = async (req, res) => {
     });
   } catch (error) {
     console.error("Create Shop Error:", error);
-    return res.status(500).json({ success: false, message: "Error creating shop" });
+    return res.status(500).json({
+      success: false,
+      message: "An error occurred while creating shop",
+    });
   }
 };
 
 // ✅ Activate Shop
 const activateShop = async (req, res) => {
-  const { activationToken } = req.body;
-
-  if (!activationToken) {
-    return res.status(400).json({ success: false, message: "No activation token provided" });
-  }
-
-  let shopData;
   try {
-    shopData = jwt.verify(activationToken, process.env.ACTIVATION_SECRET);
-  } catch (err) {
-    return res.status(400).json({ success: false, message: "Invalid or expired token" });
+    const { activationToken } = req.body;
+
+    if (!activationToken) {
+      return res.status(400).json({
+        success: false,
+        message: "No activation token provided",
+      });
+    }
+
+    let shopData;
+    try {
+      shopData = jwt.verify(activationToken, process.env.ACTIVATION_SECRET);
+    } catch (err) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid or expired activation token",
+      });
+    }
+
+    const existingShop = await Shop.findOne({ email: shopData.email });
+    if (existingShop) {
+      return res.status(200).json({
+        success: true,
+        message: "Shop already activated",
+      });
+    }
+
+    const avatarUrl = `${req.protocol}://${req.get("host")}/uploads/${shopData.avatar.public_id}`;
+
+    const shop = await Shop.create({
+      ...shopData,
+      avatar: {
+        public_id: shopData.avatar.public_id,
+        url: avatarUrl,
+      },
+    });
+
+    return res.status(201).json({
+      success: true,
+      message: "Shop account activated successfully",
+      shop,
+    });
+  } catch (error) {
+    console.error("Activation Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error activating shop account",
+    });
   }
-
-  const shopExists = await Shop.findOne({ email: shopData.email });
-  if (shopExists) {
-    return res.status(200).json({ success: true, message: "Shop already activated" });
-  }
-
-  const avatarUrl = `${req.protocol}://${req.get("host")}/uploads/${shopData.avatar.public_id}`;
-
-  const shop = await Shop.create({
-    ...shopData,
-    avatar: {
-      public_id: shopData.avatar.public_id,
-      url: avatarUrl,
-    },
-  });
-
-  return res.status(201).json({ success: true, message: "Shop activated", shop });
 };
 
 // ✅ Login Shop
@@ -103,49 +127,70 @@ const loginShop = async (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({ success: false, message: "Email and password are required" });
+      return res.status(400).json({
+        success: false,
+        message: "Email and password are required",
+      });
     }
 
     const shop = await Shop.findOne({ email }).select("+password");
     if (!shop) {
-      return res.status(401).json({ success: false, message: "Invalid email or password" });
+      return res.status(401).json({
+        success: false,
+        message: "Invalid email or password",
+      });
     }
 
     const isPasswordValid = await bcrypt.compare(password, shop.password);
     if (!isPasswordValid) {
-      return res.status(401).json({ success: false, message: "Invalid email or password" });
+      return res.status(401).json({
+        success: false,
+        message: "Invalid email or password",
+      });
     }
 
     sendShopToken(shop, 200, res);
   } catch (error) {
     console.error("Login Error:", error);
-    return res.status(500).json({ success: false, message: "Login failed" });
+    return res.status(500).json({
+      success: false,
+      message: "Login failed",
+    });
   }
 };
 
 // ✅ Get Shop Details
-router.get("/getSeller", async (req, res) => {
+const getSeller = async (req, res) => {
   try {
-    const { seller_token } = req.cookies;
-
-    if (!seller_token) {
-      return res.status(401).json({ success: false, message: "Please login to access this resource" });
-    }
-
-    const decoded = jwt.verify(seller_token, process.env.JWT_SECRET_KEY);
-
-    const shop = await Shop.findById(decoded.id).select("-password -createdAt -updatedAt -__v");
+    const shop = await Shop.findById(req.user.id);
 
     if (!shop) {
-      return res.status(404).json({ success: false, message: "Shop not found" });
+      return res.status(404).json({
+        success: false,
+        message: "Shop not found",
+      });
     }
 
-    return res.status(200).json({ success: true, shop });
+    const avatarUrl = `${req.protocol}://${req.get("host")}/uploads/${shop.avatar.public_id}`;
+
+    return res.status(200).json({
+      success: true,
+      shop: {
+        ...shop._doc,
+        avatar: {
+          public_id: shop.avatar.public_id,
+          url: avatarUrl,
+        },
+      },
+    });
   } catch (error) {
-    console.error("Get Shop Error:", error);
-    return res.status(500).json({ success: false, message: "Error fetching shop" });
+    console.error("Get Seller Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch shop details",
+    });
   }
-});
+};
 
 // ✅ Logout Shop
 const logoutShop = async (req, res) => {
@@ -174,6 +219,7 @@ const logoutShop = async (req, res) => {
 router.post("/create-shop", upload.single("file"), createShop);
 router.post("/activation", activateShop);
 router.post("/login-shop", loginShop);
+router.get("/getSeller", getSeller);
 router.get("/logout", logoutShop);
 
 module.exports = router;

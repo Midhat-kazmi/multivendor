@@ -8,39 +8,42 @@ import { CiMoneyBill, CiSettings } from "react-icons/ci";
 import { Link } from "react-router-dom";
 import { BiMessageSquareDetail } from "react-icons/bi";
 import { HiOutlineReceiptRefund } from "react-icons/hi";
+import { useSelector } from "react-redux";
 
 const DashboardSideBar = ({ active, isOwner }) => {
+  const { seller } = useSelector((state) => state.seller);
+
+  // Adjusted to match your seller avatar structure
+  const avatarUrl = seller?.avatar?.url;
+
   return (
     <div className="w-full h-[90vh] bg-white shadow-sm overflow-y-scroll sticky top-0 left-0 z-10">
-      {/* Dashboard */}
+      {/* Avatar Section */}
+      <div className="flex justify-center items-center p-4 border-b">
+        <img
+          src={avatarUrl}
+          alt="Seller Avatar"
+          className="w-16 h-16 rounded-full object-cover"
+          onError={(e) => {
+            e.currentTarget.onerror = null; // Prevent infinite loop
+            e.currentTarget.src = "https://via.placeholder.com/50"; // fallback URL
+          }}
+        />
+      </div>
+
+      {/* Sidebar items */}
       <SidebarItem to="/dashboard" icon={<RxDashboard size={30} />} label="Dashboard" active={active === 1} />
-
-      {/* Orders */}
       <SidebarItem to="/dashboard-orders" icon={<FiShoppingBag size={30} />} label="All Orders" active={active === 2} />
-
-      {/* Products */}
       <SidebarItem to="/dashboard-products" icon={<FiPackage size={30} />} label="All Products" active={active === 3} />
       <SidebarItem to="/dashboard-create-product" icon={<AiOutlineFolderAdd size={30} />} label="Create Product" active={active === 4} />
-
-      {/* Events */}
       <SidebarItem to="/dashboard-events" icon={<MdOutlineLocalOffer size={30} />} label="All Events" active={active === 5} />
       <SidebarItem to="/dashboard-create-event" icon={<VscNewFile size={30} />} label="Create Event" active={active === 6} />
-
-      {/* Withdraw Money - Owner only */}
       {isOwner && (
         <SidebarItem to="/dashboard-withdraw-money" icon={<CiMoneyBill size={30} />} label="Withdraw Money" active={active === 7} />
       )}
-
-      {/* Messages */}
       <SidebarItem to="/dashboard-messages" icon={<BiMessageSquareDetail size={30} />} label="Shop Inbox" active={active === 8} />
-
-      {/* Coupons */}
       <SidebarItem to="/dashboard-coupouns" icon={<AiOutlineGift size={30} />} label="Discount Codes" active={active === 9} />
-
-      {/* Refunds */}
       <SidebarItem to="/dashboard-refunds" icon={<HiOutlineReceiptRefund size={30} />} label="Refunds" active={active === 10} />
-
-      {/* Settings - Owner only */}
       {isOwner && (
         <SidebarItem to="/settings" icon={<CiSettings size={30} />} label="Settings" active={active === 11} />
       )}
@@ -48,7 +51,6 @@ const DashboardSideBar = ({ active, isOwner }) => {
   );
 };
 
-// 🔹 Reusable Sidebar Item
 const SidebarItem = ({ to, icon, label, active }) => (
   <div className="w-full flex items-center p-4">
     <Link to={to} className="w-full flex items-center">
