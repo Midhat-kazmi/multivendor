@@ -3,14 +3,15 @@ import { Link } from "react-router-dom";
 import styles from "../../styles/styles";
 import Loader from "../Layout/Loader";
 import axios from "axios";
-import { server } from "../../server"; // make sure this path is correct
-
+import { server } from "../../server";
+import { useSelector } from "react-redux";
+ 
 const ShopInfo = ({ isOwner, isLoading, data, products }) => {
-  // Calculate total reviews count
+  const { seller } = useSelector((state) => state.seller);
+
   const totalReviewsLength =
     products?.reduce((acc, product) => acc + product.reviews.length, 0) || 0;
 
-  // Calculate total ratings sum across all reviews of all products
   const totalRatings =
     products?.reduce(
       (acc, product) =>
@@ -27,7 +28,7 @@ const ShopInfo = ({ isOwner, isLoading, data, products }) => {
   const placeholderAddress = "123 Random St, Some City";
   const placeholderPhone = "+1 (555) 123-4567";
   const placeholderDescription = "This is a default shop description.";
-  const placeholderName = "Default Shop Name";
+  const placeholderName = "Makeup City";
   const placeholderDate = "2023-01-01";
 
   const logoutHandler = async () => {
@@ -47,22 +48,21 @@ const ShopInfo = ({ isOwner, isLoading, data, products }) => {
         <Loader />
       ) : (
         <div>
-          {/* Shop Avatar, Name and Description */}
-          <div className="w-full py-5">
-            <div className="w-full flex items-center justify-center">
-              <img
-                src={data?.avatar?.url || "https://via.placeholder.com/150"}
-                alt="Shop Avatar"
-                className="w-[150px] h-[150px] object-cover rounded-full"
-              />
-            </div>
-            <h3 className="text-center py-2 text-[20px]">
-              {data?.name || placeholderName}
-            </h3>
-            <p className="text-[16px] text-[#000000a6] p-[10px] flex items-center">
-              {data?.description || placeholderDescription}
-            </p>
-          </div>
+          {/* Added missing declaration of seller */}
+          {/* You probably meant to use data or seller from props or state */}
+           <Link to={`/shop/${seller?._id}`}>
+                      <img
+                        src={`${seller?.avatar?.url}`}
+              alt=""
+              className="w-[50px] h-[50px] rounded-full object-cover"
+            />
+          </Link>
+          <h3 className="text-center py-2 text-[20px]">
+            {data?.name || placeholderName}
+          </h3>
+          <p className="text-[16px] text-[#000000a6] p-[10px] flex items-center">
+            {data?.description || placeholderDescription}
+          </p>
 
           {/* Address */}
           <div className="p-3">

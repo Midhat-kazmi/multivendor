@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-
+import { server } from '../../server';
 const ProfileContent = ({ active, user }) => {
   const [formData, setFormData] = useState({
     name: user?.name || '',
@@ -43,8 +43,9 @@ const ProfileContent = ({ active, user }) => {
           <>
             <h2 className="text-2xl font-bold mb-4">My Account</h2>
             {user?.avatar?.url && (
-              <img
-                src={`http://localhost:8000${user.avatar.url}`}
+             
+             <img
+                src={`${server}${user.avatar.url}`}
                 alt="Profile"
                 className="w-24 h-24 rounded-full border border-gray-300 mb-4 object-cover"
               />

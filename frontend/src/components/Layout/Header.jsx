@@ -11,6 +11,7 @@ import Dropdown from "./Dropdown";
 import Navbar from "./Navbar";
 import Cart from "../Cart/Cart";
 import Wishlist from "../Wishlist/Wishlist";
+import { server } from "../../server";
 
 const Header = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -134,7 +135,7 @@ const Header = () => {
           {user ? (
             <Link to="/profile">
               <img
-                src={`${user.avatar?.url}`}
+                src={`${server}${user.avatar.url}`} 
                 alt="profile"
                 className="w-[30px] h-[30px] sm:w-[35px] sm:h-[35px] rounded-full object-cover border border-white"
               />
