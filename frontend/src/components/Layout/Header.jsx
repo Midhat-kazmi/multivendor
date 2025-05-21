@@ -21,23 +21,26 @@ const Header = () => {
   const [openCart, setOpenCart] = useState(false);
   const [openWishlist, setOpenWishlist] = useState(false);
 
+  // Retrieve and set user from localStorage
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
-    setUser(storedUser);
-    console.log("User avatar", user?.avatar?.url);
-    console.log("User", user);
-    console.log("storedUser", storedUser);
+    if (storedUser) {
+      console.log("Avatar URL:", user?.avatar?.url);
+
+      setUser(storedUser);
+    }
   }, []);
 
+  // Search handler
   const handleSearchChange = (e) => {
     const term = e.target.value;
     setSearchTerm(term);
 
     if (term.trim()) {
-      const filteredProducts = productData.filter((product) =>
+      const filtered = productData.filter((product) =>
         product.name.toLowerCase().includes(term.toLowerCase())
       );
-      setSearchData(filteredProducts);
+      setSearchData(filtered);
     } else {
       setSearchData([]);
     }
@@ -56,7 +59,7 @@ const Header = () => {
           />
         </Link>
 
-        {/* Search bar */}
+        {/* Search Bar */}
         <div className="w-full md:w-[500px] relative">
           <div
             className={`h-[40px] rounded-md flex items-center justify-between px-2 border ${
@@ -75,6 +78,7 @@ const Header = () => {
             <AiOutlineSearch size={20} className="text-gray-500" />
           </div>
 
+          {/* Search Suggestions */}
           {searchTerm && searchData.length > 0 && (
             <div className="absolute min-h-[30vh] max-h-[50vh] overflow-y-auto bg-white shadow z-50 p-4 w-full rounded">
               {searchData.map((item, index) => (
@@ -111,7 +115,7 @@ const Header = () => {
         <Dropdown />
         <Navbar />
         <div className="flex items-center gap-4 sm:gap-6 text-lg sm:text-xl relative">
-          {/* Wishlist Icon */}
+          {/* Wishlist */}
           <div
             className="relative cursor-pointer"
             onClick={() => setOpenWishlist(true)}
@@ -121,7 +125,8 @@ const Header = () => {
               2
             </span>
           </div>
-          {/* Cart Icon */}
+
+          {/* Cart */}
           <div
             className="relative cursor-pointer"
             onClick={() => setOpenCart(true)}
@@ -131,14 +136,15 @@ const Header = () => {
               2
             </span>
           </div>
-          {/* User */}
-          {user ? (
+
+          {/* User Avatar / Login */}
+          {user && user.avatar ? (
             <Link to="/profile">
-              <img
-                src={`${server}${user.avatar.url}`} 
-                alt="profile"
-                className="w-[30px] h-[30px] sm:w-[35px] sm:h-[35px] rounded-full object-cover border border-white"
-              />
+              <img 
+  src={`http://localhost:8000${user?.avatar?.url}`} 
+  alt="profile"
+  className="w-[30px] h-[30px] sm:w-[35px] sm:h-[35px] rounded-full object-cover border border-white"
+/>
             </Link>
           ) : (
             <Link to="/login">

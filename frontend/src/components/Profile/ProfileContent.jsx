@@ -45,7 +45,7 @@ const ProfileContent = ({ active, user }) => {
             {user?.avatar?.url && (
              
              <img
-                src={`${server}${user.avatar.url}`}
+                 src={`http://localhost:8000${user?.avatar?.url}`}
                 alt="Profile"
                 className="w-24 h-24 rounded-full border border-gray-300 mb-4 object-cover"
               />
