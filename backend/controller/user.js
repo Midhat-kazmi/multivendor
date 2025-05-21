@@ -9,7 +9,6 @@ const upload = require("../utils/multer");
 require("dotenv").config();
 const { isAuthenticated } = require("../middleware/auth");
 
-// Function to create activation token
 const createActivationToken = (user) => {
   return jwt.sign(user, process.env.ACTIVATION_SECRET, {
     expiresIn: "5m",
@@ -36,7 +35,10 @@ const createUser = async (req, res) => {
       });
     }
 
-    const user = { name, email, password, avatar };
+    const avatarFilename = path.basename(avatar.replace(/\\/g, "/"));
+    const avatarUrl = `/uploads/${avatarFilename}`;
+
+    const user = { name, email, password, avatar: { url: avatarUrl } };
 
     const activationToken = createActivationToken(user);
     const activationUrl = `http://localhost:5173/activation/${activationToken}`;
@@ -78,8 +80,7 @@ const activateUser = async (req, res) => {
     }
 
     const newUser = jwt.verify(activation_token, process.env.ACTIVATION_SECRET);
-
-    const { name, email, password, avatar } = newUser;
+    let { name, email, password, avatar } = newUser;
 
     const userExists = await User.findOne({ email });
     if (userExists) {
@@ -89,6 +90,13 @@ const activateUser = async (req, res) => {
         user: userExists,
       });
     }
+
+    // ✅ Fix avatar URL (extract filename and re-assign)
+    const filename = path.basename(avatar?.url?.replace(/\\/g, "/") || "");
+    avatar = {
+      public_id: filename,
+      url: `/uploads/${filename}`,
+    };
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -129,10 +137,13 @@ const loginUser = async (req, res) => {
       return res.status(401).json({ success: false, message: "Invalid email or password" });
     }
 
-    // ✅ Fix avatar path for frontend
+    // ✅ Fix avatar path
     if (user.avatar && user.avatar.url) {
       const filename = path.basename(user.avatar.url.replace(/\\/g, "/"));
-      user.avatar.url = `/uploads/${filename}`;
+      user.avatar = {
+        public_id: filename,
+        url: `/uploads/${filename}`,
+      };
     }
 
     const token = user.getJwtToken();
@@ -179,13 +190,24 @@ const logoutUser = async (req, res) => {
   }
 };
 
-// ✅ Load Authenticated User
+// ✅ Get Authenticated User
 router.get("/getuser", isAuthenticated, async (req, res) => {
   try {
     const user = await User.findById(req.user._id).select("-password -createdAt -updatedAt -__v");
+
     if (!user) {
       return res.status(404).json({ success: false, message: "User not found" });
     }
+
+    // ✅ Normalize avatar path
+    if (user.avatar && user.avatar.url) {
+      const filename = path.basename(user.avatar.url.replace(/\\/g, "/"));
+      user.avatar = {
+        public_id: filename,
+        url: `/uploads/${filename}`,
+      };
+    }
+
     return res.status(200).json({ success: true, user });
   } catch (error) {
     console.error("Get User Error:", error);
