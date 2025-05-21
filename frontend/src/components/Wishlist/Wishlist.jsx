@@ -1,25 +1,30 @@
 import React, { useState } from "react";
 import { RxCross1 } from "react-icons/rx";
-import { AiOutlineHeart } from "react-icons/ai";
+import { BsCartPlus } from "react-icons/bs";
 import styles from "../../styles/styles";
-import { Link } from "react-router-dom";
-import { productData } from "../../static/data";
+import { AiOutlineHeart } from "react-icons/ai";
+import { useDispatch, useSelector } from "react-redux";
+import { removeFromWishlist } from "../../redux/actions/wishlist";
+import { addToCart } from "../../redux/actions/cart"; 
 
 const Wishlist = ({ setOpenWishlist }) => {
-  // Simulated wishlist (same source as Cart)
-  const staticWishlist = productData.slice(0, 2);
+  const { wishlist } = useSelector((state) => state.wishlist);
+  const dispatch = useDispatch();
 
-  const [wishlistItems, setWishlistItems] = useState(staticWishlist);
+  const removeFromWishlistHandler = (data) => {
+    dispatch(removeFromWishlist(data));
+  };
 
-  const removeFromWishlistHandler = (item) => {
-    const updatedWishlist = wishlistItems.filter((i) => i.id !== item.id);
-    setWishlistItems(updatedWishlist);
+  const addToCartHandler = (data) => {
+    const newData = { ...data, qty: 1 };
+    dispatch(addToCart(newData));  
+    setOpenWishlist(false);
   };
 
   return (
     <div className="fixed top-0 left-0 w-full bg-[#0000004b] h-screen z-10">
-      <div className="fixed top-0 right-0 h-full w-[80%] 800px:w-[25%] bg-white flex flex-col overflow-y-scroll justify-between shadow-sm">
-        {wishlistItems.length === 0 ? (
+      <div className="fixed top-0 right-0 h-full w-[80%] overflow-y-scroll 800px:w-[25%] bg-white flex flex-col justify-between shadow-sm">
+        {wishlist && wishlist.length === 0 ? (
           <div className="w-full h-screen flex items-center justify-center">
             <div className="flex w-full justify-end pt-5 pr-5 fixed top-3 right-3">
               <RxCross1
@@ -28,7 +33,7 @@ const Wishlist = ({ setOpenWishlist }) => {
                 onClick={() => setOpenWishlist(false)}
               />
             </div>
-            <h5>Wishlist is empty!</h5>
+            <h5>Wishlist Items is empty!</h5>
           </div>
         ) : (
           <>
@@ -40,32 +45,27 @@ const Wishlist = ({ setOpenWishlist }) => {
                   onClick={() => setOpenWishlist(false)}
                 />
               </div>
+              {/* Item length */}
               <div className={`${styles.noramlFlex} p-4`}>
                 <AiOutlineHeart size={25} />
                 <h5 className="pl-2 text-[20px] font-[500]">
-                  {wishlistItems.length} items
+                  {wishlist && wishlist.length} items
                 </h5>
               </div>
 
+              {/* cart Single Items */}
+              <br />
               <div className="w-full border-t">
-                {wishlistItems.map((item, index) => (
-                  <WishlistSingle
-                    key={index}
-                    data={item}
-                    removeFromWishlistHandler={removeFromWishlistHandler}
-                  />
-                ))}
+                {wishlist &&
+                  wishlist.map((i, index) => (
+                    <CartSingle
+                      key={index}
+                      data={i}
+                      removeFromWishlistHandler={removeFromWishlistHandler}
+                      addToCartHandler={addToCartHandler}
+                    />
+                  ))}
               </div>
-            </div>
-
-            <div className="px-5 mb-3">
-              <Link to="/wishlist">
-                <div className="h-[45px] flex items-center justify-center w-full bg-[#e44343] rounded-[5px]">
-                  <h1 className="text-white text-[18px] font-[600]">
-                    View Full Wishlist
-                  </h1>
-                </div>
-              </Link>
             </div>
           </>
         )}
@@ -74,27 +74,37 @@ const Wishlist = ({ setOpenWishlist }) => {
   );
 };
 
-const WishlistSingle = ({ data, removeFromWishlistHandler }) => {
+const CartSingle = ({ data, removeFromWishlistHandler, addToCartHandler }) => {
+  const [value, setValue] = useState(1);
+  const totalPrice = data.discountPrice * value;
+
   return (
     <div className="border-b p-4">
-      <div className="w-full flex items-center">
-        <img
-          src={data.image_Url[0].url}
-          alt=""
-          className="w-[80px] h-[80px] object-cover"
-        />
-        <div className="pl-4 flex-1">
-          <h1 className="text-[16px] font-[500]">
-            {data.name.slice(0, 35)}...
-          </h1>
-          <h4 className="font-[400] text-[15px] text-[#00000082] mt-1">
-            ${data.discount_price}
-          </h4>
-        </div>
+      <div className="w-full 800px:flex items-center">
         <RxCross1
-          className="cursor-pointer ml-2"
+          className="cursor-pointer 800px:mb-['unset'] 800px:ml-['unset'] mb-2 ml-2"
           onClick={() => removeFromWishlistHandler(data)}
         />
+        <img
+          src={`${data?.images[0]?.url}`}
+          alt=""
+          className="w-[130px] h-min ml-2 mr-2 rounded-[5px]"
+        />
+
+        <div className="pl-[5px]">
+          <h1>{data.name}</h1>
+          <h4 className="font-[600] pt-3 800px:pt-[3px] text-[17px] text-[#d02222] font-Roboto">
+            US${totalPrice}
+          </h4>
+        </div>
+        <div>
+          <BsCartPlus
+            size={20}
+            className="cursor-pointer"
+            title="Add to cart"
+            onClick={() => addToCartHandler(data)}
+          />
+        </div>
       </div>
     </div>
   );

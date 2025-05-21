@@ -1,163 +1,183 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import styles from "../../styles/styles";
+import { categoriesData } from "../../static/data";
 import {
-  AiOutlineSearch,
   AiOutlineHeart,
+  AiOutlineSearch,
   AiOutlineShoppingCart,
-  AiOutlineUser,
 } from "react-icons/ai";
-import { productData } from "../../static/data";
-import Dropdown from "./Dropdown";
+import { IoIosArrowDown, IoIosArrowForward } from "react-icons/io";
+import { BiMenuAltLeft } from "react-icons/bi";
+import { CgProfile } from "react-icons/cg";
+import DropDown from "./DropDown";
 import Navbar from "./Navbar";
-import Cart from "../Cart/Cart";
+import { useSelector } from "react-redux";
+import Cart from "../cart/Cart";
 import Wishlist from "../Wishlist/Wishlist";
-import { server } from "../../server";
 
-const Header = () => {
+const Header = ({ activeHeading }) => {
+  const { isAuthenticated, user } = useSelector((state) => state.user);
+  const { isSeller } = useSelector((state) => state.seller);
+  const { wishlist } = useSelector((state) => state.wishlist);
+  const { cart } = useSelector((state) => state.cart);
+  const { allProducts } = useSelector((state) => state.products);
+
   const [searchTerm, setSearchTerm] = useState("");
-  const [searchData, setSearchData] = useState([]);
-  const [isFocused, setIsFocused] = useState(false);
-  const [user, setUser] = useState(null);
+  const [searchData, setSearchData] = useState(null);
+  const [active, setActive] = useState(false);
+  const [dropDown, setDropDown] = useState(false);
   const [openCart, setOpenCart] = useState(false);
   const [openWishlist, setOpenWishlist] = useState(false);
 
-  // Retrieve and set user from localStorage
-  useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem("user"));
-    if (storedUser) {
-      console.log("Avatar URL:", user?.avatar?.url);
-
-      setUser(storedUser);
-    }
-  }, []);
-
-  // Search handler
   const handleSearchChange = (e) => {
     const term = e.target.value;
     setSearchTerm(term);
 
-    if (term.trim()) {
-      const filtered = productData.filter((product) =>
-        product.name.toLowerCase().includes(term.toLowerCase())
-      );
-      setSearchData(filtered);
-    } else {
-      setSearchData([]);
-    }
+    const filteredProducts = allProducts?.filter((product) =>
+      product.name.toLowerCase().includes(term.toLowerCase())
+    );
+    setSearchData(filteredProducts);
   };
 
-  return (
-    <div className="w-full shadow-sm sticky top-0 left-0 z-50 bg-white">
-      {/* Top Section */}
-      <div className="flex flex-col md:flex-row items-center justify-between px-4 py-2 bg-white gap-2">
-        {/* Logo */}
-        <Link to="/" className="flex-shrink-0">
-          <img
-            src="https://shopo.quomodothemes.website/assets/images/logo.svg"
-            alt="logo"
-            className="w-[120px] h-[40px] object-contain"
-          />
-        </Link>
+  useEffect(() => {
+    const handleScroll = () => {
+      setActive(window.scrollY > 70);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
-        {/* Search Bar */}
-        <div className="w-full md:w-[500px] relative">
-          <div
-            className={`h-[40px] rounded-md flex items-center justify-between px-2 border ${
-              isFocused ? "border-blue-500" : "border-gray-300"
-            }`}
-          >
+  return (
+    <>
+      {/* Top Bar */}
+      <div className={`${styles.section}`}>
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between py-2">
+          {/* Logo */}
+          <div className="mb-3 lg:mb-0">
+            <Link to="/">
+              <img
+                src="https://shopo.quomodothemes.website/assets/images/logo.svg"
+                alt="Shopo Logo"
+                className="h-[40px]"
+              />
+            </Link>
+          </div>
+
+          {/* Search Box */}
+          <div className="w-full lg:w-[50%] relative mb-3 lg:mb-0">
             <input
               type="text"
               placeholder="Search Product..."
               value={searchTerm}
               onChange={handleSearchChange}
-              onFocus={() => setIsFocused(true)}
-              onBlur={() => setTimeout(() => setIsFocused(false), 200)}
-              className="h-[40px] w-full px-2 outline-none text-sm"
+              className="h-[36px] w-full px-2 border-[#3957db] border-2 rounded-md"
             />
-            <AiOutlineSearch size={20} className="text-gray-500" />
+            <AiOutlineSearch
+              size={24}
+              className="absolute right-2 top-2.5 cursor-pointer"
+            />
+            {searchData && searchData.length !== 0 && (
+              <div className="absolute bg-white shadow z-50 w-full mt-1 max-h-[300px] overflow-y-auto p-2">
+                {searchData.map((item, index) => (
+                  <Link to={`/product/${item._id}`} key={index}>
+                    <div className="flex items-center py-2">
+                      <img
+                        src={item.images[0]?.url}
+                        alt=""
+                        className="w-[40px] h-[40px] mr-3"
+                      />
+                      <h1>{item.name}</h1>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
           </div>
 
-          {/* Search Suggestions */}
-          {searchTerm && searchData.length > 0 && (
-            <div className="absolute min-h-[30vh] max-h-[50vh] overflow-y-auto bg-white shadow z-50 p-4 w-full rounded">
-              {searchData.map((item, index) => (
-                <Link
-                  key={index}
-                  to={`/product/${item.name.replace(/\s+/g, "_")}`}
-                  className="block text-sm py-1 text-gray-700 hover:text-blue-600"
-                >
-                  <div className="w-full flex items-center py-2 border-b">
-                    <img
-                      src={item.image_Url[0].url}
-                      alt={item.name}
-                      className="w-[50px] h-[50px] object-contain mr-3"
-                    />
-                    <h1>{item.name}</h1>
-                  </div>
-                </Link>
-              ))}
+          {/* Dashboard / Seller Button */}
+          <div className={styles.button}>
+            <Link to={isSeller ? "/dashboard" : "/shop-create"}>
+              <h1 className="text-white flex items-center">
+                {isSeller ? "Go Dashboard" : "Become Seller"}{" "}
+                <IoIosArrowForward className="ml-1" />
+              </h1>
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* Navigation Bar */}
+      <div
+        className={`w-full bg-[#3321c8] h-[60px] z-50 transition ${
+          active ? "fixed top-0 left-0 shadow-sm" : "relative"
+        }`}
+      >
+        <div className={`${styles.section} flex items-center justify-between relative`}>
+          {/* Categories Dropdown */}
+          <div className="relative hidden lg:block">
+            <div
+              onClick={() => setDropDown(!dropDown)}
+              className="h-[48px] w-[240px] flex items-center bg-white pl-10 pr-3 rounded-t-md cursor-pointer relative"
+            >
+              <BiMenuAltLeft size={25} className="absolute left-2 top-2.5" />
+              <span className="text-sm font-medium">All Categories</span>
+              <IoIosArrowDown size={16} className="ml-auto" />
             </div>
-          )}
-        </div>
 
-        {/* Become a Seller */}
-        <Link
-          to="/shop-create"
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm md:text-base transition"
-        >
-          Become a Seller
-        </Link>
-      </div>
-
-      {/* Bottom Section */}
-      <div className="flex flex-col sm:flex-row items-center justify-between px-4 py-2 bg-blue-600 text-white gap-2">
-        <Dropdown />
-        <Navbar />
-        <div className="flex items-center gap-4 sm:gap-6 text-lg sm:text-xl relative">
-          {/* Wishlist */}
-          <div
-            className="relative cursor-pointer"
-            onClick={() => setOpenWishlist(true)}
-          >
-            <AiOutlineHeart />
-            <span className="absolute -top-2 -right-2 text-xs bg-red-600 text-white w-4 h-4 rounded-full flex items-center justify-center">
-              2
-            </span>
+            {dropDown && (
+              <div className="absolute top-full left-0 z-50 bg-white w-full shadow">
+                <DropDown categoriesData={categoriesData} setDropDown={setDropDown} />
+              </div>
+            )}
           </div>
 
-          {/* Cart */}
-          <div
-            className="relative cursor-pointer"
-            onClick={() => setOpenCart(true)}
-          >
-            <AiOutlineShoppingCart />
-            <span className="absolute -top-2 -right-2 text-xs bg-red-600 text-white w-4 h-4 rounded-full flex items-center justify-center">
-              2
-            </span>
-          </div>
+          {/* Navbar Links */}
+          <Navbar active={activeHeading} />
 
-          {/* User Avatar / Login */}
-          {user && user.avatar ? (
-            <Link to="/profile">
-              <img 
-  src={`http://localhost:8000${user?.avatar?.url}`} 
-  alt="profile"
-  className="w-[30px] h-[30px] sm:w-[35px] sm:h-[35px] rounded-full object-cover border border-white"
-/>
-            </Link>
-          ) : (
-            <Link to="/login">
-              <AiOutlineUser />
-            </Link>
-          )}
+          {/* Icons */}
+          <div className="flex items-center space-x-4">
+            <div
+              className="relative cursor-pointer"
+              onClick={() => setOpenWishlist(true)}
+            >
+              <AiOutlineHeart size={28} color="white" />
+              <span className="absolute -top-1 -right-1 bg-green-500 text-white text-xs w-4 h-4 rounded-full flex items-center justify-center">
+                {wishlist?.length}
+              </span>
+            </div>
+            <div
+              className="relative cursor-pointer"
+              onClick={() => setOpenCart(true)}
+            >
+              <AiOutlineShoppingCart size={28} color="white" />
+              <span className="absolute -top-1 -right-1 bg-green-500 text-white text-xs w-4 h-4 rounded-full flex items-center justify-center">
+                {cart?.length}
+              </span>
+            </div>
+            <div className="cursor-pointer">
+              {isAuthenticated ? (
+                <Link to="/profile">
+                  <img
+                    src={user?.avatar?.url}
+                    className="w-[35px] h-[35px] rounded-full"
+                    alt="User avatar"
+                  />
+                </Link>
+              ) : (
+                <Link to="/login">
+                  <CgProfile size={28} color="white" />
+                </Link>
+              )}
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Cart & Wishlist Popups */}
+      {/* Popups */}
       {openCart && <Cart setOpenCart={setOpenCart} />}
       {openWishlist && <Wishlist setOpenWishlist={setOpenWishlist} />}
-    </div>
+    </>
   );
 };
 

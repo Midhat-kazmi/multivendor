@@ -1,30 +1,31 @@
 import axios from "axios";
-import React, { useEffect } from "react";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { server } from "../server";
+import { server } from "../server"; // This is correctly set to: http://localhost:8000/api/v2
 
 const ActivationPage = () => {
-  const { activation_token } = useParams();
+  const { activation_token } = useParams(); // Gets the token from the URL
   const [error, setError] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   useEffect(() => {
+    const activateUser = async () => {
+      try {
+        const response = await axios.post(`${server}/user/activation`, {
+          activation_token,
+        });
+        console.log("Activation response:", response.data);
+        setSuccess(true);
+      } catch (err) {
+        console.error("Activation error:", err.response?.data || err.message);
+        setError(true);
+      }
+    };
+
     if (activation_token) {
-      const sendRequest = async () => {
-        await axios
-          .post(`${server}/user/activation`, {
-            activation_token,
-          })
-          .then((res) => {
-            console.log(res);
-          })
-          .catch((err) => {
-            setError(true);
-          });
-      };
-      sendRequest();
+      activateUser();
     }
-  }, []);
+  }, [activation_token]);
 
   return (
     <div
@@ -34,12 +35,16 @@ const ActivationPage = () => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
+        fontSize: "18px",
+        fontWeight: "500",
       }}
     >
       {error ? (
-        <p>Your token is expired!</p>
+        <p style={{ color: "red" }}>Your activation token is invalid or expired.</p>
+      ) : success ? (
+        <p style={{ color: "green" }}>Your account has been activated successfully!</p>
       ) : (
-        <p>Your account has been created suceessfully!</p>
+        <p>Activating your account...</p>
       )}
     </div>
   );

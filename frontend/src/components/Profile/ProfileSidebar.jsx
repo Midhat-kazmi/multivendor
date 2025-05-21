@@ -1,84 +1,139 @@
-import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import React from "react";
+import { AiOutlineLogin, AiOutlineMessage } from "react-icons/ai";
+import { RiLockPasswordLine } from "react-icons/ri";
+import { HiOutlineReceiptRefund, HiOutlineShoppingBag } from "react-icons/hi";
 import {
-  FaUser,
-  FaBoxOpen,
-  FaHeart,
-  FaSignOutAlt,
-  FaEnvelope,
-  FaMoneyCheckAlt,
-  FaMapMarkedAlt,
-  FaUndoAlt,
-  FaSearchLocation,
-  FaBars,
-  FaTimes,
-} from 'react-icons/fa';
+  MdOutlineAdminPanelSettings,
+  MdOutlinePassword,
+  MdOutlineTrackChanges,
+} from "react-icons/md";
+import { TbAddressBook } from "react-icons/tb";
+import { RxPerson } from "react-icons/rx";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { server } from "../../server";
+import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
 
-import { logout } from '../../redux/actions/user'; // 🔁 Adjust this path as needed
-
-const menuItems = [
-  { id: 1, label: 'My Account', icon: <FaUser /> },
-  { id: 2, label: 'Orders', icon: <FaBoxOpen /> },
-  { id: 3, label: 'Wishlist', icon: <FaHeart /> },
-  { id: 4, label: 'Inbox', icon: <FaEnvelope /> },
-  { id: 5, label: 'Refunds', icon: <FaUndoAlt /> },
-  { id: 6, label: 'Track Order', icon: <FaSearchLocation /> },
-  { id: 7, label: 'Payment Methods', icon: <FaMoneyCheckAlt /> },
-  { id: 8, label: 'Address', icon: <FaMapMarkedAlt /> },
-];
-
-const ProfileSidebar = ({ active, setActive }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const dispatch = useDispatch();
+const ProfileSidebar = ({ setActive, active }) => {
   const navigate = useNavigate();
+  const { user } = useSelector((state) => state.user);
 
-  const handleToggle = () => setIsOpen(!isOpen);
-
-  const handleItemClick = (id) => {
-    setActive(id);
-    setIsOpen(false);
-  };
-
-  const handleLogout = () => {
-    dispatch(logout());
-    navigate('/login');
+  const logoutHandler = () => {
+    axios
+      .get(`${server}/user/logout`, { withCredentials: true })
+      .then((res) => {
+        toast.success(res.data.message);
+        window.location.reload(true);
+        navigate("/login");
+      })
+      .catch((error) => {
+        console.log(error.response.data.message);
+      });
   };
 
   return (
-    <div className="w-full sm:w-[250px] bg-white rounded-lg shadow-md mb-4 sm:mb-0 sm:mr-6">
-      {/* Mobile menu header */}
-      <div className="sm:hidden flex justify-between items-center p-4 border-b border-gray-200">
-        <h2 className="text-lg font-semibold">Menu</h2>
-        <button onClick={handleToggle} className="text-gray-700 focus:outline-none">
-          {isOpen ? <FaTimes size={20} /> : <FaBars size={20} />}
-        </button>
+    <div className="w-full bg-white shadow-sm rounded-[10px] p-4 pt-8">
+      <div
+        className="flex items-center cursor-pointer w-full mb-8"
+        onClick={() => setActive(1)}
+      >
+        <RxPerson size={20} color={active === 1 ? "red" : ""} />
+        <span className={`pl-3 ${active === 1 ? "text-[red]" : ""} 800px:block`}>
+          Profile
+        </span>
       </div>
 
-      {/* Sidebar menu */}
-      <ul className={`sm:block ${isOpen ? 'block' : 'hidden'} sm:mt-0 mt-2`}>
-        {menuItems.map((item) => (
-          <li
-            key={item.id}
-            onClick={() => handleItemClick(item.id)}
-            className={`flex items-center gap-3 py-2 px-4 cursor-pointer transition hover:bg-gray-100 ${
-              active === item.id ? 'bg-blue-100 font-semibold text-blue-600' : 'text-gray-700'
-            }`}
-          >
-            <span>{item.icon}</span>
-            <span>{item.label}</span>
-          </li>
-        ))}
+      <div
+        className="flex items-center cursor-pointer w-full mb-8"
+        onClick={() => setActive(2)}
+      >
+        <HiOutlineShoppingBag size={20} color={active === 2 ? "red" : ""} />
+        <span className={`pl-3 ${active === 2 ? "text-[red]" : ""} 800px:block`}>
+          Orders
+        </span>
+      </div>
 
-        {/* Logout */}
-        <li
-          onClick={handleLogout}
-          className="flex items-center gap-3 py-2 px-4 text-red-600 cursor-pointer hover:bg-red-100 transition"
-        >
-          <FaSignOutAlt />
-          <span>Log out</span>
-        </li>
-      </ul>
+      <div
+        className="flex items-center cursor-pointer w-full mb-8"
+        onClick={() => setActive(3)}
+      >
+        <HiOutlineReceiptRefund size={20} color={active === 3 ? "red" : ""} />
+        <span className={`pl-3 ${active === 3 ? "text-[red]" : ""} 800px:block`}>
+          Refunds
+        </span>
+      </div>
+
+      <div
+        className="flex items-center cursor-pointer w-full mb-8"
+        onClick={() => setActive(4) || navigate("/inbox")}
+      >
+        <AiOutlineMessage size={20} color={active === 4 ? "red" : ""} />
+        <span className={`pl-3 ${active === 4 ? "text-[red]" : ""} 800px:block`}>
+          Inbox
+        </span>
+      </div>
+
+      <div
+        className="flex items-center cursor-pointer w-full mb-8"
+        onClick={() => setActive(5)}
+      >
+        <MdOutlineTrackChanges size={20} color={active === 5 ? "red" : ""} />
+        <span className={`pl-3 ${active === 5 ? "text-[red]" : ""} 800px:block`}>
+          Track Order
+        </span>
+      </div>
+
+      <div
+        className="flex items-center cursor-pointer w-full mb-8"
+        onClick={() => setActive(6)}
+      >
+        <RiLockPasswordLine size={20} color={active === 6 ? "red" : ""} />
+        <span className={`pl-3 ${active === 6 ? "text-[red]" : ""} 800px:block`}>
+          Change Password
+        </span>
+      </div>
+
+      <div
+        className="flex items-center cursor-pointer w-full mb-8"
+        onClick={() => setActive(7)}
+      >
+        <TbAddressBook size={20} color={active === 7 ? "red" : ""} />
+        <span className={`pl-3 ${active === 7 ? "text-[red]" : ""} 800px:block`}>
+          Address
+        </span>
+      </div>
+
+      {user && user?.role === "Admin" && (
+        <Link to="/admin/dashboard">
+          <div
+            className="flex items-center cursor-pointer w-full mb-8"
+            onClick={() => setActive(8)}
+          >
+            <MdOutlineAdminPanelSettings
+              size={20}
+              color={active === 7 ? "red" : ""}
+            />
+            <span
+              className={`pl-3 ${
+                active === 8 ? "text-[red]" : ""
+              } 800px:block`}
+            >
+              Admin Dashboard
+            </span>
+          </div>
+        </Link>
+      )}
+
+      <div
+        className="single_item flex items-center cursor-pointer w-full mb-8"
+        onClick={logoutHandler}
+      >
+        <AiOutlineLogin size={20} color={active === 8 ? "red" : ""} />
+        <span className={`pl-3 ${active === 8 ? "text-[red]" : ""} 800px:block`}>
+          Log out
+        </span>
+      </div>
     </div>
   );
 };

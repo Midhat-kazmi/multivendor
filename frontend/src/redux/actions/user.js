@@ -33,7 +33,7 @@ export const loadSeller = () => async (dispatch) => {
     });
     dispatch({
       type: "LoadSellerSuccess",
-      payload: data.shop,
+      payload: data.seller,
     });
   } catch (error) {
     dispatch({
@@ -43,17 +43,125 @@ export const loadSeller = () => async (dispatch) => {
   }
 };
 
-// redux/actions/user.js
+// user update information
+export const updateUserInformation =
+  (name, email, phoneNumber, password) => async (dispatch) => {
+    try {
+      dispatch({
+        type: "updateUserInfoRequest",
+      });
 
-export const logout = () => async (dispatch) => {
+      const { data } = await axios.put(
+        `${server}/user/update-user-info`,
+        {
+          email,
+          password,
+          phoneNumber,
+          name,
+        },
+        {
+          withCredentials: true,
+          headers: {
+            "Access-Control-Allow-Credentials": true,
+          },
+        }
+      );
+
+      dispatch({
+        type: "updateUserInfoSuccess",
+        payload: data.user,
+      });
+    } catch (error) {
+      dispatch({
+        type: "updateUserInfoFailed",
+        payload: error.response.data.message,
+      });
+    }
+  };
+
+// update user address
+export const updatUserAddress =
+  (country, city, address1, address2, zipCode, addressType) =>
+  async (dispatch) => {
+    try {
+      dispatch({
+        type: "updateUserAddressRequest",
+      });
+
+      const { data } = await axios.put(
+        `${server}/user/update-user-addresses`,
+        {
+          country,
+          city,
+          address1,
+          address2,
+          zipCode,
+          addressType,
+        },
+        { withCredentials: true }
+      );
+
+      dispatch({
+        type: "updateUserAddressSuccess",
+        payload: {
+          successMessage: "User address updated succesfully!",
+          user: data.user,
+        },
+      });
+    } catch (error) {
+      dispatch({
+        type: "updateUserAddressFailed",
+        payload: error.response.data.message,
+      });
+    }
+  };
+
+// delete user address
+export const deleteUserAddress = (id) => async (dispatch) => {
   try {
-    await axios.get(`${server}/user/logout`, { withCredentials: true }); // if you have an API route
+    dispatch({
+      type: "deleteUserAddressRequest",
+    });
 
-    dispatch({ type: "LogoutSuccess" });
+    const { data } = await axios.delete(
+      `${server}/user/delete-user-address/${id}`,
+      { withCredentials: true }
+    );
+
+    dispatch({
+      type: "deleteUserAddressSuccess",
+      payload: {
+        successMessage: "User deleted successfully!",
+        user: data.user,
+      },
+    });
   } catch (error) {
     dispatch({
-      type: "LogoutFail",
-      payload: error.response?.data?.message || "Logout failed",
+      type: "deleteUserAddressFailed",
+      payload: error.response.data.message,
+    });
+  }
+};
+
+// get all users --- admin
+export const getAllUsers = () => async (dispatch) => {
+  try {
+    dispatch({
+      type: "getAllUsersRequest",
+    });
+
+    const { data } = await axios.get(`${server}/user/admin-all-users`, {
+      withCredentials: true,
+    });
+
+    dispatch({
+      type: "getAllUsersSuccess",
+      payload: data.users,
+    });
+  } catch (error) {
+    dispatch({
+      type: "getAllUsersFailed",
+      payload: error.response.data.message,
     });
   }
 };

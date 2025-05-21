@@ -9,13 +9,14 @@ const upload = require("../utils/multer");
 require("dotenv").config();
 const { isAuthenticated } = require("../middleware/auth");
 
+// Create Activation Token
 const createActivationToken = (user) => {
   return jwt.sign(user, process.env.ACTIVATION_SECRET, {
     expiresIn: "5m",
   });
 };
 
-// ✅ Create User & Send Activation Email
+//  Create User & Send Activation Email
 const createUser = async (req, res) => {
   try {
     const { name, email, password, avatar } = req.body;
@@ -36,7 +37,7 @@ const createUser = async (req, res) => {
     }
 
     const avatarFilename = path.basename(avatar.replace(/\\/g, "/"));
-    const avatarUrl = `/uploads/${avatarFilename}`;
+    const avatarUrl = `${req.protocol}://${req.get("host")}/uploads/${avatarFilename}`;
 
     const user = { name, email, password, avatar: { url: avatarUrl } };
 
@@ -70,7 +71,7 @@ const createUser = async (req, res) => {
   }
 };
 
-// ✅ Activate User
+//  Activate User
 const activateUser = async (req, res) => {
   try {
     const { activation_token } = req.body;
@@ -91,11 +92,10 @@ const activateUser = async (req, res) => {
       });
     }
 
-    // ✅ Fix avatar URL (extract filename and re-assign)
     const filename = path.basename(avatar?.url?.replace(/\\/g, "/") || "");
     avatar = {
       public_id: filename,
-      url: `/uploads/${filename}`,
+      url: `${req.protocol}://${req.get("host")}/uploads/${filename}`,
     };
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -118,7 +118,7 @@ const activateUser = async (req, res) => {
   }
 };
 
-// ✅ Login User
+// Login User
 const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -137,12 +137,12 @@ const loginUser = async (req, res) => {
       return res.status(401).json({ success: false, message: "Invalid email or password" });
     }
 
-    // ✅ Fix avatar path
+    // Normalize avatar to full URL
     if (user.avatar && user.avatar.url) {
       const filename = path.basename(user.avatar.url.replace(/\\/g, "/"));
       user.avatar = {
         public_id: filename,
-        url: `/uploads/${filename}`,
+        url: `${req.protocol}://${req.get("host")}/uploads/${filename}`,
       };
     }
 
@@ -167,7 +167,7 @@ const loginUser = async (req, res) => {
   }
 };
 
-// ✅ Logout User
+//  Logout User
 const logoutUser = async (req, res) => {
   try {
     res.cookie("token", "", {
@@ -190,7 +190,7 @@ const logoutUser = async (req, res) => {
   }
 };
 
-// ✅ Get Authenticated User
+// Get Authenticated User
 router.get("/getuser", isAuthenticated, async (req, res) => {
   try {
     const user = await User.findById(req.user._id).select("-password -createdAt -updatedAt -__v");
@@ -199,12 +199,11 @@ router.get("/getuser", isAuthenticated, async (req, res) => {
       return res.status(404).json({ success: false, message: "User not found" });
     }
 
-    // ✅ Normalize avatar path
     if (user.avatar && user.avatar.url) {
       const filename = path.basename(user.avatar.url.replace(/\\/g, "/"));
       user.avatar = {
         public_id: filename,
-        url: `/uploads/${filename}`,
+        url: `${req.protocol}://${req.get("host")}/uploads/${filename}`,
       };
     }
 
@@ -215,7 +214,7 @@ router.get("/getuser", isAuthenticated, async (req, res) => {
   }
 });
 
-// ✅ Routes
+//  Routes
 router.post("/create-user", upload.single("file"), createUser);
 router.post("/activation", activateUser);
 router.post("/login-user", loginUser);

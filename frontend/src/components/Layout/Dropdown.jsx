@@ -1,48 +1,39 @@
-import React, { useState } from "react";
-import { categoriesData } from "../../static/data";
-import { IoIosArrowDown, IoIosArrowForward } from "react-icons/io";
+import React from "react";
 import { useNavigate } from "react-router-dom";
+import styles from "../../styles/styles";
 
-const Dropdown = () => {
-  const [dropDown, setDropDown] = useState(false);
+const DropDown = ({ categoriesData, setDropDown }) => {
   const navigate = useNavigate();
-
-  const handleCategoryClick = (title) => {
-    const encodedTitle = encodeURIComponent(title);
-    navigate(`/products?category=${encodedTitle}`);
-    setDropDown(false); // optional: close dropdown on click
+  const submitHandle = (i) => {
+    navigate(`/products?category=${i.title}`);
+    setDropDown(false);
+    window.location.reload();
   };
-
   return (
-    <div
-      className="relative h-[60px] flex items-center cursor-pointer"
-      onMouseEnter={() => setDropDown(true)}
-      onMouseLeave={() => setDropDown(false)}
-    >
-      <div className="flex items-center gap-1 text-white font-medium px-4">
-        All Categories <IoIosArrowDown />
-      </div>
-      {dropDown && (
-        <div className="absolute top-[60px] left-0 w-[270px] bg-white z-50 rounded shadow-md">
-          {categoriesData.map((category) => (
-            <div
-              key={category.id}
-              onClick={() => handleCategoryClick(category.title)}
-              className="flex items-center gap-2 p-3 hover:bg-gray-100 transition cursor-pointer"
-            >
-              <img
-                src={category.image_Url}
-                alt={category.title}
-                className="w-[30px] h-[30px] object-cover rounded-full"
-              />
-              <span className="text-sm text-gray-700">{category.title}</span>
-              <IoIosArrowForward className="ml-auto text-gray-500" />
-            </div>
-          ))}
-        </div>
-      )}
+    <div className="pb-4 w-[270px] bg-[#fff] absolute z-30 rounded-b-md shadow-sm">
+      {categoriesData &&
+        categoriesData.map((i, index) => (
+          <div
+            key={index}
+            className={`${styles.noramlFlex}`}
+            onClick={() => submitHandle(i)}
+          >
+            <img
+              src={i.image_Url}
+              style={{
+                width: "25px",
+                height: "25px",
+                objectFit: "contain",
+                marginLeft: "10px",
+                userSelect: "none",
+              }}
+              alt=""
+            />
+            <h3 className="m-3 cursor-pointer select-none">{i.title}</h3>
+          </div>
+        ))}
     </div>
   );
 };
 
-export default Dropdown;
+export default DropDown;
