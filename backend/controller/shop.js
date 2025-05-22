@@ -1,228 +1,231 @@
 const express = require("express");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
+const path = require("path");
 const router = express.Router();
-const Shop = require("../model/shop");
-const upload = require("../utils/multer");
+const jwt = require("jsonwebtoken");
 const sendMail = require("../utils/sendMail");
+const Shop = require("../model/shop");
+const { isAuthenticated, isSeller, isAdmin } = require("../middleware/auth");
 const sendShopToken = require("../utils/sendShopToken");
-require("dotenv").config();
-const { isSeller } = require('../middleware/auth');
+const upload = require("../utils/multer");
 
-// ✅ Create Shop & Send Activation Link
-const createShop = async (req, res) => {
+// create shop
+router.post("/create-shop", upload.single("avatar"), async (req, res) => {
   try {
-    const { shopName, email, password, zipCode, address } = req.body;
-    const file = req.file;
+    const { email, name, password, address, phoneNumber, zipCode } = req.body;
+    const sellerEmail = await Shop.findOne({ email });
 
-    if (!shopName || !email || !password || !zipCode || !address || !file) {
-      return res.status(400).json({
-        success: false,
-        message: "All fields including avatar are required",
-      });
+    if (sellerEmail) {
+      return res.status(400).json({ success: false, message: "User already exists" });
     }
 
-    const shopExists = await Shop.findOne({ email });
-    if (shopExists) {
-      return res.status(400).json({
-        success: false,
-        message: "Shop already exists",
-      });
-    }
+    const avatar = req.file
+      ? {
+          public_id: req.file.filename,
+          url: `/uploads/${req.file.filename}`,
+        }
+      : null;
 
-    const shopData = {
-      shopName,
-      email,
-      password,
-      zipCode,
-      address,
-      avatar: {
-        public_id: file.filename,
-        url: "", // placeholder, will be updated after activation
-      },
-      role: "seller",
-    };
+    const seller = { name, email, password, avatar, address, phoneNumber, zipCode };
+    const activationToken = createActivationToken(seller);
 
-    const activationToken = jwt.sign(shopData, process.env.ACTIVATION_SECRET, {
-      expiresIn: "5m",
-    });
-
-    const activationUrl = `http://localhost:5173/shop/activation/${activationToken}`;
+    const activationUrl = `https://eshop-tutorial-pyri.vercel.app/seller/activation/${activationToken}`;
 
     await sendMail({
       email,
-      subject: "Activate your shop account",
-      message: `Hello ${shopName},\n\nClick the link to activate your account:\n${activationUrl}`,
+      subject: "Activate your Shop",
+      emailMessage: `Hello ${name}, please click on the link to activate your shop: ${activationUrl}`,
     });
 
-    return res.status(200).json({
+    res.status(201).json({
       success: true,
-      message: `Activation email sent to ${email}`,
+      message: `Please check your email: ${email} to activate your shop!`,
     });
   } catch (error) {
-    console.error("Create Shop Error:", error);
-    return res.status(500).json({
-      success: false,
-      message: "An error occurred while creating shop",
-    });
+    res.status(500).json({ success: false, message: error.message });
   }
+});
+
+// create activation token
+const createActivationToken = (seller) => {
+  return jwt.sign(seller, process.env.ACTIVATION_SECRET, { expiresIn: "5m" });
 };
 
-// ✅ Activate Shop
-const activateShop = async (req, res) => {
+// activate user
+router.post("/activation", async (req, res) => {
   try {
-    const { activationToken } = req.body;
+    const { activation_token } = req.body;
+    const newSeller = jwt.verify(activation_token, process.env.ACTIVATION_SECRET);
 
-    if (!activationToken) {
-      return res.status(400).json({
-        success: false,
-        message: "No activation token provided",
-      });
+    if (!newSeller) {
+      return res.status(400).json({ success: false, message: "Invalid token" });
     }
 
-    let shopData;
-    try {
-      shopData = jwt.verify(activationToken, process.env.ACTIVATION_SECRET);
-    } catch (err) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid or expired activation token",
-      });
+    const existingSeller = await Shop.findOne({ email: newSeller.email });
+    if (existingSeller) {
+      return res.status(400).json({ success: false, message: "User already exists" });
     }
 
-    const existingShop = await Shop.findOne({ email: shopData.email });
-    if (existingShop) {
-      return res.status(200).json({
-        success: true,
-        message: "Shop already activated",
-      });
-    }
-
-    const avatarUrl = `${req.protocol}://${req.get("host")}/uploads/${shopData.avatar.public_id}`;
-
-    const shop = await Shop.create({
-      ...shopData,
-      avatar: {
-        public_id: shopData.avatar.public_id,
-        url: avatarUrl,
-      },
-    });
-
-    return res.status(201).json({
-      success: true,
-      message: "Shop account activated successfully",
-      shop,
-    });
+    const seller = await Shop.create(newSeller);
+    sendShopToken(seller, 201, res);
   } catch (error) {
-    console.error("Activation Error:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Error activating shop account",
-    });
+    res.status(500).json({ success: false, message: error.message });
   }
-};
+});
 
-// ✅ Login Shop
-const loginShop = async (req, res) => {
+// login shop
+router.post("/login-shop", async (req, res) => {
   try {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({
-        success: false,
-        message: "Email and password are required",
-      });
+      return res.status(400).json({ success: false, message: "Please provide all fields!" });
     }
 
-    const shop = await Shop.findOne({ email }).select("+password");
-    if (!shop) {
-      return res.status(401).json({
-        success: false,
-        message: "Invalid email or password",
-      });
+    const user = await Shop.findOne({ email }).select("+password");
+    if (!user || !(await user.comparePassword(password))) {
+      return res.status(400).json({ success: false, message: "Invalid credentials" });
     }
 
-    const isPasswordValid = await bcrypt.compare(password, shop.password);
-    if (!isPasswordValid) {
-      return res.status(401).json({
-        success: false,
-        message: "Invalid email or password",
-      });
-    }
-
-    sendShopToken(shop, 200, res);
+    sendShopToken(user, 201, res);
   } catch (error) {
-    console.error("Login Error:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Login failed",
-    });
+    res.status(500).json({ success: false, message: error.message });
   }
-};
+});
 
-// ✅ Get Shop Details
-const getSeller = async (req, res) => {
+// load shop
+router.get("/getSeller", isSeller, async (req, res) => {
   try {
-    // Use req.seller instead of req.user
-    const shop = await Shop.findById(req.seller.id);
-
-    if (!shop) {
-      return res.status(404).json({
-        success: false,
-        message: "Shop not found",
-      });
+    const seller = await Shop.findById(req.seller._id);
+    if (!seller) {
+      return res.status(400).json({ success: false, message: "User doesn't exist" });
     }
 
-    const avatarUrl = `${req.protocol}://${req.get("host")}/uploads/${shop.avatar.public_id}`;
-
-    return res.status(200).json({
-      success: true,
-      shop: {
-        ...shop._doc,
-        avatar: {
-          public_id: shop.avatar.public_id,
-          url: avatarUrl,
-        },
-      },
-    });
+    res.status(200).json({ success: true, seller });
   } catch (error) {
-    console.error("Get Seller Error:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Failed to fetch shop details",
-    });
+    res.status(500).json({ success: false, message: error.message });
   }
-};
+});
 
-
-// ✅ Logout Shop
-const logoutShop = async (req, res) => {
+// logout
+router.get("/logout", (req, res) => {
   try {
-    res.cookie("seller_token", "", {
+    res.cookie("seller_token", null, {
+      expires: new Date(Date.now()),
       httpOnly: true,
-      expires: new Date(0),
-      sameSite: "lax",
-      secure: process.env.NODE_ENV === "production",
+      sameSite: "none",
+      secure: true,
     });
-
-    return res.status(200).json({
-      success: true,
-      message: "Logged out successfully",
-    });
+    res.status(200).json({ success: true, message: "Logged out successfully!" });
   } catch (error) {
-    console.error("Logout Error:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Logout failed",
-    });
+    res.status(500).json({ success: false, message: error.message });
   }
-};
+});
 
-// ✅ Route Bindings
-router.post("/create-shop", upload.single("file"), createShop);
-router.post("/activation", activateShop);
-router.post("/login-shop", loginShop);
-router.get("/getSeller", isSeller, getSeller);
-router.get("/logout", logoutShop);
+// get shop info
+router.get("/get-shop-info/:id", async (req, res) => {
+  try {
+    const shop = await Shop.findById(req.params.id);
+    res.status(200).json({ success: true, shop });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// update shop profile picture
+router.put("/update-shop-avatar", isSeller, upload.single("avatar"), async (req, res) => {
+  try {
+    const seller = await Shop.findById(req.seller._id);
+    if (!seller) {
+      return res.status(400).json({ success: false, message: "Seller not found" });
+    }
+
+    if (req.file) {
+      seller.avatar = {
+        public_id: req.file.filename,
+        url: `/uploads/${req.file.filename}`,
+      };
+    }
+
+    await seller.save();
+    res.status(200).json({ success: true, seller });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// update seller info
+router.put("/update-seller-info", isSeller, async (req, res) => {
+  try {
+    const { name, description, address, phoneNumber, zipCode } = req.body;
+    const shop = await Shop.findById(req.seller._id);
+
+    if (!shop) {
+      return res.status(400).json({ success: false, message: "Seller not found" });
+    }
+
+    shop.name = name;
+    shop.description = description;
+    shop.address = address;
+    shop.phoneNumber = phoneNumber;
+    shop.zipCode = zipCode;
+
+    await shop.save();
+    res.status(200).json({ success: true, shop });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// all sellers - admin only
+router.get("/admin-all-sellers", isAuthenticated, isAdmin("Admin"), async (req, res) => {
+  try {
+    const sellers = await Shop.find().sort({ createdAt: -1 });
+    res.status(200).json({ success: true, sellers });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// delete seller - admin only
+router.delete("/delete-seller/:id", isAuthenticated, isAdmin("Admin"), async (req, res) => {
+  try {
+    const seller = await Shop.findById(req.params.id);
+    if (!seller) {
+      return res.status(400).json({ success: false, message: "Seller not found" });
+    }
+
+    await Shop.findByIdAndDelete(req.params.id);
+    res.status(200).json({ success: true, message: "Seller deleted successfully!" });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// update seller withdraw methods
+router.put("/update-payment-methods", isSeller, async (req, res) => {
+  try {
+    const { withdrawMethod } = req.body;
+    const seller = await Shop.findByIdAndUpdate(req.seller._id, { withdrawMethod }, { new: true });
+    res.status(200).json({ success: true, seller });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// delete seller withdraw method
+router.delete("/delete-withdraw-method", isSeller, async (req, res) => {
+  try {
+    const seller = await Shop.findById(req.seller._id);
+    if (!seller) {
+      return res.status(400).json({ success: false, message: "Seller not found" });
+    }
+
+    seller.withdrawMethod = null;
+    await seller.save();
+    res.status(200).json({ success: true, seller });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
 
 module.exports = router;
