@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom'; 
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import {
   FaUser,
   FaBoxOpen,
@@ -14,6 +15,8 @@ import {
   FaTimes,
 } from 'react-icons/fa';
 
+import { logout } from '../../redux/actions/user'; // 🔁 Adjust this path as needed
+
 const menuItems = [
   { id: 1, label: 'My Account', icon: <FaUser /> },
   { id: 2, label: 'Orders', icon: <FaBoxOpen /> },
@@ -27,17 +30,24 @@ const menuItems = [
 
 const ProfileSidebar = ({ active, setActive }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleToggle = () => setIsOpen(!isOpen);
 
   const handleItemClick = (id) => {
     setActive(id);
-    setIsOpen(false); // close menu on mobile after selection
+    setIsOpen(false);
+  };
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate('/login');
   };
 
   return (
     <div className="w-full sm:w-[250px] bg-white rounded-lg shadow-md mb-4 sm:mb-0 sm:mr-6">
-      {/* Mobile menu button */}
+      {/* Mobile menu header */}
       <div className="sm:hidden flex justify-between items-center p-4 border-b border-gray-200">
         <h2 className="text-lg font-semibold">Menu</h2>
         <button onClick={handleToggle} className="text-gray-700 focus:outline-none">
@@ -60,12 +70,14 @@ const ProfileSidebar = ({ active, setActive }) => {
           </li>
         ))}
 
-        <Link to="/login">
-          <li className="flex items-center gap-3 py-2 px-4 text-red-600 cursor-pointer hover:bg-red-100 transition">
-            <FaSignOutAlt />
-            <span>Log out</span>
-          </li>
-        </Link>
+        {/* Logout */}
+        <li
+          onClick={handleLogout}
+          className="flex items-center gap-3 py-2 px-4 text-red-600 cursor-pointer hover:bg-red-100 transition"
+        >
+          <FaSignOutAlt />
+          <span>Log out</span>
+        </li>
       </ul>
     </div>
   );

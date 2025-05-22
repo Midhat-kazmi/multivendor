@@ -42,3 +42,18 @@ export const loadSeller = () => async (dispatch) => {
     });
   }
 };
+
+// redux/actions/user.js
+
+export const logout = () => async (dispatch) => {
+  try {
+    await axios.get(`${server}/user/logout`, { withCredentials: true }); // if you have an API route
+
+    dispatch({ type: "LogoutSuccess" });
+  } catch (error) {
+    dispatch({
+      type: "LogoutFail",
+      payload: error.response?.data?.message || "Logout failed",
+    });
+  }
+};
