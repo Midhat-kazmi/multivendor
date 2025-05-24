@@ -1,24 +1,39 @@
 import React, { useEffect, useState } from "react";
-import { productData } from "../../../static/data";
+import { useSelector } from "react-redux";
 import styles from "../../../styles/styles";
-import ProductCard from "../ProductCard/ProductCard"; 
+import ProductCard from "../ProductCard/ProductCard";
 
 const BestDeals = () => {
   const [data, setData] = useState([]);
+  const { allProducts, isLoading, error } = useSelector((state) => state.products);
 
   useEffect(() => {
-    const sorted = productData.sort((a, b) => b.total_sell - a.total_sell);
-    setData(sorted.slice(0, 5));
-  }, []);
+    console.log("allProducts in BestDeals:", allProducts); // Debugging log
+    if (allProducts.length > 0) {
+      // Create a copy before sorting to avoid mutating the Redux state
+      const sortedData = [...allProducts].sort((a, b) => b.sold_out - a.sold_out);
+      const firstFive = sortedData.slice(0, 5);
+      setData(firstFive);
+    }
+  }, [allProducts]);
 
   return (
-    <div className={`${styles.section} py-10`}>
-      <h1 className={styles.heading}>Best Deals</h1>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-5">
-        {data.map((product) => (
-          <ProductCard key={product.id} data={product} />
-        ))}
+    <div>
+      <div className={`${styles.section}`}>
+        <div className={`${styles.heading}`}>
+          <h1>Best Deals</h1>
+        </div>
+        <div className="grid grid-cols-1 gap-[20px] md:grid-cols-2 md:gap-[25px] lg:grid-cols-4 lg:gap-[25px] xl:grid-cols-5 xl:gap-[30px] mb-12 border-0">
+          {isLoading ? (
+            <p>Loading...</p>
+          ) : error ? (
+            <p>{error}</p>
+          ) : data.length !== 0 ? (
+            data.map((product, index) => <ProductCard data={product} key={index} />)
+          ) : (
+            <p>No products available</p>
+          )}
+        </div>
       </div>
     </div>
   );

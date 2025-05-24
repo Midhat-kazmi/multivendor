@@ -1,40 +1,51 @@
-import React, { useEffect, useState } from "react";
-import { RxCross1 } from "react-icons/rx";
-import { AiOutlinePlusCircle } from "react-icons/ai";
-import { toast } from "react-toastify";
+import Button from '@mui/material/Button';
+import { DataGrid } from '@mui/x-data-grid';
+
 import axios from "axios";
-import { server } from "../../server";
+import React, { useEffect, useState } from "react";
+import { AiOutlineDelete } from "react-icons/ai";
+import { RxCross1 } from "react-icons/rx";
+import { useDispatch, useSelector } from "react-redux";
 import styles from "../../styles/styles";
+import Loader from "../Layout/Loader";
+import { server } from "../../server";
+import { toast } from "react-toastify";
 
 const AllCoupons = () => {
   const [open, setOpen] = useState(false);
-  const [coupouns, setCoupouns] = useState([]);
   const [name, setName] = useState("");
-  const [value, setValue] = useState("");
-  const [minAmount, setMinAmout] = useState("");
-  const [maxAmount, setMaxAmount] = useState("");
-  const [selectedProducts, setSelectedProducts] = useState("");
-  const [products, setProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [coupons,setCoupons] = useState([]);
+  const [minAmount, setMinAmout] = useState(null);
+  const [maxAmount, setMaxAmount] = useState(null);
+  const [selectedProducts, setSelectedProducts] = useState(null);
+  const [value, setValue] = useState(null);
+  const { seller } = useSelector((state) => state.seller);
+  const { products } = useSelector((state) => state.products);
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
+    setIsLoading(true);
     axios
-      .get(`${server}/coupon/get-coupon`)
+      .get(`${server}/coupon/get-coupon/${seller._id}`, {
+        withCredentials: true,
+      })
       .then((res) => {
-        setCoupouns(res.data.coupons);
+        setIsLoading(false);
+        setCoupons(res.data.couponCodes);
       })
       .catch((error) => {
-        console.log(error.response.data.message);
+        setIsLoading(false);
       });
+  }, [dispatch]);
 
-    axios
-      .get(`${server}/product/admin-all-products`, { withCredentials: true })
-      .then((res) => {
-        setProducts(res.data.products);
-      })
-      .catch((error) => {
-        console.log(error.response.data.message);
-      });
-  }, []);
+  const handleDelete = async (id) => {
+    axios.delete(`${server}/coupon/delete-coupon/${id}`,{withCredentials: true}).then((res) => {
+      toast.success("Coupon code deleted succesfully!")
+    })
+    window.location.reload();
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -44,164 +55,194 @@ const AllCoupons = () => {
         `${server}/coupon/create-coupon-code`,
         {
           name,
-          value,
           minAmount,
           maxAmount,
           selectedProducts,
+          value,
+          shopId: seller._id,
         },
         { withCredentials: true }
       )
       .then((res) => {
-        toast.success("Coupon code created successfully!");
-        setCoupouns((prev) => [...prev, res.data.newCoupon]);
-        setOpen(false);
-        setName("");
-        setValue("");
-        setMinAmout("");
-        setMaxAmount("");
-        setSelectedProducts("");
+       toast.success("Coupon code created successfully!");
+       setOpen(false);
+       window.location.reload();
       })
       .catch((error) => {
         toast.error(error.response.data.message);
       });
   };
 
-  const handleDelete = async (id) => {
-    await axios
-      .delete(`${server}/coupon/delete-coupon/${id}`, {
-        withCredentials: true,
-      })
-      .then(() => {
-        toast.success("Coupon code deleted successfully!");
-        setCoupouns(coupouns.filter((coupon) => coupon._id !== id));
-      })
-      .catch((error) => {
-        toast.error(error.response.data.message);
+  const columns = [
+    { field: "id", headerName: "Id", minWidth: 150, flex: 0.7 },
+    {
+      field: "name",
+      headerName: "Coupon Code",
+      minWidth: 180,
+      flex: 1.4,
+    },
+    {
+      field: "price",
+      headerName: "Value",
+      minWidth: 100,
+      flex: 0.6,
+    },
+    {
+      field: "Delete",
+      flex: 0.8,
+      minWidth: 120,
+      headerName: "",
+      type: "number",
+      sortable: false,
+      renderCell: (params) => {
+        return (
+          <>
+            <Button onClick={() => handleDelete(params.id)}>
+              <AiOutlineDelete size={20} />
+            </Button>
+          </>
+        );
+      },
+    },
+  ];
+
+  const row = [];
+
+  coupons &&
+  coupons.forEach((item) => {
+      row.push({
+        id: item._id,
+        name: item.name,
+        price: item.value + " %",
+        sold: 10,
       });
-  };
+    });
 
   return (
-    <div className="w-full max-w-full overflow-x-hidden px-4 pt-1 mt-10 bg-white">
-      <div className="w-full flex justify-end">
-        <button
-          type="button"
-          className={`${styles.button} !w-max !h-[45px] px-4 py-2 !rounded-[5px] mr-3 mb-3 text-white`}
-          onClick={() => setOpen(true)}
-        >
-          Create Coupon Code
-        </button>
-      </div>
-
-      <div className="w-full">
-        <table className="w-full border border-gray-300">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="py-2 px-4 border">Id</th>
-              <th className="py-2 px-4 border">Name</th>
-              <th className="py-2 px-4 border">Price</th>
-              <th className="py-2 px-4 border">Min Amount</th>
-              <th className="py-2 px-4 border">Max Amount</th>
-              <th className="py-2 px-4 border">Delete</th>
-            </tr>
-          </thead>
-          <tbody>
-            {coupouns.map((item, index) => (
-              <tr key={item._id} className="text-center">
-                <td className="py-2 px-4 border">{index + 1}</td>
-                <td className="py-2 px-4 border">{item.name}</td>
-                <td className="py-2 px-4 border">{item.value}%</td>
-                <td className="py-2 px-4 border">${item.minAmount}</td>
-                <td className="py-2 px-4 border">${item.maxAmount}</td>
-                <td className="py-2 px-4 border">
-                  <button
-                    onClick={() => handleDelete(item._id)}
-                    className="text-red-500 hover:text-red-700"
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-
-        {open && (
-          <div className="fixed top-0 left-0 w-full h-screen bg-[#00000062] z-[20000] flex items-center justify-center overflow-auto">
-            <div className="w-[90%] max-w-[500px] max-h-[90vh] bg-white rounded-md shadow p-4 overflow-y-auto relative">
-              <div className="w-full flex justify-end sticky top-0 bg-white z-10">
-                <RxCross1
-                  size={30}
-                  className="cursor-pointer"
-                  onClick={() => setOpen(false)}
-                />
-              </div>
-              <h5 className="text-[24px] font-semibold text-center mb-4">
-                Create Coupon Code
-              </h5>
-              <form onSubmit={handleSubmit}>
-                <label className="block mb-2 text-sm font-medium">Name</label>
-                <input
-                  type="text"
-                  className="w-full border border-gray-300 rounded px-3 py-2 mb-4"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  required
-                />
-
-                <label className="block mb-2 text-sm font-medium">Discount Percentage</label>
-                <input
-                  type="number"
-                  className="w-full border border-gray-300 rounded px-3 py-2 mb-4"
-                  value={value}
-                  onChange={(e) => setValue(e.target.value)}
-                  required
-                />
-
-                <label className="block mb-2 text-sm font-medium">Minimum Amount</label>
-                <input
-                  type="number"
-                  className="w-full border border-gray-300 rounded px-3 py-2 mb-4"
-                  value={minAmount}
-                  onChange={(e) => setMinAmout(e.target.value)}
-                  required
-                />
-
-                <label className="block mb-2 text-sm font-medium">Maximum Amount</label>
-                <input
-                  type="number"
-                  className="w-full border border-gray-300 rounded px-3 py-2 mb-4"
-                  value={maxAmount}
-                  onChange={(e) => setMaxAmount(e.target.value)}
-                  required
-                />
-
-                <label className="block mb-2 text-sm font-medium">Selected Product</label>
-                <select
-                  className="w-full border border-gray-300 rounded px-3 py-2 mb-6"
-                  value={selectedProducts}
-                  onChange={(e) => setSelectedProducts(e.target.value)}
-                >
-                  <option value="">Choose a product</option>
-                  {products.map((i) => (
-                    <option value={i._id} key={i._id}>
-                      {i.name}
-                    </option>
-                  ))}
-                </select>
-
-                <button
-                  type="submit"
-                  className={`${styles.button} w-full h-[45px] !rounded-[5px] text-white flex items-center justify-center`}
-                >
-                  <span>Create</span>
-                  <AiOutlinePlusCircle size={20} className="ml-2" />
-                </button>
-              </form>
+    <>
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <div className="w-full mx-8 pt-1 mt-10 bg-white">
+          <div className="w-full flex justify-end">
+            <div
+              className={`${styles.button} !w-max !h-[45px] px-3 !rounded-[5px] mr-3 mb-3`}
+              onClick={() => setOpen(true)}
+            >
+              <span className="text-white">Create Coupon Code</span>
             </div>
           </div>
-        )}
-      </div>
-    </div>
+          <DataGrid
+            rows={row}
+            columns={columns}
+            pageSize={10}
+            disableSelectionOnClick
+            autoHeight
+          />
+          {open && (
+            <div className="fixed top-0 left-0 w-full h-screen bg-[#00000062] z-[20000] flex items-center justify-center">
+              <div className="w-[90%] 800px:w-[40%] h-[80vh] bg-white rounded-md shadow p-4">
+                <div className="w-full flex justify-end">
+                  <RxCross1
+                    size={30}
+                    className="cursor-pointer"
+                    onClick={() => setOpen(false)}
+                  />
+                </div>
+                <h5 className="text-[30px] font-Poppins text-center">
+                  Create Coupon code
+                </h5>
+                {/* create coupoun code */}
+                <form onSubmit={handleSubmit} aria-required={true}>
+                  <br />
+                  <div>
+                    <label className="pb-2">
+                      Name <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="name"
+                      required
+                      value={name}
+                      className="mt-2 appearance-none block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="Enter your coupon code name..."
+                    />
+                  </div>
+                  <br />
+                  <div>
+                    <label className="pb-2">
+                      Discount Percentenge{" "}
+                      <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="value"
+                      value={value}
+                      required
+                      className="mt-2 appearance-none block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      onChange={(e) => setValue(e.target.value)}
+                      placeholder="Enter your coupon code value..."
+                    />
+                  </div>
+                  <br />
+                  <div>
+                    <label className="pb-2">Min Amount</label>
+                    <input
+                      type="number"
+                      name="value"
+                      value={minAmount}
+                      className="mt-2 appearance-none block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      onChange={(e) => setMinAmout(e.target.value)}
+                      placeholder="Enter your coupon code min amount..."
+                    />
+                  </div>
+                  <br />
+                  <div>
+                    <label className="pb-2">Max Amount</label>
+                    <input
+                      type="number"
+                      name="value"
+                      value={maxAmount}
+                      className="mt-2 appearance-none block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      onChange={(e) => setMaxAmount(e.target.value)}
+                      placeholder="Enter your coupon code max amount..."
+                    />
+                  </div>
+                  <br />
+                  <div>
+                    <label className="pb-2">Selected Product</label>
+                    <select
+                      className="w-full mt-2 border h-[35px] rounded-[5px]"
+                      value={selectedProducts}
+                      onChange={(e) => setSelectedProducts(e.target.value)}
+                    >
+                      <option value="Choose your selected products">
+                        Choose a selected product
+                      </option>
+                      {products &&
+                        products.map((i) => (
+                          <option value={i.name} key={i.name}>
+                            {i.name}
+                          </option>
+                        ))}
+                    </select>
+                  </div>
+                  <br />
+                  <div>
+                    <input
+                      type="submit"
+                      value="Create"
+                      className="mt-2 appearance-none block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    />
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </>
   );
 };
 

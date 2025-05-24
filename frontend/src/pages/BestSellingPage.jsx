@@ -1,36 +1,42 @@
 import React, { useEffect, useState } from "react";
-import { productData } from "../static/data";
-import styles from "../styles/styles";
-import ProductCard from "../components/Route/ProductCard/ProductCard"; 
+import { useSelector } from "react-redux";
+import { useSearchParams } from "react-router-dom";
 import Header from "../components/Layout/Header";
+import Loader from "../components/Layout/Loader";
+import ProductCard from "../components/Route/ProductCard/ProductCard";
+import styles from "../styles/styles";
 import Footer from "../components/Layout/Footer";
 
 const BestSellingPage = () => {
-  const [topProducts, setTopProducts] = useState([]);
+  const [data, setData] = useState([]);
+  const {allProducts,isLoading} = useSelector((state) => state.products);
 
   useEffect(() => {
-    const sorted = productData
-      .sort((a, b) => b.total_sell - a.total_sell)
-      .slice(0, 10); // You can change this number
-    setTopProducts(sorted);
-  }, []);
+    const allProductsData = allProducts ? [...allProducts] : [];
+    const sortedData = allProductsData?.sort((a,b) => b.sold_out - a.sold_out); 
+    setData(sortedData);
+  }, [allProducts]);
 
   return (
-    <div>
-      <Header activeHeading={2} /> {/* highlight "Best Selling" in nav if applicable */}
-
-      <div className={`${styles.section} py-10`}>
-        <h1 className={`${styles.heading} mb-8`}>Best Selling Products</h1>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-5">
-          {topProducts.map((product) => (
-            <ProductCard key={product.id} data={product} />
-          ))}
+   <>
+   {
+    isLoading ? (
+      <Loader />
+    ) : (
+      <div>
+      <Header activeHeading={2} />
+      <br />
+      <br />
+      <div className={`${styles.section}`}>
+        <div className="grid grid-cols-1 gap-[20px] md:grid-cols-2 md:gap-[25px] lg:grid-cols-4 lg:gap-[25px] xl:grid-cols-5 xl:gap-[30px] mb-12">
+          {data && data.map((i, index) => <ProductCard data={i} key={index} />)}
         </div>
       </div>
-
       <Footer />
     </div>
+    )
+   }
+   </>
   );
 };
 

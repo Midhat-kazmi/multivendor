@@ -4,7 +4,7 @@ import styles from "../../styles/styles";
 const Sponsored = () => {
   return (
     <div
-      className={`${styles.section} hidden sm:block bg-white py-10 px-5 mb-12 cursor-pointer rounded-xl`}
+      className={`${styles.section} bg-white py-10 px-5 mb-12 cursor-pointer rounded-xl`}
     >
       <div className="flex justify-between w-full">
         <div className="flex items-start">
@@ -23,14 +23,14 @@ const Sponsored = () => {
         </div>
         <div className="flex items-start">
           <img
-            src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/LG_logo_%282015%29.svg/2560px-LG_logo_%282015%29.svg.png"
+            src="https://www.vectorlogo.zone/logos/lg/lg-ar21~bgwhite.svg"
             style={{width:"150px", objectFit:"contain"}}
             alt=""
           />
         </div>
         <div className="flex items-start">
           <img
-            src="https://pngimg.com/d/apple_logo_PNG19688.png"
+            src="https://www.vectorlogo.zone/logos/apple/apple-ar21~bgwhite.svg"
             style={{width:"150px", objectFit:"contain"}}
             alt=""
           />

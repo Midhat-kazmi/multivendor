@@ -1,22 +1,29 @@
-import React from "react";
-import { productData } from "../../../static/data";
+import React, { useEffect } from "react";
+import { useSelector } from "react-redux";
+import styles from "../../../styles/styles";
 import ProductCard from "../ProductCard/ProductCard";
 
-const FeaturedProducts = () => {
-  const itemsToShow = 10; // or 10
-  const visibleProducts = productData.slice(0, itemsToShow);
-
+const FeaturedProduct = () => {
+  const {allProducts} = useSelector((state) => state.products);
+   
   return (
-    <div className="w-full bg-white py-10 px-4">
-      <h2 className="text-2xl font-semibold mb-6">Featured Products</h2>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-        {visibleProducts.map((product) => (
-          <ProductCard data={product} key={product.id} />
-        ))}
+    <div>
+      <div className={`${styles.section}`}>
+        <div className={`${styles.heading}`}>
+          <h1>Featured Products</h1>
+        </div>
+        <div className="grid grid-cols-1 gap-[20px] md:grid-cols-2 md:gap-[25px] lg:grid-cols-4 lg:gap-[25px] xl:grid-cols-5 xl:gap-[30px] mb-12 border-0">
+        {
+            allProducts && allProducts.length !== 0 &&(
+              <>
+               {allProducts && allProducts.map((i, index) => <ProductCard data={i} key={index} />)}
+              </>
+            )
+           }
+        </div>
       </div>
     </div>
   );
 };
 
-export default FeaturedProducts;
+export default FeaturedProduct;

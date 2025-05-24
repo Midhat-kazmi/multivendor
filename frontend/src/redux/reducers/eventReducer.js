@@ -1,50 +1,67 @@
+import { createReducer } from "@reduxjs/toolkit";
+
 const initialState = {
-  loading: false,
-  success: false,
-  error: null,
-  events: [],
+  isLoading: true,
 };
 
-export const eventReducer = (state = initialState, action) => {
-  switch (action.type) {
-    // CREATE
-    case "eventCreateRequest":
-      return { ...state, loading: true };
+export const eventReducer = createReducer(initialState, (builder) => {
+  builder
+    // Create Event
+    .addCase("eventCreateRequest", (state) => {
+      state.isLoading = true;
+    })
+    .addCase("eventCreateSuccess", (state, action) => {
+      state.isLoading = false;
+      state.event = action.payload;
+      state.success = true;
+    })
+    .addCase("eventCreateFail", (state, action) => {
+      state.isLoading = false;
+      state.error = action.payload;
+      state.success = false;
+    })
 
-    case "eventCreateSuccess":
-      return { ...state, loading: false, success: true };
+    // Get all events of shop
+    .addCase("getAlleventsShopRequest", (state) => {
+      state.isLoading = true;
+    })
+    .addCase("getAlleventsShopSuccess", (state, action) => {
+      state.isLoading = false;
+      state.events = action.payload;
+    })
+    .addCase("getAlleventsShopFailed", (state, action) => {
+      state.isLoading = false;
+      state.error = action.payload;
+    })
 
-    case "eventCreateFail":
-      return { ...state, loading: false, error: action.payload };
+    // Delete event
+    .addCase("deleteeventRequest", (state) => {
+      state.isLoading = true;
+    })
+    .addCase("deleteeventSuccess", (state, action) => {
+      state.isLoading = false;
+      state.message = action.payload;
+    })
+    .addCase("deleteeventFailed", (state, action) => {
+      state.isLoading = false;
+      state.error = action.payload;
+    })
 
-    case "eventCreateReset":
-      return { ...state, success: false, error: null };
+    // Get all events (general)
+    .addCase("getAlleventsRequest", (state) => {
+      state.isLoading = true;
+    })
+    .addCase("getAlleventsSuccess", (state, action) => {
+      state.isLoading = false;
+      state.allEvents = action.payload;
+    })
+    .addCase("getAlleventsFailed", (state, action) => {
+      state.isLoading = false;
+      state.error = action.payload;
+    })
 
-    // GET ALL EVENTS OF SELLER
-    case "getAllEventsShopRequest":
-      return { ...state, loading: true };
-
-    case "getAllEventsShopSuccess":
-      return { ...state, loading: false, events: action.payload };
-
-    case "getAllEventsShopFail":
-      return { ...state, loading: false, error: action.payload };
-
-    // DELETE
-    case "deleteEventRequest":
-      return { ...state, loading: true };
-
-    case "deleteEventSuccess":
-      return {
-        ...state,
-        loading: false,
-        events: state.events.filter((event) => event._id !== action.payload.id),
-      };
-
-    case "deleteEventFail":
-      return { ...state, loading: false, error: action.payload };
-
-    default:
-      return state;
-  }
-};
+    // Clear errors
+    .addCase("clearErrors", (state) => {
+      state.error = null;
+    });
+});

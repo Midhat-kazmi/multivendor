@@ -1,43 +1,41 @@
-import LoginPage from  "../pages/login.jsx";
-import SignupPage from  "../pages/Signup";
-import ActivationPage from  "../pages/ActivationPage";
-import HomePage from  "../pages/HomePage";
-import ProductsPage from  "../pages/ProductsPage";
-import BestSellingPage from  "../pages/BestSellingPage";
-import EventPage from "../pages/Events"
-import FAQ from  "../pages/FAQ";
-import ProductDetailsPage from  "../pages/ProductDetailsPage";
-import CheckoutPage from  "../pages/CheckoutPage";
-import PaymentPage from  "../pages/PaymentPage";
-import OrderSuccessPage from  "../pages/OrderSuccessPage";
-import ProfilePage from  "../pages/ProfilePage";
-import ShopCreate from "../pages/ShopCreate";
-import SellerActivationPage from "../pages/SellerActivationPage" 
+import LoginPage from "../pages/Login";
+import SignupPage from "../pages/Signup.jsx";
+import ActivationPage from "../pages/ActivationPage";
+import HomePage from "../pages/HomePage";
+import ProductsPage from "../pages/ProductsPage";
+import BestSellingPage from "../pages/BestSellingPage";
+import EventsPage from "../pages/EventPage";
+import FAQPage from "../pages/FAQ.jsx";
+import CheckoutPage from "../pages/CheckoutPage";
+import PaymentPage from "../pages/PaymentPage";
+import OrderSuccessPage from "../pages/OrderSuccessPage";
+import ProductDetailsPage from "../pages/ProductDetailsPage";
+import ProfilePage from "../pages/ProfilePage";
+import ShopCreatePage from "../pages/ShopCreate";
+import SellerActivationPage from "../pages/SellerActivationPage";
 import ShopLoginPage from "../pages/ShopLoginPage";
+import OrderDetailsPage from "../pages/OrderDetailsPage";
+import TrackOrderPage from "../pages/TrackOrderPage";
+import UserInbox from "../pages/UserInbox.jsx";
 
-
-
-
-
-
-
-export{
-
+export { 
     LoginPage,
     SignupPage,
     ActivationPage,
     HomePage,
     ProductsPage,
     BestSellingPage,
-    EventPage,
-    FAQ,
-    ProductDetailsPage,
+    EventsPage,
+    FAQPage,
     CheckoutPage,
     PaymentPage,
     OrderSuccessPage,
+    ProductDetailsPage,
     ProfilePage,
-    ShopCreate,
+    ShopCreatePage,
     SellerActivationPage,
-    ShopLoginPage
-    
+    ShopLoginPage,
+    OrderDetailsPage,
+    TrackOrderPage,
+    UserInbox
 };

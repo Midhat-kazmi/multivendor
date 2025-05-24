@@ -1,9 +1,9 @@
 import React from 'react'
 import DashboardHeader from '../../components/Shop/Layout/DashboardHeader'
-import DashboardSideBar from '../../components/Shop/Layout/DashboardSidebar'
-import AllCoupons from "../../components/Shop/AllCoupons.jsx";
+import DashboardSideBar from '../../components/Shop/Layout/DashboardSideBar'
+import AllCoupons from "../../components/Shop/AllCoupons";
 
-const ShopAllCoupouns = () => {
+const ShopAllCoupons = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <DashboardHeader />
@@ -24,4 +24,4 @@ const ShopAllCoupouns = () => {
   )
 }
 
-export default ShopAllCoupouns
+export default ShopAllCoupons

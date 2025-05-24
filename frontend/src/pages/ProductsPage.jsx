@@ -1,49 +1,53 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import Header from "../components/Layout/Header";
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { useSearchParams } from "react-router-dom";
 import Footer from "../components/Layout/Footer";
-import { productData } from "../static/data"; // Import product data
+import Header from "../components/Layout/Header";
+import Loader from "../components/Layout/Loader";
+import ProductCard from "../components/Route/ProductCard/ProductCard";
+import styles from "../styles/styles";
 
 const ProductsPage = () => {
-  const navigate = useNavigate();
-
-  const handleProductClick = (name) => {
-    const urlSafeName = name.split(" ").join("-");
-    navigate(`/product/${urlSafeName}`);
-  };
+  const [searchParams] = useSearchParams();
+  const categoryData = searchParams.get("category");
+  const { allProducts, isLoading } = useSelector((state) => state.products);
+  const [data, setData] = useState([]);
+  useEffect(() => {
+    if (categoryData === null) {
+      const d = allProducts;
+      setData(d);
+    } else {
+      const d =
+        allProducts && allProducts.filter((i) => i.category === categoryData);
+      setData(d);
+    }
+    //    window.scrollTo(0,0);
+  }, [allProducts, categoryData]);
 
   return (
-    <div>
-      {/* Header with active heading */}
-      <Header activeHeading={3} />
-
-      {/* Products Section */}
-      <div className="p-6">
-        <h1 className="text-2xl font-bold mb-4">Products</h1>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {productData.map((product) => (
-            <div
-              key={product.id}
-              onClick={() => handleProductClick(product.name)}
-              className="p-4 border rounded-lg shadow-md cursor-pointer hover:shadow-lg transition-shadow"
-            >
-              <img
-                src={product.image}
-                alt={product.name}
-                className="w-full h-48 object-cover rounded-lg border-0 outline-none"
-              />
-              <h2 className="text-xl font-semibold mt-2">{product.name}</h2>
-              <p className="text-gray-600">{product.price}</p>
-              <button className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-lg">
-                Buy Now
-              </button>
+    <>
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <div>
+          <Header activeHeading={3} />
+          <br />
+          <br />
+          <div className={`${styles.section}`}>
+            <div className="grid grid-cols-1 gap-[20px] md:grid-cols-2 md:gap-[25px] lg:grid-cols-4 lg:gap-[25px] xl:grid-cols-5 xl:gap-[30px] mb-12">
+              {data &&
+                data.map((i, index) => <ProductCard data={i} key={index} />)}
             </div>
-          ))}
+            {data && data.length === 0 ? (
+              <h1 className="text-center w-full pb-[100px] text-[20px]">
+                No products Found!
+              </h1>
+            ) : null}
+          </div>
+          <Footer />
         </div>
-      </div>
-
-      <Footer />
-    </div>
+      )}
+    </>
   );
 };
 

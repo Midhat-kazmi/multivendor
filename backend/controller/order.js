@@ -5,7 +5,7 @@ const Order = require("../model/order");
 const Shop = require("../model/shop");
 const Product = require("../model/product");
 
-// Create new order
+
 router.post("/create-order", async (req, res) => {
   try {
     const { cart, shippingAddress, user, totalPrice, paymentInfo } = req.body;

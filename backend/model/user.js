@@ -6,20 +6,17 @@ const userSchema = new mongoose.Schema({
   name: {
     type: String,
     required: [true, "Please enter your name!"],
-    trim: true,
   },
   email: {
     type: String,
     required: [true, "Please enter your email!"],
     unique: true,
-    lowercase: true,
-    trim: true,
   },
   password: {
     type: String,
     required: [true, "Please enter your password"],
     minLength: [4, "Password should be greater than 4 characters"],
-    select: false, // ensure password is not returned by default
+    select: false,
   },
   phoneNumber: {
     type: Number,
@@ -36,7 +33,6 @@ const userSchema = new mongoose.Schema({
   ],
   role: {
     type: String,
-    enum: ["user", "admin"],
     default: "user",
   },
   avatar: {
@@ -57,28 +53,23 @@ const userSchema = new mongoose.Schema({
   resetPasswordTime: Date,
 });
 
-// ✅ Pre-save: Hash password if modified
+// Hash password
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
-
-  try {
-    this.password = await bcrypt.hash(this.password, 10);
-    next();
-  } catch (err) {
-    return next(err);
-  }
+  this.password = await bcrypt.hash(this.password, 10);
+  next();
 });
 
-// ✅ Method to get signed JWT token
+// JWT token
 userSchema.methods.getJwtToken = function () {
   return jwt.sign({ id: this._id }, process.env.JWT_SECRET_KEY, {
-    expiresIn: process.env.JWT_EXPIRES || "7d",
+    expiresIn: process.env.JWT_EXPIRES,
   });
 };
 
-// ✅ Compare plain and hashed password
+// Compare password
 userSchema.methods.comparePassword = async function (enteredPassword) {
-  return bcrypt.compare(enteredPassword, this.password);
+  return await bcrypt.compare(enteredPassword, this.password);
 };
 
 module.exports = mongoose.model("User", userSchema);
