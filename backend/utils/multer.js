@@ -11,20 +11,35 @@ if (!fs.existsSync(uploadDir)) {
 // Configure storage
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, uploadDir); // save in the 'uploads/' folder
+    cb(null, uploadDir);
   },
   filename: function (req, file, cb) {
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, uniqueSuffix + path.extname(file.originalname)); // adding a unique suffix to avoid overwriting
+    cb(null, uniqueSuffix + path.extname(file.originalname));
   },
 });
 
+// File filter function
+const fileFilter = (req, file, cb) => {
+  // Accept images only
+  if (!file.originalname.match(/\.(jpg|JPG|jpeg|JPEG|png|PNG|gif|GIF)$/)) {
+    req.fileValidationError = 'Only image files are allowed!';
+    return cb(new Error('Only image files are allowed!'), false);
+  }
+  cb(null, true);
+};
 
+// Create multer instance with configuration
+const multerConfig = {
+  storage: storage,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB size limit
+    files: 5 // Maximum 5 files
+  },
+  fileFilter: fileFilter
+};
 
-// Multer configuration with increased limits (5MB size limit)
-const upload = multer({
-  storage,
-
-});
+// Create multer instance
+const upload = multer(multerConfig);
 
 module.exports = upload;

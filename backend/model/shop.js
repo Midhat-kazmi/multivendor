@@ -3,7 +3,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 const shopSchema = new mongoose.Schema({
-  shopName: {
+  name: {
     type: String,
     required: [true, "Please enter your shop name!"],
     trim: true,
@@ -15,7 +15,6 @@ const shopSchema = new mongoose.Schema({
     lowercase: true,
     trim: true,
   },
-
   zipCode: {
     type: String,
     required: [true, "Please enter your zip code!"],
@@ -33,12 +32,19 @@ const shopSchema = new mongoose.Schema({
   avatar: {
     public_id: {
       type: String,
-       required: true,
+      required: false,
     },
     url: {
       type: String,
-      required: true,
+      required: false,
     },
+  },
+  phoneNumber: {
+    type: String,
+    required: [true, "Please enter your phone number!"],
+  },
+  description: {
+    type: String,
   },
   createdAt: {
     type: Date,
@@ -48,7 +54,12 @@ const shopSchema = new mongoose.Schema({
     type: String,
     default: "seller",
   },
+  withdrawMethod: {
+    type: Object,
+  },
 });
+
+// Hash password before saving
 shopSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
 
@@ -60,14 +71,14 @@ shopSchema.pre("save", async function (next) {
   }
 });
 
-// ✅ Method to get signed JWT token
+// Method to get signed JWT token
 shopSchema.methods.getJwtToken = function () {
-  return jwt.sign({ id: this._id }, process.env.JWT_SECRET_KEY, {
-    expiresIn: process.env.JWT_EXPIRES || "7d",
+  return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRES,
   });
 };
 
-// ✅ Compare plain and hashed password
+// Compare plain and hashed password
 shopSchema.methods.comparePassword = async function (enteredPassword) {
   return bcrypt.compare(enteredPassword, this.password);
 };

@@ -15,13 +15,39 @@ const createActivationToken = (user) => {
   return jwt.sign(user, process.env.ACTIVATION_SECRET, { expiresIn: "5m" });
 };
 
+// Create token and save in cookie
+const sendToken = (user, statusCode, res) => {
+  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRES,
+  });
+
+  // Options for cookie
+  const options = {
+    expires: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
+    httpOnly: true,
+    sameSite: "none",
+    secure: true,
+  };
+
+  res.status(statusCode)
+    .cookie("token", token, options)
+    .json({
+      success: true,
+      user,
+      token,
+    });
+};
+
 // Register user and send activation email
-router.post("/create-user", upload.single("avatar"), async (req, res) => {
+router.post("/create-user", upload.single("avatar"), async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
     const file = req.file;
 
     if (!name || !email || !password || !file) {
+      if (file) {
+        fs.unlinkSync(file.path);
+      }
       return res.status(400).json({ success: false, message: "All fields including avatar are required" });
     }
 
@@ -49,6 +75,9 @@ router.post("/create-user", upload.single("avatar"), async (req, res) => {
     res.status(201).json({ success: true, message: `Please check your email: ${user.email} to activate your account.` });
   } catch (error) {
     console.error("User creation failed:", error);
+    if (req.file) {
+      fs.unlinkSync(req.file.path);
+    }
     res.status(500).json({ success: false, message: "Something went wrong during registration." });
   }
 });
@@ -81,36 +110,30 @@ router.post("/activation", async (req, res) => {
 });
 
 // Login User
-router.post(
-  "/login-user",
-  (async (req, res, next) => {
-    try {
-      const { email, password } = req.body;
+router.post("/login-user", async (req, res) => {
+  try {
+    const { email, password } = req.body;
 
-      if (!email || !password) {
-        return next("Please provide the all fields!", 400);
-      }
-
-      const user = await User.findOne({ email }).select("+password");
-
-      if (!user) {
-        return next("User doesn't exists!", 400);
-      }
-
-      const isPasswordValid = await user.comparePassword(password);
-
-      if (!isPasswordValid) {
-        return next("Please provide the correct information", 400
-        );
-      }
-
-      sendToken(user, 201, res);
-    } catch (error) {
-      return next(error.message, 500);
+    if (!email || !password) {
+      return res.status(400).json({ success: false, message: "Please provide all fields!" });
     }
-  })
-);
 
+    const user = await User.findOne({ email }).select("+password");
+    if (!user) {
+      return res.status(400).json({ success: false, message: "User doesn't exist!" });
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(401).json({ success: false, message: "Invalid credentials" });
+    }
+
+    sendToken(user, 200, res);
+  } catch (error) {
+    console.error("Login failed:", error);
+    res.status(500).json({ success: false, message: "Something went wrong during login." });
+  }
+});
 
 // Get current user
 router.get("/getuser", isAuthenticated, async (req, res) => {
@@ -148,9 +171,20 @@ router.put("/update-user-info", isAuthenticated, async (req, res) => {
 router.put("/update-avatar", isAuthenticated, upload.single("avatar"), async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
+    if (!user) {
+      if (req.file) {
+        fs.unlinkSync(req.file.path);
+      }
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
     if (user.avatar?.public_id) {
       const oldPath = path.join(__dirname, "..", "uploads", user.avatar.public_id);
       if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+    }
+
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: "No file uploaded" });
     }
 
     const filename = req.file.filename;
@@ -160,6 +194,9 @@ router.put("/update-avatar", isAuthenticated, upload.single("avatar"), async (re
     await user.save();
     res.status(200).json({ success: true, user });
   } catch (error) {
+    if (req.file) {
+      fs.unlinkSync(req.file.path);
+    }
     res.status(500).json({ success: false, message: "Failed to update avatar" });
   }
 });

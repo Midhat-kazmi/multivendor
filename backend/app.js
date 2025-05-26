@@ -21,8 +21,10 @@ app.use(express.urlencoded({ extended: true, limit: "15mb" }));
 app.use(cookieParser());
 
 // Serve static files
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use("/uploads", express.static(path.join(__dirname, "..", "uploads")));
 
+
+app.use(express.json());
 // import routes
 const user = require("./controller/user");
 const shop = require("./controller/shop");

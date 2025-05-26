@@ -13,6 +13,7 @@ const ShopCreated = () => {
   const [password, setPassword] = useState("");
   const [zipCode, setZipCode] = useState("");
   const [address, setAddress] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [avatar, setAvatar] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -37,7 +38,8 @@ const ShopCreated = () => {
     formData.append("password", password);
     formData.append("zipCode", zipCode);
     formData.append("address", address);
-    formData.append("file", avatar);
+    formData.append("phoneNumber", phoneNumber);
+    formData.append("avatar", avatar);
 
     try {
       const response = await axios.post(
@@ -54,6 +56,7 @@ const ShopCreated = () => {
       setPassword("");
       setZipCode("");
       setAddress("");
+      setPhoneNumber("");
       setAvatar(null);
     } catch (error) {
       toast.error(error?.response?.data?.message || "Something went wrong");
@@ -129,6 +132,22 @@ const ShopCreated = () => {
                   )}
                 </div>
               </div>
+            </div>
+
+            {/* Phone Number */}
+            <div>
+              <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700">
+                Phone Number
+              </label>
+              <input
+                type="text"
+                name="phoneNumber"
+                id="phoneNumber"
+                required
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              />
             </div>
 
             {/* Zip Code */}

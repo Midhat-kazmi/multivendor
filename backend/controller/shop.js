@@ -1,39 +1,59 @@
 const express = require("express");
 const path = require("path");
+const fs = require("fs");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
 const sendMail = require("../utils/sendMail");
 const Shop = require("../model/shop");
 const { isAuthenticated, isSeller, isAdmin } = require("../middleware/auth");
-const sendShopToken = require("../utils/sendShopToken");
 const upload = require("../utils/multer");
+const sendShopToken = require("../utils/sendShopToken");
 
 // create shop
-router.post("/create-shop", upload.single("avatar"), async (req, res) => {
+router.post("/create-shop", upload.single("avatar"), async (req, res, next) => {
   try {
-    const { email, name, password, address, phoneNumber, zipCode } = req.body;
-    const sellerEmail = await Shop.findOne({ email });
+    const { email, shopName, password, address, phoneNumber, zipCode } = req.body;
+    
+    if (!email || !shopName || !password || !address || !phoneNumber || !zipCode) {
+      if (req.file) {
+        fs.unlinkSync(req.file.path);
+      }
+      return res.status(400).json({ success: false, message: "All fields are required" });
+    }
 
+    const sellerEmail = await Shop.findOne({ email });
     if (sellerEmail) {
-      return res.status(400).json({ success: false, message: "User already exists" });
+      if (req.file) {
+        fs.unlinkSync(req.file.path);
+      }
+      return res.status(400).json({ success: false, message: "Shop with this email already exists" });
     }
 
     const avatar = req.file
       ? {
           public_id: req.file.filename,
-          url: `/uploads/${req.file.filename}`,
+          url: `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`,
         }
       : null;
 
-    const seller = { name, email, password, avatar, address, phoneNumber, zipCode };
+    const seller = {
+      name: shopName,
+      email,
+      password,
+      avatar,
+      address,
+      phoneNumber,
+      zipCode
+    };
+    
     const activationToken = createActivationToken(seller);
-
     const activationUrl = `https://eshop-tutorial-pyri.vercel.app/seller/activation/${activationToken}`;
 
     await sendMail({
       email,
       subject: "Activate your Shop",
-      emailMessage: `Hello ${name}, please click on the link to activate your shop: ${activationUrl}`,
+      message: `Hello ${shopName}, please click on the link to activate your shop: ${activationUrl}`,
     });
 
     res.status(201).json({
@@ -41,7 +61,11 @@ router.post("/create-shop", upload.single("avatar"), async (req, res) => {
       message: `Please check your email: ${email} to activate your shop!`,
     });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    console.error("Shop creation failed:", error);
+    if (req.file) {
+      fs.unlinkSync(req.file.path);
+    }
+    res.status(500).json({ success: false, message: "Something went wrong during shop creation." });
   }
 });
 
@@ -50,25 +74,40 @@ const createActivationToken = (seller) => {
   return jwt.sign(seller, process.env.ACTIVATION_SECRET, { expiresIn: "5m" });
 };
 
-// activate user
+// activate shop
 router.post("/activation", async (req, res) => {
   try {
     const { activation_token } = req.body;
-    const newSeller = jwt.verify(activation_token, process.env.ACTIVATION_SECRET);
+    if (!activation_token) {
+      return res.status(400).json({ success: false, message: "No activation token provided" });
+    }
 
+    const newSeller = jwt.verify(activation_token, process.env.ACTIVATION_SECRET);
     if (!newSeller) {
       return res.status(400).json({ success: false, message: "Invalid token" });
     }
 
-    const existingSeller = await Shop.findOne({ email: newSeller.email });
+    const { name, email, password, avatar, address, phoneNumber, zipCode } = newSeller;
+
+    const existingSeller = await Shop.findOne({ email });
     if (existingSeller) {
-      return res.status(400).json({ success: false, message: "User already exists" });
+      return res.status(400).json({ success: false, message: "Shop already exists" });
     }
 
-    const seller = await Shop.create(newSeller);
+    const seller = await Shop.create({
+      name,
+      email,
+      password,
+      avatar,
+      address,
+      phoneNumber,
+      zipCode,
+    });
+
     sendShopToken(seller, 201, res);
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    console.error("Shop activation failed:", error);
+    res.status(500).json({ success: false, message: "Shop activation failed" });
   }
 });
 
@@ -81,14 +120,20 @@ router.post("/login-shop", async (req, res) => {
       return res.status(400).json({ success: false, message: "Please provide all fields!" });
     }
 
-    const user = await Shop.findOne({ email }).select("+password");
-    if (!user || !(await user.comparePassword(password))) {
-      return res.status(400).json({ success: false, message: "Invalid credentials" });
+    const shop = await Shop.findOne({ email }).select("+password");
+    if (!shop) {
+      return res.status(400).json({ success: false, message: "Shop not found" });
     }
 
-    sendShopToken(user, 201, res);
+    const isPasswordValid = await shop.comparePassword(password);
+    if (!isPasswordValid) {
+      return res.status(401).json({ success: false, message: "Invalid credentials" });
+    }
+
+    sendShopToken(shop, 200, res);
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    console.error("Shop login failed:", error);
+    res.status(500).json({ success: false, message: "Something went wrong during login." });
   }
 });
 
@@ -136,20 +181,36 @@ router.put("/update-shop-avatar", isSeller, upload.single("avatar"), async (req,
   try {
     const seller = await Shop.findById(req.seller._id);
     if (!seller) {
-      return res.status(400).json({ success: false, message: "Seller not found" });
+      if (req.file) {
+        fs.unlinkSync(req.file.path);
+      }
+      return res.status(404).json({ success: false, message: "Seller not found" });
     }
 
-    if (req.file) {
-      seller.avatar = {
-        public_id: req.file.filename,
-        url: `/uploads/${req.file.filename}`,
-      };
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: "No file uploaded" });
     }
+
+    // Delete old avatar file if it exists
+    if (seller.avatar?.public_id) {
+      const oldPath = path.join(__dirname, "..", "uploads", seller.avatar.public_id);
+      if (fs.existsSync(oldPath)) {
+        fs.unlinkSync(oldPath);
+      }
+    }
+
+    seller.avatar = {
+      public_id: req.file.filename,
+      url: `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`,
+    };
 
     await seller.save();
     res.status(200).json({ success: true, seller });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    if (req.file) {
+      fs.unlinkSync(req.file.path);
+    }
+    res.status(500).json({ success: false, message: "Failed to update avatar" });
   }
 });
 

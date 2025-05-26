@@ -1,6 +1,6 @@
 const express = require("express");
 const { isSeller, isAuthenticated, isAdmin } = require("../middleware/auth");
-const upload = require("../utils/multer"); 
+const upload = require("../utils/multer");
 const router = express.Router();
 const Product = require("../model/product");
 const Shop = require("../model/shop");
@@ -8,8 +8,8 @@ const Shop = require("../model/shop");
 // Create product with multer upload
 router.post(
   "/create-product",
-  upload.array("images", 5), // Expect up to 5 images with field name "images"
-  (async (req, res, next) => {
+  upload.array("file", 5),
+  async (req, res, next) => {
     try {
       const shopId = req.body.shopId;
       const shop = await Shop.findById(shopId);
@@ -39,9 +39,8 @@ router.post(
       console.error("Create Product Error:", error);
       return next(error);
     }
-  })
+  }
 );
-
 // Get all products of a shop
 router.get(
   "/get-all-products-shop/:id",
@@ -122,5 +121,9 @@ router.get(
     }
   })
 );
+
+router.post('/upload', upload.array, (req, res) => {
+  // Handle multiple uploads
+});
 
 module.exports = router;

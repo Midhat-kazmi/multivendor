@@ -22,6 +22,7 @@ const CreateEvent = () => {
   const [stock, setStock] = useState();
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
+  const [imagePreview, setImagePreview] = useState([]);
 
   const handleStartDateChange = (e) => {
     const startDate = new Date(e.target.value);
@@ -59,44 +60,91 @@ const CreateEvent = () => {
   }, [dispatch, error, success]);
 
   const handleImageChange = (e) => {
+    e.preventDefault();
     const files = Array.from(e.target.files);
+    
+    // Debug: Log file input event
+    console.log("File input change event:", e);
+    console.log("Selected files:", files);
+    
+    setImages(files);
 
-    setImages([]);
-
-    files.forEach((file) => {
-      const reader = new FileReader();
-
-      reader.onload = () => {
-        if (reader.readyState === 2) {
-          setImages((old) => [...old, reader.result]);
-        }
-      };
-      reader.readAsDataURL(file);
+    // Create preview URLs
+    const previews = files.map(file => {
+      console.log("Processing file:", file.name, file.type);
+      return URL.createObjectURL(file);
     });
+    setImagePreview(previews);
   };
 
-  const handleSubmit = (e) => {
+  // Cleanup preview URLs on unmount
+  useEffect(() => {
+    return () => {
+      imagePreview.forEach(url => URL.revokeObjectURL(url));
+    };
+  }, [imagePreview]);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const newForm = new FormData();
+    if (!startDate || !endDate) {
+      toast.error("Please select both start and end dates!");
+      return;
+    }
 
-    images.forEach((image) => {
-      newForm.append("images", image);
-    });
-    const data = {
-      name,
-      description,
-      category,
-      tags,
-      originalPrice,
-      discountPrice,
-      stock,
-      images,
-      shopId: seller._id,
-      start_Date: startDate?.toISOString(),
-      Finish_Date: endDate?.toISOString(),
-    };
-    dispatch(createEvent(data));
+    if (!images.length) {
+      toast.error("Please select at least one image!");
+      return;
+    }
+
+    try {
+      const newForm = new FormData();
+
+      // Append all form fields
+      newForm.append("name", name);
+      newForm.append("description", description);
+      newForm.append("category", category);
+      newForm.append("tags", tags);
+      newForm.append("originalPrice", originalPrice || 0);
+      newForm.append("discountPrice", discountPrice);
+      newForm.append("stock", stock);
+      newForm.append("shopId", seller._id);
+      newForm.append("startDate", startDate?.toISOString());
+      newForm.append("finishDate", endDate?.toISOString());
+
+      // Debug: Log all form data
+      console.log("Form data before file append:");
+      for (let [key, value] of newForm.entries()) {
+        console.log(`${key}: ${value}`);
+      }
+
+      // Debug: Log file information
+      console.log("Files to upload:", images);
+      images.forEach((file, index) => {
+        console.log(`File ${index}:`, {
+          name: file.name,
+          type: file.type,
+          size: file.size
+        });
+      });
+
+      // Append each file individually
+      images.forEach((file) => {
+        console.log(`Appending file:`, file.name);
+        newForm.append("images", file);
+      });
+
+      // Debug: Log final form data
+      console.log("Final form data:");
+      for (let [key, value] of newForm.entries()) {
+        console.log(`${key}: ${value instanceof File ? value.name : value}`);
+      }
+
+      dispatch(createEvent(newForm));
+    } catch (error) {
+      console.error("Form submission error:", error);
+      toast.error("Error creating event. Please try again.");
+    }
   };
 
   return (
@@ -245,22 +293,24 @@ const CreateEvent = () => {
           </label>
           <input
             type="file"
-            name=""
+            name="images"
             id="upload"
             className="hidden"
             multiple
+            accept="image/*"
             onChange={handleImageChange}
+            required
           />
           <div className="w-full flex items-center flex-wrap">
             <label htmlFor="upload">
               <AiOutlinePlusCircle size={30} className="mt-3" color="#555" />
             </label>
-            {images &&
-              images.map((i) => (
+            {imagePreview &&
+              imagePreview.map((url, index) => (
                 <img
-                  src={i}
-                  key={i}
-                  alt=""
+                  src={url}
+                  key={index}
+                  alt={`Preview ${index + 1}`}
                   className="h-[120px] w-[120px] object-cover m-2"
                 />
               ))}

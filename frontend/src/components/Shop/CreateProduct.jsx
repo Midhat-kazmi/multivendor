@@ -53,11 +53,12 @@ const CreateProduct = () => {
     newForm.append("originalPrice", originalPrice);
     newForm.append("discountPrice", discountPrice);
     newForm.append("stock", stock);
-    newForm.append("shopId", seller._id); // safe because of the check above
+    newForm.append("shopId", seller._id); 
 
     images.forEach((image) => {
       newForm.append("images", image);
     });
+    
 
     dispatch(createProduct(newForm));
   };
