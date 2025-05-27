@@ -53,12 +53,12 @@ const userSchema = new mongoose.Schema({
   resetPasswordTime: Date,
 });
 
-// Hash password
-userSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) return next();
-  this.password = await bcrypt.hash(this.password, 10);
-  next();
-});
+// Hash password // testing: token  ( testing: temporarily: token: infinite time and never expired)
+// userSchema.pre("save", async function (next) {
+//   if (!this.isModified("password")) return next();
+//   this.password = await bcrypt.hash(this.password, 10);
+//   next();
+// });
 
 // JWT token
 userSchema.methods.getJwtToken = function () {

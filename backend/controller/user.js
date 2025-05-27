@@ -117,14 +117,16 @@ const loginUser = async (req, res) => {
     }
 
     const user = await User.findOne({ email }).select("+password");
-    if (!user) {
-      return res.status(401).json({ success: false, message: "Invalid email or password" });
-    }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-      return res.status(401).json({ success: false, message: "Invalid email or password" });
-    }
+if (!user || !user.password) {
+  return res.status(401).json({ success: false, message: "Invalid email or password" });
+}
+
+const isPasswordValid = await bcrypt.compare(password, user.password);
+if (!isPasswordValid) {
+  return res.status(401).json({ success: false, message: "wrong password " });
+}
+
 
     if (user.avatar && user.avatar.url) {
       const filename = path.basename(user.avatar.url.replace(/\\/g, "/"));
