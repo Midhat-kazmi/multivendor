@@ -17,11 +17,10 @@ const createActivationToken = (user) => {
 
 // Create token and save in cookie
 const sendToken = (user, statusCode, res) => {
-  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY, {
     expiresIn: process.env.JWT_EXPIRES,
   });
 
-  // Options for cookie
   const options = {
     expires: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
     httpOnly: true,
@@ -82,7 +81,7 @@ router.post("/create-user", upload.single("avatar"), async (req, res, next) => {
   }
 });
 
-// ✅ Activate User (updated to hash password before saving)
+// Activate User
 router.post("/activation", async (req, res) => {
   try {
     const { activation_token } = req.body;
@@ -99,7 +98,6 @@ router.post("/activation", async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-
     const user = await User.create({ name, email, password: hashedPassword, avatar });
 
     res.status(201).json({ success: true, message: "Account activated successfully", user });
@@ -110,30 +108,54 @@ router.post("/activation", async (req, res) => {
 });
 
 // Login User
-router.post("/login-user", async (req, res) => {
+const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({ success: false, message: "Please provide all fields!" });
+      return res.status(400).json({ success: false, message: "All fields are required" });
     }
 
     const user = await User.findOne({ email }).select("+password");
     if (!user) {
-      return res.status(400).json({ success: false, message: "User doesn't exist!" });
+      return res.status(401).json({ success: false, message: "Invalid email or password" });
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      return res.status(401).json({ success: false, message: "Invalid credentials" });
+      return res.status(401).json({ success: false, message: "Invalid email or password" });
     }
 
-    sendToken(user, 200, res);
+    if (user.avatar && user.avatar.url) {
+      const filename = path.basename(user.avatar.url.replace(/\\/g, "/"));
+      user.avatar = {
+        public_id: filename,
+        url: `${req.protocol}://${req.get("host")}/uploads/${filename}`,
+      };
+    }
+
+    const token = user.getJwtToken();
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Login successful",
+      user,
+      token,
+    });
   } catch (error) {
-    console.error("Login failed:", error);
-    res.status(500).json({ success: false, message: "Something went wrong during login." });
+    console.error("Login Error:", error);
+    return res.status(500).json({ success: false, message: "Login failed" });
   }
-});
+};
+
+router.post("/login-user", loginUser);
 
 // Get current user
 router.get("/getuser", isAuthenticated, async (req, res) => {

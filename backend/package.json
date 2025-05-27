@@ -10,14 +10,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Midhat-kazmi/e-commerce-store.git"
+    "url": "git+https://github.com/Midhat-kazmi/multivendor.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Midhat-kazmi/e-commerce-store/issues"
+    "url": "https://github.com/Midhat-kazmi/multivendor/issues"
   },
-  "homepage": "https://github.com/Midhat-kazmi/e-commerce-store#readme",
+  "homepage": "https://github.com/Midhat-kazmi/multivendor#readme",
   "dependencies": {
     "bcrypt": "^5.1.1",
     "bcryptjs": "^3.0.2",
