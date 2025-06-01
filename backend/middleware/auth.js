@@ -1,73 +1,52 @@
-const jwt = require('jsonwebtoken');
-const User = require('../model/user');
-const Shop = require('../model/shop');
+const ErrorHandler = require("../utils/ErrorHandler");
+const catchAsyncErrors = require("./catchAsyncErrors");
+const jwt = require("jsonwebtoken");
+const User = require("../model/user");
+const Shop = require("../model/shop");
 
+exports.isAuthenticated = catchAsyncErrors(async(req,res,next) => {
+    const {token} = req.cookies;
 
-exports.isAuthenticated = async (req, res, next) => {
-  try {
-    // Get token from cookies
-    const { token } = req.cookies;
-
-    // If no token, return an error
-    if (!token) {
-      return res.status(401).json({ success: false, message: 'Please login to access this resource' });
+    if(!token){
+        return next(new ErrorHandler("Please login to continue", 401));
     }
 
-    // Verify the token
     const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
 
-    // Find user by decoded ID (make sure this matches the key used when signing the JWT)
-    req.user = await User.findById(decoded.id); // Ensure 'id' matches what's in your JWT payload
+    req.user = await User.findById(decoded.id);
 
-    // If user not found
-    if (!req.user) {
-      return res.status(404).json({ success: false, message: 'User not found' });
-    }
-
-    // Proceed to the next middleware
     next();
+});
 
-  } catch (error) {
-    // Handle errors from JWT verification or user fetching
-    console.error("Authentication Error:", error);
-    return res.status(401).json({ success: false, message: 'Authentication failed. Please login again.' });
-  }
-};
-
-
-
-// middleware/auth.js
 
 
 exports.isSeller = async (req, res, next) => {
   try {
-    const { seller_token } = req.cookies;
+    const token = req.cookies.shop_token;
 
-    if (!seller_token) {
-      return res.status(401).json({ success: false, message: 'Please login to access this resource' });
+    if (!token) {
+      return res.status(401).json({ success: false, message: "No token, please login" });
     }
 
-    const decoded = jwt.verify(seller_token, process.env.JWT_SECRET_KEY);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
 
-    req.seller = await Shop.findById(decoded.id); // assign to req.seller
+    req.user = await Shop.findById(decoded.id);
 
-    if (!req.seller) {
-      return res.status(404).json({ success: false, message: 'Seller not found' });
+    if (!req.user) {
+      return res.status(404).json({ success: false, message: "User not found" });
     }
 
     next();
   } catch (error) {
-    console.error("Seller Authentication Error:", error);
-    return res.status(401).json({ success: false, message: 'Authentication failed. Please login again.' });
+    console.error("Auth middleware error:", error);
+    res.status(401).json({ success: false, message: "Unauthorized access" });
   }
 };
-
-
 
 exports.isAdmin = (...roles) => {
     return (req,res,next) => {
         if(!roles.includes(req.user.role)){
-            return next(`${req.user.role} can not access this resources!`)
+            return next(new ErrorHandler(`${req.user.role} can not access this resources!`))
         };
         next();
     }

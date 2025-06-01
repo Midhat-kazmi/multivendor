@@ -3,7 +3,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 const shopSchema = new mongoose.Schema({
-  name: {
+  shopName: {
     type: String,
     required: [true, "Please enter your shop name!"],
     trim: true,
@@ -15,6 +15,7 @@ const shopSchema = new mongoose.Schema({
     lowercase: true,
     trim: true,
   },
+
   zipCode: {
     type: String,
     required: [true, "Please enter your zip code!"],
@@ -27,24 +28,17 @@ const shopSchema = new mongoose.Schema({
     type: String,
     required: [true, "Please enter your password!"],
     minLength: [4, "Password should be greater than 4 characters"],
-    select: false, // ensure password is not returned by default
+    select: false,
   },
   avatar: {
     public_id: {
       type: String,
-      required: false,
+       required: true,
     },
     url: {
       type: String,
-      required: false,
+      required: true,
     },
-  },
-  phoneNumber: {
-    type: String,
-    required: [true, "Please enter your phone number!"],
-  },
-  description: {
-    type: String,
   },
   createdAt: {
     type: Date,
@@ -54,27 +48,22 @@ const shopSchema = new mongoose.Schema({
     type: String,
     default: "seller",
   },
-  withdrawMethod: {
-    type: Object,
-  },
 });
+//shopSchema.pre("save", async function (next) {
+  //if (!this.isModified("password")) return next();
 
-// Hash password before saving
-shopSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) return next();
+  //try {
+  //  this.password = await bcrypt.hash(this.password, 10);
+   // next();
+  //} catch (err) {
+  //  return next(err);
+  //}
+//});
 
-  try {
-    this.password = await bcrypt.hash(this.password, 10);
-    next();
-  } catch (err) {
-    return next(err);
-  }
-});
-
-// Method to get signed JWT token
+//  Method to get signed JWT token
 shopSchema.methods.getJwtToken = function () {
-  return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES,
+  return jwt.sign({ id: this._id }, process.env.JWT_SECRET_KEY, {
+    expiresIn: process.env.JWT_EXPIRES || "7d",
   });
 };
 
