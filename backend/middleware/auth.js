@@ -30,18 +30,24 @@ exports.isSeller = async (req, res, next) => {
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
 
-    req.user = await Shop.findById(decoded.id);
-
-    if (!req.user) {
-      return res.status(404).json({ success: false, message: "User not found" });
+    if (!decoded || !decoded.id) {
+      return res.status(400).json({ success: false, message: "Invalid token" });
     }
 
+    const shop = await Shop.findById(decoded.id).select("-password");
+
+    if (!shop) {
+      return res.status(404).json({ success: false, message: "Shop not found" });
+    }
+
+    req.user = shop;
     next();
   } catch (error) {
     console.error("Auth middleware error:", error);
     res.status(401).json({ success: false, message: "Unauthorized access" });
   }
 };
+
 
 exports.isAdmin = (...roles) => {
     return (req,res,next) => {

@@ -11,21 +11,28 @@ const ShopInfo = ({ isOwner }) => {
   const [data,setData] = useState({});
   const {products} = useSelector((state) => state.products);
   const [isLoading,setIsLoading] = useState(false);
-  const {id} = useParams();
   const dispatch = useDispatch();
+  
+  
+  const {id} = useParams();
 
-  useEffect(() => {
-    dispatch(getAllProductsShop(id));
-    setIsLoading(true);
-    axios.get(`${server}/shop/get-shop-info/${id}`).then((res) => {
-     setData(res.data.shop);
-     setIsLoading(false);
-    }).catch((error) => {
-      console.log(error);
+ useEffect(() => {
+  if (!id) return;
+
+  dispatch(getAllProductsShop(id));
+  setIsLoading(true);
+
+  axios.get(`${server}/shop/get-shop-info/${id}`)
+    .then((res) => {
+      setData(res.data.shop);
       setIsLoading(false);
     })
-  }, [])
-  
+    .catch((error) => {
+      console.log(error);
+      setIsLoading(false);
+    });
+}, [id]); 
+
 
   const logoutHandler = async () => {
     axios.get(`${server}/shop/logout`,{
