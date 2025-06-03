@@ -155,7 +155,7 @@ router.post("/login-shop", async (req, res) => {
 
     const isPasswordValid = await bcrypt.compare(password, shop.password);
     if (!isPasswordValid) {
-      return res.status(401).json({ success: false, message: "Incorrect password" });
+      return res.status(401).json({ success: false, message: "Invalid credentials" });
     }
 
     // Normalize avatar URL
@@ -172,10 +172,10 @@ router.post("/login-shop", async (req, res) => {
     });
 
     res.cookie("shop_token", token, {
+      expires: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), // 90 days
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      sameSite: "none",
+      secure: true,
     });
 
     res.status(200).json({

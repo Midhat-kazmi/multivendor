@@ -1,20 +1,31 @@
 const express = require("express");
 const router = express.Router();
 
-// Placeholder for payment processing (Stripe removed)
-router.post("/process", (req, res) => {
-  // You can handle custom logic here later
-  res.status(200).json({
-    success: true,
-    message: "Payment processing temporarily disabled.",
-  });
-});
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
-// Placeholder for getting Stripe API key (Stripe removed)
-router.get("/stripeapikey", (req, res) => {
-  res.status(200).json({
-    stripeApikey: "Stripe integration is currently disabled.",
-  });
-});
+router.post(
+  "/process",
+ (async (req, res, next) => {
+    const myPayment = await stripe.paymentIntents.create({
+      amount: req.body.amount,
+      currency: "usd",
+      metadata: {
+        company: "Becodemy",
+      },
+    });
+    res.status(200).json({
+      success: true,
+      client_secret: myPayment.client_secret,
+    });
+  })
+);
+
+router.get(
+  "/stripeapikey",
+(async (req, res, next) => {
+    res.status(200).json({ stripeApikey: process.env.STRIPE_API_KEY });
+  })
+);
+
 
 module.exports = router;

@@ -5,9 +5,11 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { server } from "../../server";
 import { toast } from "react-toastify";
+import { useDispatch } from "react-redux";
 
 const ShopLogin = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [visible, setVisible] = useState(false);
@@ -15,16 +17,40 @@ const ShopLogin = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      console.log("Attempting to login...");
       const res = await axios.post(
         `${server}/shop/login-shop`,
         { email, password },
         { withCredentials: true }
       );
+      console.log("Login response:", res.data);
+      
+      // Dispatch loadSeller action after successful login
+      dispatch({ type: "LoadSellerRequest" });
+      
+      console.log("Fetching shop data...");
+      const { data: sellerData } = await axios.get(`${server}/shop/get-shop`, {
+        withCredentials: true,
+      });
+      console.log("Get shop response:", sellerData);
+      
+      if (!sellerData.shop) {
+        throw new Error("No shop data received");
+      }
+      
+      dispatch({
+        type: "LoadSellerSuccess",
+        payload: sellerData.shop,
+      });
+
       toast.success("Login Success!");
       navigate("/dashboard");
-         window.location.reload(true);
     } catch (err) {
-      console.error("Login error: ", err); // Log the error for debugging
+      console.error("Login error:", err);
+      dispatch({
+        type: "LoadSellerFail",
+        payload: err.response?.data?.message || err.message,
+      });
       toast.error(err.response?.data?.message || "An error occurred during login.");
     }
   };

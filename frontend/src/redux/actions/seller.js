@@ -19,25 +19,29 @@ export const getAllSellers = () => async (dispatch) => {
   } catch (error) {
     dispatch({
       type: "getAllSellerFailed",
-    //   payload: error.response.data.message,
+      payload: error.response?.data?.message || "Failed to fetch sellers",
     });
   }
 };
 
-
-// redux/actions/seller.js
-
+// Load seller data --> Login -> 
 export const loadSeller = () => async (dispatch) => {
   try {
     dispatch({ type: "LoadSellerRequest" });
 
-    const { data } = await axios.get(`${server}/shop/getSeller`, {
+    const { data } = await axios.get(`${server}/shop/get-shop`, {
       withCredentials: true,
     });
 
+    debugger;
+
+    if (!data.shop) {
+      throw new Error("No shop data received");
+    }
+
     dispatch({
       type: "LoadSellerSuccess",
-      payload: data.seller, 
+      payload: data.shop,
     });
   } catch (error) {
     dispatch({

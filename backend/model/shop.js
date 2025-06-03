@@ -48,6 +48,15 @@ const shopSchema = new mongoose.Schema({
     type: String,
     default: "seller",
   },
+  description: {
+  type: String,
+  default: "", // optional
+},
+phoneNumber: {
+  type: String,
+  default: "", // optional
+},
+
 });
 //shopSchema.pre("save", async function (next) {
   //if (!this.isModified("password")) return next();
