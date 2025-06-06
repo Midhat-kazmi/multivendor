@@ -4,6 +4,8 @@ import ShopInfo from "../../components/Shop/ShopInfo";
 import ShopProfileData from "../../components/Shop/ShopProfileData";
 
 const ShopHomePage = () => {
+
+  console.log("ShopHomePage rendered");
   return (
     <div className={`${styles.section} bg-[#f5f5f5]`}>
       <div className="w-full flex py-10 justify-between">

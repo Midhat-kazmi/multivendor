@@ -33,7 +33,7 @@ export const loadSeller = () => async (dispatch) => {
       withCredentials: true,
     });
 
-    debugger;
+    
 
     if (!data.shop) {
       throw new Error("No shop data received");

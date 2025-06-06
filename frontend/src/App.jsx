@@ -11,7 +11,7 @@ import {
   EventsPage,
   FAQPage,
   CheckoutPage,
-  PaymentPage,
+  // PaymentPage, // Stripe-related
   OrderSuccessPage,
   ProductDetailsPage,
   ProfilePage,
@@ -22,6 +22,7 @@ import {
   TrackOrderPage,
   UserInbox,
 } from "./routes/Routes.js";
+
 import {
   ShopDashboardPage,
   ShopCreateProduct,
@@ -37,6 +38,7 @@ import {
   ShopWithDrawMoneyPage,
   ShopInboxPage,
 } from "./routes/ShopRoutes";
+
 import {
   AdminDashboardPage,
   AdminDashboardUsers,
@@ -46,6 +48,7 @@ import {
   AdminDashboardEvents,
   AdminDashboardWithdraw,
 } from "./routes/AdminRoutes";
+
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Store from "./redux/store";
@@ -59,17 +62,52 @@ import { getAllEvents } from "./redux/actions/event";
 import { Provider } from "react-redux";
 
 
+// Stripe-related imports (commented out)
+// import { Elements } from "@stripe/react-stripe-js";
+// import { loadStripe } from "@stripe/stripe-js";
+// import axios from "axios";
+// import { server } from "./server";
+
+// Stripe API key state and function (commented out)
+// const [stripeApikey, setStripeApiKey] = useState("");
+
+// async function getStripeApikey() {
+//   const { data } = await axios.get(`${server}/payment/stripeapikey`);
+//   setStripeApiKey(data.stripeApikey);
+// }
+
 const App = () => {
   useEffect(() => {
     Store.dispatch(loadUser());
     Store.dispatch(loadSeller());
     Store.dispatch(getAllProducts());
     Store.dispatch(getAllEvents());
+
+    // Stripe key fetch (commented out)
+    // getStripeApikey();
   }, []);
 
   return (
     <Provider store={Store}>
       <BrowserRouter>
+        {/* Stripe Payment Route (commented out) */}
+        {/* 
+        {stripeApikey && (
+          <Elements stripe={loadStripe(stripeApikey)}>
+            <Routes>
+              <Route
+                path="/payment"
+                element={
+                  <ProtectedRoute>
+                    <PaymentPage />
+                  </ProtectedRoute>
+                }
+              />
+            </Routes>
+          </Elements>
+        )}
+        */}
+
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
@@ -95,15 +133,6 @@ const App = () => {
               </ProtectedRoute>
             }
           />
-          <Route
-            path="/Payment"
-            element={
-              <ProtectedRoute>
-                <PaymentPage />
-              </ProtectedRoute>
-            }
-          />
-
           <Route path="/order/success" element={<OrderSuccessPage />} />
           <Route
             path="/profile"
@@ -305,6 +334,7 @@ const App = () => {
             }
           />
         </Routes>
+
         <ToastContainer
           position="bottom-center"
           autoClose={5000}
