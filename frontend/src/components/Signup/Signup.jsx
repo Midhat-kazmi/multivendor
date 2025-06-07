@@ -28,7 +28,7 @@ const Signup = () => {
     formData.append("name", name);
     formData.append("email", email);
     formData.append("password", password);
-    formData.append("file", avatar); 
+    formData.append("avatar", avatar); 
     axios
       axios.post(`${server}/user/create-user`, formData, {
         headers: { "Content-Type": "multipart/form-data" },

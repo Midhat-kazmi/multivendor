@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import ProductCard from '../Route/ProductCard/ProductCard';
-import { productData } from '../../static/data'; 
+import ProductCard from "../Route/ProductCard/ProductCard";
+import { productData } from "../../static/data";
 
 const ShopProfileData = ({ isOwner }) => {
   const [activeTab, setActiveTab] = useState("products");

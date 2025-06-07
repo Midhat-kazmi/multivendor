@@ -8,8 +8,10 @@ export const getAllOrdersOfUser = (userId) => async (dispatch) => {
   try {
     dispatch({ type: "getAllOrdersUserRequest" });
 
-    const { data } = await axios.get(`${server}/order/get-all-orders/${userId}`);
-    
+    const { data } = await axios.get(
+      `${server}/order/get-all-orders/${userId}`
+    );
+
     dispatch({
       type: "getAllOrdersUserSuccess",
       payload: data.orders,
@@ -27,8 +29,10 @@ export const getAllOrdersOfShop = (shopId) => async (dispatch) => {
   try {
     dispatch({ type: "getAllOrdersShopRequest" });
 
-    const { data } = await axios.get(`${server}/order/get-seller-all-orders/${shopId}`);
-    
+    const { data } = await axios.get(
+      `${server}/order/get-seller-all-orders/${shopId}`
+    );
+
     dispatch({
       type: "getAllOrdersShopSuccess",
       payload: data.orders,

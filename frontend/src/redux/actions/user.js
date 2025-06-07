@@ -28,12 +28,12 @@ export const loadSeller = () => async (dispatch) => {
     dispatch({
       type: "LoadSellerRequest",
     });
-    const { data } = await axios.get(`${server}/shop/get-shop`, {
+    const { data } = await axios.get(`${server}/shop/getSeller`, {
       withCredentials: true,
     });
     dispatch({
       type: "LoadSellerSuccess",
-      payload: data.seller,
+      payload: data.shop,
     });
   } catch (error) {
     dispatch({

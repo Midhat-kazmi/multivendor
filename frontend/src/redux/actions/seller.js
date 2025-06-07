@@ -24,29 +24,27 @@ export const getAllSellers = () => async (dispatch) => {
   }
 };
 
-// Load seller data --> Login -> 
-export const loadSeller = () => async (dispatch) => {
-  try {
-    dispatch({ type: "LoadSellerRequest" });
+// Load seller data --> Login ->
+// export const loadSeller = () => async (dispatch) => {
+//   try {
+//     dispatch({ type: "LoadSellerRequest" });
 
-    const { data } = await axios.get(`${server}/shop/get-shop`, {
-      withCredentials: true,
-    });
+//     const { data } = await axios.get(`${server}/shop/getSeller`, {
+//       withCredentials: true,
+//     });
 
-    
+//     if (!data.shop) {
+//       throw new Error("No shop data received");
+//     }
 
-    if (!data.shop) {
-      throw new Error("No shop data received");
-    }
-
-    dispatch({
-      type: "LoadSellerSuccess",
-      payload: data.shop,
-    });
-  } catch (error) {
-    dispatch({
-      type: "LoadSellerFail",
-      payload: error.response?.data?.message || error.message,
-    });
-  }
-};
+//     dispatch({
+//       type: "LoadSellerSuccess",
+//       payload: data.shop,
+//     });
+//   } catch (error) {
+//     dispatch({
+//       type: "LoadSellerFail",
+//       payload: error.response?.data?.message || error.message,
+//     });
+//   }
+// };
