@@ -1,60 +1,103 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useParams } from "react-router-dom";
+import { getAllProductsShop } from "../../redux/actions/product";
+import styles from "../../styles/styles";
 import ProductCard from "../Route/ProductCard/ProductCard";
-import { productData } from "../../static/data";
+import { getAllEventsShop } from "../../redux/actions/event";
 
 const ShopProfileData = ({ isOwner }) => {
-  const [activeTab, setActiveTab] = useState("products");
+  const { products } = useSelector((state) => state.products);
+  const { events } = useSelector((state) => state.events);
+  const { id } = useParams();
+  const dispatch = useDispatch();
 
-  const tabs = [
-    { id: "products", label: "Shop Products" },
-    { id: "events", label: "Running Events" },
-    { id: "reviews", label: "Shop Reviews" },
-  ];
+  useEffect(() => {
+    dispatch(getAllProductsShop(id));
+    dispatch(getAllEventsShop(id));
+  }, [dispatch, id]);
+
+  const [active, setActive] = useState(1);
+  const allReviews = products && products.map((product) => product.reviews).flat();
 
   return (
     <div className="w-full">
-      {/* Top Header: Tabs + Button */}
-      <div className="w-full flex items-center justify-between mb-4">
-        {/* Left: Tabs */}
-        <div className="flex items-center space-x-6">
-          {tabs.map((tab) => (
-            <h5
-              key={tab.id}
-              className={`font-[600] text-[18px] cursor-pointer transition-all duration-200 ${
-                activeTab === tab.id
-                  ? "text-red-500 underline underline-offset-4"
-                  : "text-gray-700 hover:text-red-400"
-              }`}
-              onClick={() => setActiveTab(tab.id)}
-            >
-              {tab.label}
-            </h5>
-          ))}
+      <div className="flex w-full items-center justify-between">
+        <div className="w-full flex">
+          <h5
+            className={`font-[600] text-[20px] cursor-pointer pr-[20px] ${active === 1 ? "text-red-500" : "text-[#333]"}`}
+            onClick={() => setActive(1)}
+          >
+            Shop Products
+          </h5>
+          <h5
+            className={`font-[600] text-[20px] cursor-pointer pr-[20px] ${active === 2 ? "text-red-500" : "text-[#333]"}`}
+            onClick={() => setActive(2)}
+          >
+            Running Events
+          </h5>
+          <h5
+            className={`font-[600] text-[20px] cursor-pointer pr-[20px] ${active === 3 ? "text-red-500" : "text-[#333]"}`}
+            onClick={() => setActive(3)}
+          >
+            Shop Reviews
+          </h5>
         </div>
-
-        {/* Right: Dashboard Button */}
-        <Link
-          to="/dashboard"
-          className="bg-black hover:bg-blue-700 text-white py-2 px-4 rounded-lg text-sm font-medium transition duration-200"
-        >
-          Go to Dashboard
-        </Link>
+        {isOwner && (
+          <Link to="/dashboard">
+            <div className={`${styles.button} !rounded-[4px] h-[42px]`}>
+              <span className="text-[#fff]">Go Dashboard</span>
+            </div>
+          </Link>
+        )}
       </div>
 
       <br />
 
-      {/* Product Section (Visible by default) */}
-      {activeTab === "products" && (
-        <div className="grid grid-cols-1 gap-[20px] md:grid-cols-2 md:gap-[25px] lg:grid-cols-3 lg:gap-[25px] xl:grid-cols-4 xl:gap-[20px] mb-12 border-0">
-          {productData &&
-            productData.map((i, index) => (
-              <ProductCard data={i} key={index} isShop={true} />
+      {active === 1 && (
+        <div className="grid grid-cols-1 gap-[20px] md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mb-12">
+          {products &&
+            products.map((product, index) => (
+              <ProductCard data={product} key={index} isShop={true} />
             ))}
         </div>
       )}
 
-      {/* You can add similar blocks for events and reviews here */}
+      {active === 2 && (
+        <div className="w-full">
+          <div className="grid grid-cols-1 gap-[20px] md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mb-12">
+            {events &&
+              events.map((event, index) => (
+                <ProductCard data={event} key={index} isShop={true} isEvent={true} />
+              ))}
+          </div>
+          {events && events.length === 0 && (
+            <h5 className="w-full text-center py-5 text-[18px]">
+              No Events have for this shop!
+            </h5>
+          )}
+        </div>
+      )}
+
+      {active === 3 && (
+        <div className="w-full">
+          {allReviews &&
+            allReviews.map((item, index) => (
+              <div key={index} className="w-full flex my-4">
+                <img
+                  src={item.user.avatar?.url}
+                  className="w-[50px] h-[50px] rounded-full"
+                  alt="user avatar"
+                />
+                <div className="pl-2">
+                  <h5 className="font-[500]">{item.user.name}</h5>
+                  <Ratings rating={item.rating} />
+                  <p>{item.comment}</p>
+                </div>
+              </div>
+            ))}
+        </div>
+      )}
     </div>
   );
 };

@@ -15,7 +15,7 @@ router.post(
     try {
       console.log("Files received:", req.files);
       console.log("Body received:", req.body);
-      
+
       const {
         name,
         description,
@@ -26,29 +26,40 @@ router.post(
         discountPrice,
         stock,
         shopId,
-        tags
+        tags,
       } = req.body;
 
-      // Validate required fields
-      if (!name || !description || !category || !startDate || !finishDate || 
-          !discountPrice || !stock || !shopId || !req.files || req.files.length === 0) {
+      if (
+        !name ||
+        !description ||
+        !category ||
+        !startDate ||
+        !finishDate ||
+        !discountPrice ||
+        !stock ||
+        !shopId ||
+        !req.files ||
+        req.files.length === 0
+      ) {
         if (req.files) {
-          req.files.forEach(file => {
+          req.files.forEach((file) => {
             fs.unlinkSync(file.path);
           });
         }
-        return res.status(400).json({ 
-          success: false, 
-          message: "Please provide all required fields including images" 
+        return res.status(400).json({
+          success: false,
+          message: "Please provide all required fields including images",
         });
       }
 
       const shop = await Shop.findById(shopId);
       if (!shop) {
-        req.files.forEach(file => {
+        req.files.forEach((file) => {
           fs.unlinkSync(file.path);
         });
-        return res.status(400).json({ success: false, message: "Invalid shop ID" });
+        return res
+          .status(400)
+          .json({ success: false, message: "Invalid shop ID" });
       }
 
       const imagesLinks = req.files.map((file) => ({
@@ -68,7 +79,7 @@ router.post(
         images: imagesLinks,
         shop,
         shopId,
-        tags: tags || ""
+        tags: tags || "",
       };
 
       const event = await Event.create(eventData);
@@ -80,13 +91,13 @@ router.post(
     } catch (error) {
       console.error("Create Event Error:", error);
       if (req.files) {
-        req.files.forEach(file => {
+        req.files.forEach((file) => {
           fs.unlinkSync(file.path);
         });
       }
-      return res.status(500).json({ 
-        success: false, 
-        message: error.message || "Event creation failed" 
+      return res.status(500).json({
+        success: false,
+        message: error.message || "Event creation failed",
       });
     }
   }
@@ -98,32 +109,35 @@ router.get("/get-all-events", async (req, res, next) => {
     const events = await Event.find().sort({ createdAt: -1 });
     res.status(200).json({ success: true, events });
   } catch (error) {
-    return res.status(500).json({ success: false, message: "Failed to fetch events" });
+    return res
+      .status(500)
+      .json({ success: false, message: "Failed to fetch events" });
   }
 });
 
 // Get Events of a Specific Shop
 router.get("/get-all-events/:id", async (req, res, next) => {
   try {
-    const events = await Event.find({ shopId: req.params.id }).sort({ createdAt: -1 });
+    const events = await Event.find({ shopId: req.params.id }).sort({
+      createdAt: -1,
+    });
     res.status(200).json({ success: true, events });
   } catch (error) {
-    return res.status(500).json({ success: false, message: "Error fetching events" });
+    return res
+      .status(500)
+      .json({ success: false, message: "Error fetching events" });
   }
 });
 
-// Delete Event
-router.delete("/delete-shop-event/:id", isSeller, async (req, res, next) => {
+// Delete Event (Authorization check removed)
+router.delete("/delete-shop-event/:id", async (req, res, next) => {
   try {
     const event = await Event.findById(req.params.id);
 
     if (!event) {
-      return res.status(404).json({ success: false, message: "Event not found" });
-    }
-
-    // Verify shop ownership
-    if (event.shopId.toString() !== req.seller._id.toString()) {
-      return res.status(403).json({ success: false, message: "You are not authorized to delete this event" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Event not found" });
     }
 
     // Delete image files from uploads folder
@@ -142,7 +156,9 @@ router.delete("/delete-shop-event/:id", isSeller, async (req, res, next) => {
     });
   } catch (error) {
     console.error("Delete Event Error:", error);
-    return res.status(500).json({ success: false, message: "Error deleting event" });
+    return res
+      .status(500)
+      .json({ success: false, message: "Error deleting event" });
   }
 });
 
@@ -156,7 +172,9 @@ router.get(
       const events = await Event.find().sort({ createdAt: -1 });
       res.status(200).json({ success: true, events });
     } catch (error) {
-      return res.status(500).json({ success: false, message: "Failed to load events" });
+      return res
+        .status(500)
+        .json({ success: false, message: "Failed to load events" });
     }
   }
 );
