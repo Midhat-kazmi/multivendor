@@ -11,7 +11,6 @@ import {
   EventsPage,
   FAQPage,
   CheckoutPage,
-  // PaymentPage, // Stripe-related
   OrderSuccessPage,
   ProductDetailsPage,
   ProfilePage,

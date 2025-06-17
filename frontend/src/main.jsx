@@ -6,7 +6,7 @@ import { Provider } from 'react-redux';
 import Store from './redux/store';
 import axios from 'axios';
 
-// ✅ Allow sending cookies with every request
+// Allow sending cookies with every request
 axios.defaults.withCredentials = true;
 
 const root = createRoot(document.getElementById('root'));
