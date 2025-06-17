@@ -73,7 +73,7 @@ const App = () => {
 
   async function getStripeApikey() {
     const { data } = await axios.get(`${server}/payment/stripeapikey`);
-    console.log("🚀 ~ getStripeApikey ~ data:", data);
+    console.log(" ~ getStripeApikey ~ data:", data);
     setStripeApiKey(data.stripeApikey);
   }
 
