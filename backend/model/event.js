@@ -1,71 +1,71 @@
 const mongoose = require("mongoose");
 
 const eventSchema = new mongoose.Schema({
-    name: {
+    name:{
         type: String,
-        required: [true, "Please enter your event product name!"],
+        required:[true,"Please enter your event product name!"],
     },
-    description: {
+    description:{
         type: String,
-        required: [true, "Please enter your event product description!"],
+        required:[true,"Please enter your event product description!"],
     },
-    category: {
+    category:{
         type: String,
-        required: [true, "Please enter your event product category!"],
+        required:[true,"Please enter your event product category!"],
     },
-    startDate: {
+    start_Date: {
         type: Date,
         required: true,
-    },
-    finishDate: {
+      },
+      Finish_Date: {
         type: Date,
         required: true,
-    },
-    status: {
+      },
+      status: {
         type: String,
         default: "Running",
-    },
-    tags: {
+      },
+    tags:{
         type: String,
     },
-    originalPrice: {
+    originalPrice:{
         type: Number,
     },
-    discountPrice: {
+    discountPrice:{
         type: Number,
-        required: [true, "Please enter your event product price!"],
+        required: [true,"Please enter your event product price!"],
     },
-    stock: {
+    stock:{
         type: Number,
-        required: [true, "Please enter your event product stock!"],
+        required: [true,"Please enter your event product stock!"],
     },
-    images: [
+    images:[
         {
             public_id: {
                 type: String,
                 required: true,
-            },
-            url: {
+              },
+              url: {
                 type: String,
                 required: true,
-            },
+              },
         },
     ],
-    shopId: {
+    shopId:{
         type: String,
         required: true,
     },
-    shop: {
+    shop:{
         type: Object,
         required: true,
     },
-    soldOut: {
+    sold_out:{
         type: Number,
         default: 0,
     },
-    createdAt: {
+    createdAt:{
         type: Date,
-        default: Date.now,
+        default: Date.now(),
     }
 });
 
