@@ -1,10 +1,12 @@
 # Ignore node_modules in both folders
 frontend/node_modules/
 backend/node_modules/
+socket/node_modules/
 
 # Ignore environment files
 frontend/.env
 backend/.env
+socket/.env
 
 # Optional: ignore logs and build outputs
 *.log
