@@ -1,93 +1,110 @@
-import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { AiOutlineDelete, AiOutlineEye } from "react-icons/ai";
+import Button from "@mui/material/Button";
 import { DataGrid } from "@mui/x-data-grid";
+import React, { useEffect } from "react";
+import { AiOutlineDelete, AiOutlineEye } from "react-icons/ai";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { deleteEvent, getAllEventsShop } from "../../redux/actions/event";
+import { getAllProductsShop } from "../../redux/actions/product";
+import { deleteProduct } from "../../redux/actions/product";
 import Loader from "../Layout/Loader";
-import {
-  deleteEvent,
-  getAllEventsShop,
-} from "../../redux/actions/event";
 
 const AllEvents = () => {
-  const dispatch = useDispatch();
-  const { seller } = useSelector((state) => state.seller);
   const { events, isLoading } = useSelector((state) => state.events);
+  const { seller } = useSelector((state) => state.seller);
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    if (seller?._id) {
-      dispatch(getAllEventsShop(seller._id));
-    }
-  }, [dispatch, seller]);
+    dispatch(getAllEventsShop(seller._id));
+  }, [dispatch]);
 
   const handleDelete = (id) => {
     dispatch(deleteEvent(id));
-  };
+    window.location.reload();
+  }
 
   const columns = [
-    {
-      field: "id",
-      headerName: "Event ID",
-      minWidth: 150,
-      flex: 0.7,
-    },
+    { field: "id", headerName: "Product Id", minWidth: 150, flex: 0.7 },
     {
       field: "name",
-      headerName: "Event Name",
+      headerName: "Name",
       minWidth: 180,
-      flex: 1,
+      flex: 1.4,
     },
     {
       field: "price",
       headerName: "Price",
       minWidth: 100,
-      flex: 0.7,
+      flex: 0.6,
     },
     {
-      field: "stock",
+      field: "Stock",
       headerName: "Stock",
-      minWidth: 100,
-      flex: 0.7,
+      type: "number",
+      minWidth: 80,
+      flex: 0.5,
+    },
+
+    {
+      field: "sold",
+      headerName: "Sold out",
+      type: "number",
+      minWidth: 130,
+      flex: 0.6,
     },
     {
-      field: "preview",
-      headerName: "Preview",
+      field: "Preview",
       flex: 0.8,
+      minWidth: 100,
+      headerName: "",
+      type: "number",
       sortable: false,
       renderCell: (params) => {
-        const d = params.row.name || "event";
-        const event_name = d.replace(/[^a-zA-Z0-9]/g, "_");
+        const d = params.row.name;
+        const product_name = d.replace(/\s+/g, "-");
         return (
-          <Link to={`/event/${event_name}`}>
-            <button>
-              <AiOutlineEye size={20} />
-            </button>
-          </Link>
+          <>
+            <Link to={`/product/${product_name}`}>
+              <Button>
+                <AiOutlineEye size={20} />
+              </Button>
+            </Link>
+          </>
         );
       },
     },
     {
-      field: "delete",
-      headerName: "Delete",
+      field: "Delete",
       flex: 0.8,
       minWidth: 120,
+      headerName: "",
+      type: "number",
       sortable: false,
-      renderCell: (params) => (
-        <button onClick={() => handleDelete(params.row.id)}>
-          <AiOutlineDelete size={20} />
-        </button>
-      ),
+      renderCell: (params) => {
+        return (
+          <>
+            <Button
+            onClick={() => handleDelete(params.id)}
+            >
+              <AiOutlineDelete size={20} />
+            </Button>
+          </>
+        );
+      },
     },
   ];
 
-  const rows = [];
+  const row = [];
+
   events &&
-    events.forEach((item) => {
-      rows.push({
+  events.forEach((item) => {
+      row.push({
         id: item._id,
         name: item.name,
-        price: "US$" + item.discountPrice,
-        stock: item.stock,
+        price: "US$ " + item.discountPrice,
+        Stock: item.stock,
+        sold: item.sold_out,
       });
     });
 
@@ -98,7 +115,7 @@ const AllEvents = () => {
       ) : (
         <div className="w-full mx-8 pt-1 mt-10 bg-white">
           <DataGrid
-            rows={rows}
+            rows={row}
             columns={columns}
             pageSize={10}
             disableSelectionOnClick

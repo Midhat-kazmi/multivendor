@@ -193,7 +193,7 @@ router.post("/login-shop", async (req, res) => {
 // Get shop profile
 router.get("/get-shop", isSeller, async (req, res) => {
   try {
-    const shop = await Shop.findById(req.user._id).select("-password");
+    const shop = await Shop.findById(req.seller._id).select("-password");
     if (!shop)
       return res.status(404).json({ success: false, message: "Shop not found" });
     res.status(200).json({ success: true, shop });
