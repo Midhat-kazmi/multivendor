@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getAllProductsShop } from "../../redux/actions/product";
 
 const ShopInfo = ({ isOwner }) => {
-  const [data, setData] = useState({});
+const [data, setData] = useState(null);
   const { products } = useSelector((state) => state.products);
   const [isLoading, setIsLoading] = useState(false);
   const { id } = useParams();
@@ -53,17 +53,18 @@ const ShopInfo = ({ isOwner }) => {
 
   return (
     <>
-      {isLoading ? (
-        <Loader />
-      ) : (
-        <div>
-          <div className="w-full py-5">
-            <div className="w-full flex item-center justify-center">
-              <img
-                src={`${data.avatar?.url}`}
-                alt=""
-                className="w-[150px] h-[150px] object-cover rounded-full"
-              />
+     {isLoading || !data ? (
+  <Loader />
+) : (
+  <div>
+    <div className="w-full py-5">
+      <div className="w-full flex item-center justify-center">
+        <img
+          src={data.avatar?.url}
+          alt=""
+          className="w-[150px] h-[150px] object-cover rounded-full"
+        />
+
             </div>
             <h3 className="text-center py-2 text-[20px]">{data.name}</h3>
             <p className="text-[16px] text-[#000000a6] p-[10px] flex items-center">
