@@ -170,6 +170,21 @@ router.get("/getuser", isAuthenticated, async (req, res) => {
   }
 });
 
+// Logout User
+router.get("/logout", isAuthenticated, (req, res) => {
+  res.cookie("token", null, {
+    expires: new Date(Date.now()),
+    httpOnly: true,
+    sameSite: "none",
+    secure: true,
+  });
+
+  res.status(200).json({
+    success: true,
+    message: "Logged out successfully",
+  });
+});
+
 // Update user info
 router.put("/update-user-info", isAuthenticated, async (req, res) => {
   try {
@@ -224,5 +239,65 @@ router.put("/update-avatar", isAuthenticated, upload.single("avatar"), async (re
     res.status(500).json({ success: false, message: "Failed to update avatar" });
   }
 });
+
+
+// Update User Address
+router.put("/update-user-addresses", isAuthenticated, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) return res.status(404).json({ success: false, message: "User not found" });
+
+    const { country, city, address1, address2, zipCode, addressType } = req.body;
+
+    const newAddress = {
+      country,
+      city,
+      address1,
+      address2,
+      zipCode,
+      addressType,
+    };
+
+    // Optionally check for duplicate addresses
+    const isDuplicate = user.addresses.some(
+      (addr) =>
+        addr.address1 === address1 &&
+        addr.address2 === address2 &&
+        addr.zipCode === zipCode
+    );
+
+    if (isDuplicate) {
+      return res.status(400).json({ success: false, message: "Address already exists" });
+    }
+
+    user.addresses.push(newAddress);
+    await user.save();
+
+    res.status(200).json({ success: true, message: "Address added successfully", user });
+  } catch (error) {
+    console.error("Update Address Error:", error);
+    res.status(500).json({ success: false, message: "Failed to update address" });
+  }
+});
+
+
+router.delete("/delete-user-address/:id", isAuthenticated, async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const addressId = req.params.id;
+
+    await User.updateOne(
+      { _id: userId },
+      { $pull: { addresses: { _id: addressId } } }
+    );
+
+    const user = await User.findById(userId);
+    res.status(200).json({ success: true, user });
+  } catch (error) {
+    console.error("Delete address failed:", error);
+    res.status(500).json({ success: false, message: "Failed to delete address" });
+  }
+});
+
 
 module.exports = router;
