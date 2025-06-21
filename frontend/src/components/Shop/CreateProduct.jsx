@@ -56,7 +56,7 @@ const CreateProduct = () => {
     newForm.append("shopId", seller._id); 
 
     images.forEach((image) => {
-      newForm.append("images", image);
+      newForm.append("file", image);
     });
     
 
