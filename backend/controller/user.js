@@ -8,7 +8,7 @@ const User = require("../model/user");
 const sendMail = require("../utils/sendMail");
 const upload = require("../utils/multer");
 require("dotenv").config();
-const { isAuthenticated } = require("../middleware/auth");
+const { isAuthenticated, isAdmin } = require("../middleware/auth");
 
 // Create Activation Token
 const createActivationToken = (user) => {
@@ -299,5 +299,63 @@ router.delete("/delete-user-address/:id", isAuthenticated, async (req, res) => {
   }
 });
 
+router.put("/update-user-password", isAuthenticated, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id).select("+password");
+    if (!user) return res.status(404).json({ success: false, message: "User not found" });
+
+    const isPasswordMatched = await bcrypt.compare(req.body.oldPassword, user.password);
+    if (!isPasswordMatched) {
+      return res.status(400).json({ success: false, message: "Old password is incorrect" });
+    }
+
+    if (req.body.newPassword !== req.body.confirmPassword) {
+      return res.status(400).json({ success: false, message: "Passwords do not match" });
+    }
+
+    user.password = await bcrypt.hash(req.body.newPassword, 10);
+    await user.save();
+
+    res.status(200).json({ success: true, message: "Password updated successfully" });
+  } catch (error) {
+    console.error("Update password error:", error);
+    res.status(500).json({ success: false, message: "Failed to update password" });
+  }
+});
+
+
+router.get("/user-info/:id", async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id).select("-password");
+    if (!user) return res.status(404).json({ success: false, message: "User not found" });
+
+    res.status(200).json({ success: true, user });
+  } catch (error) {
+    console.error("Get user info error:", error);
+    res.status(500).json({ success: false, message: "Failed to fetch user info" });
+  }
+});
+
+
+router.delete("/delete-user/:id", isAuthenticated, isAdmin("Admin"), async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ success: false, message: "User not found" });
+
+    // Delete avatar from uploads folder
+    if (user.avatar?.public_id) {
+      const filePath = path.join(__dirname, "..", "uploads", user.avatar.public_id);
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
+    }
+
+    await User.findByIdAndDelete(req.params.id);
+    res.status(200).json({ success: true, message: "User deleted successfully" });
+  } catch (error) {
+    console.error("Delete user error:", error);
+    res.status(500).json({ success: false, message: "Failed to delete user" });
+  }
+});
 
 module.exports = router;
