@@ -77,8 +77,9 @@ const Header = ({ activeHeading }) => {
               size={24}
               className="absolute right-2 top-2.5 cursor-pointer"
             />
-            {searchData && searchData.length !== 0 && (
-              <div className="absolute bg-white shadow z-50 w-full mt-1 max-h-[300px] overflow-y-auto p-2">
+           {searchData && searchData.length !== 0 && (
+  <div className="absolute bg-white shadow z-[999] w-full mt-1 max-h-[300px] overflow-y-auto p-2">
+
                 {searchData.map((item, index) => (
                   <Link to={`/product/${item._id}`} key={index}>
                     <div className="flex items-center py-2">
