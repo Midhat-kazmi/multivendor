@@ -24,6 +24,7 @@ const [data, setData] = useState(null);
         setData(res.data.shop);
         setIsLoading(false);
       })
+      
       .catch((error) => {
         console.log(error);
         setIsLoading(false);
