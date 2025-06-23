@@ -109,8 +109,8 @@ const CreateEvent = () => {
       newForm.append("discountPrice", discountPrice);
       newForm.append("stock", stock);
       newForm.append("shopId", seller._id);
-      newForm.append("startDate", startDate?.toISOString());
-      newForm.append("finishDate", endDate?.toISOString());
+      newForm.append("start_Date", startDate?.toISOString());
+      newForm.append("Finish_Date", endDate?.toISOString());
 
       // Debug: Log all form data
       console.log("Form data before file append:");
