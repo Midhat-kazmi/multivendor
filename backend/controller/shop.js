@@ -13,7 +13,7 @@ const router = express.Router();
 
 // Create Activation Token
 const createActivationToken = (seller) => {
-  return jwt.sign(seller, process.env.ACTIVATION_SECRET, { expiresIn: "5m" });
+  return jwt.sign(seller, process.env.ACTIVATION_SECRET, { expiresIn: "30m" });
 };
 
 // Send token

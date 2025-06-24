@@ -1,10 +1,10 @@
 import React from "react";
 import { RxCross1 } from "react-icons/rx";
 import { BsCartPlus } from "react-icons/bs";
-import styles from "../../styles/styles";
 import { AiOutlineHeart } from "react-icons/ai";
+import styles from "../../styles/styles";
 import { useDispatch, useSelector } from "react-redux";
-import { removeFromWishlist } from "../../redux/actions/wishlist";
+import { removeFromWishlistAsync } from "../../redux/actions/wishlist";
 import { addToCart } from "../../redux/actions/cart";
 
 const Wishlist = ({ setOpenWishlist }) => {
@@ -12,7 +12,7 @@ const Wishlist = ({ setOpenWishlist }) => {
   const dispatch = useDispatch();
 
   const removeFromWishlistHandler = (data) => {
-    dispatch(removeFromWishlist(data));
+    dispatch(removeFromWishlistAsync(data));
   };
 
   const addToCartHandler = (data) => {
