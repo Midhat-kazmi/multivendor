@@ -205,12 +205,12 @@ router.put("/update-shop-avatar", isSeller, async (req, res) => {
 
 router.put("/update-seller-info", isSeller, async (req, res) => {
   try {
-    const { name, description, address, phoneNumber, zipCode } = req.body;
-    const shop = await Shop.findOne(req.seller._id);
+    const { shopName, description, address, phoneNumber, zipCode } = req.body;
+    const shop = await Shop.findById(req.seller._id); 
 
     if (!shop) return res.status(404).json({ success: false, message: "Seller not found" });
 
-    shop.name = name;
+    shop.shopName = shopName;
     shop.description = description;
     shop.address = address;
     shop.phoneNumber = phoneNumber;
@@ -223,6 +223,7 @@ router.put("/update-seller-info", isSeller, async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 });
+
 
 // ======================= ADMIN =======================
 
