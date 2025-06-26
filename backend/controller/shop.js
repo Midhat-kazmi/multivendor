@@ -164,16 +164,22 @@ router.post("/login-shop", async (req, res) => {
 
 // ======================= LOGOUT API =======================
 
-router.get("/logout", async (req, res) => {
-  res.cookie("shop_token", null, {
-    expires: new Date(Date.now()),
+// Logout seller
+router.get("/logout", (req, res) => {
+  res.cookie("shop_token", "", {
     httpOnly: true,
+    expires: new Date(0),
     sameSite: "none",
-    secure: true,
+    secure: false, // make false if you're using HTTP instead of HTTPS locally
   });
 
-  res.status(200).json({ success: true, message: "Logout successful" });
+  res.status(200).json({
+    success: true,
+    message: "Logout successful",
+  });
 });
+
+
 
 // ======================= PROFILE =======================
 
