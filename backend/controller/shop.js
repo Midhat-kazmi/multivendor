@@ -162,6 +162,19 @@ router.post("/login-shop", async (req, res) => {
   }
 });
 
+// ======================= LOGOUT API =======================
+
+router.get("/logout", async (req, res) => {
+  res.cookie("shop_token", null, {
+    expires: new Date(Date.now()),
+    httpOnly: true,
+    sameSite: "none",
+    secure: true,
+  });
+
+  res.status(200).json({ success: true, message: "Logout successful" });
+});
+
 // ======================= PROFILE =======================
 
 router.get("/get-shop", isSeller, async (req, res) => {
@@ -192,7 +205,7 @@ router.put("/update-shop-avatar", isSeller, async (req, res) => {
 
     shop.avatar = {
       public_id: `updated_${Date.now()}`,
-      url: req.body.avatar, // base64 or image URL from frontend
+      url: req.body.avatar,
     };
 
     await shop.save();
@@ -206,7 +219,8 @@ router.put("/update-shop-avatar", isSeller, async (req, res) => {
 router.put("/update-seller-info", isSeller, async (req, res) => {
   try {
     const { shopName, description, address, phoneNumber, zipCode } = req.body;
-    const shop = await Shop.findById(req.seller._id); 
+
+    const shop = await Shop.findById(req.seller._id); // ✅ Fixed bug here
 
     if (!shop) return res.status(404).json({ success: false, message: "Seller not found" });
 
@@ -223,7 +237,6 @@ router.put("/update-seller-info", isSeller, async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 });
-
 
 // ======================= ADMIN =======================
 

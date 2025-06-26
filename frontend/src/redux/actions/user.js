@@ -21,9 +21,10 @@ export const loadUser = () => async (dispatch) => {
 export const loadSeller = () => async (dispatch) => {
   try {
     dispatch({ type: "LoadSellerRequest" });
-    const { data } = await axios.get(`${server}/shop/getSeller`, {
+    const { data } = await axios.get(`${server}/shop/get-shop`, {
       withCredentials: true,
     });
+
     dispatch({ type: "LoadSellerSuccess", payload: data.shop });
   } catch (error) {
     dispatch({
@@ -32,6 +33,7 @@ export const loadSeller = () => async (dispatch) => {
     });
   }
 };
+
 
 // Update user info
 export const updateUserInformation =
