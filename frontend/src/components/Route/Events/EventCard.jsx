@@ -1,5 +1,4 @@
 import React from "react";
-import styles from "../../../styles/styles";
 import CountDown from "./CountDown";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -27,41 +26,52 @@ const EventCard = ({ active, data }) => {
 
   return (
     <div
-      className={`w-full block bg-white rounded-lg ${
-        active ? "unset" : "mb-12"
-      } lg:flex p-2`}
+      className={`w-full bg-white rounded-lg shadow-sm ${
+        active ? "" : "mb-12"
+      } lg:flex p-4 gap-6`}
     >
-      <div className="w-full lg:w-[50%] m-auto">
-        <img src={data.images?.[0]?.url || "/fallback.jpg"} alt={data.name} />
+      {/* Image Section */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center">
+        <img
+          src={data.images?.[0]?.url || "/fallback.jpg"}
+          alt={data.name}
+          className="w-full max-w-[350px] h-auto object-contain rounded-lg"
+        />
       </div>
-      <div className="w-full lg:w-[50%] flex flex-col justify-center">
-        <h2 className={`${styles.productTitle}`}>{data.name}</h2>
-        <p>{data.description}</p>
-        <div className="flex py-2 justify-between">
-          <div className="flex">
-            <h5 className="font-[500] text-[18px] text-[#d55b45] pr-3 line-through">
-              {data.originalPrice}$
+
+      {/* Content Section */}
+      <div className="w-full lg:w-1/2 flex flex-col justify-center">
+        <h2 className="text-2xl font-semibold mb-2 text-gray-800">{data.name}</h2>
+        <p className="text-gray-600 text-sm mb-3">{data.description}</p>
+
+        <div className="flex items-center justify-between py-2">
+          <div className="flex items-center space-x-2">
+            <h5 className="text-red-500 line-through text-lg font-medium">
+              ${data.originalPrice}
             </h5>
-            <h5 className="font-bold text-[20px] text-[#333] font-Roboto">
-              {data.discountPrice}$
+            <h5 className="text-gray-800 text-xl font-bold">
+              ${data.discountPrice}
             </h5>
           </div>
-          <span className="pr-3 font-[400] text-[17px] text-[#44a55e]">
+          <span className="text-green-600 text-base font-medium">
             {data.sold_out} sold
           </span>
         </div>
+
         <CountDown data={data} />
-        <br />
-        <div className="flex items-center">
+
+        <div className="flex items-center mt-4 space-x-4">
           <Link to={`/product/${data._id}?isEvent=true`}>
-            <div className={`${styles.button} text-[#fff]`}>See Details</div>
+            <button className="bg-[#333] text-white px-5 py-2 rounded hover:bg-black transition">
+              See Details
+            </button>
           </Link>
-          <div
-            className={`${styles.button} text-[#fff] ml-5`}
+          <button
             onClick={() => addToCartHandler(data)}
+            className="bg-[#E94560] text-white px-5 py-2 rounded hover:bg-[#d0334f] transition"
           >
-            Add to cart
-          </div>
+            Add to Cart
+          </button>
         </div>
       </div>
     </div>

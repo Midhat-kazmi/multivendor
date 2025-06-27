@@ -113,139 +113,136 @@ const ProductDetails = ({ data }) => {
   };
 
   return (
-    <div className="bg-white">
-      {data ? (
-        <div className={`${styles.section} w-[90%] 800px:w-[80%]`}>
-          <div className="w-full py-5">
-            <div className="block w-full 800px:flex">
-              <div className="w-full 800px:w-[50%]">
+   <div className="bg-white">
+  {data && (
+    <div className={`${styles.section} w-[90%] 800px:w-[80%]`}>
+      <div className="w-full py-6">
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Left: Images */}
+          <div className="w-full lg:w-[50%]">
+            <img
+              src={data.images[select]?.url}
+              alt={data.name}
+              className="w-full h-[400px] object-contain rounded shadow"
+            />
+            <div className="flex flex-wrap gap-2 mt-4">
+              {data.images.map((img, idx) => (
                 <img
-                  src={`${data && data.images[select]?.url}`}
-                  alt=""
-                  className="w-[80%]"
+                  key={idx}
+                  src={img.url}
+                  alt={`thumbnail-${idx}`}
+                  className={`h-[80px] w-[80px] object-cover border-2 rounded cursor-pointer ${
+                    select === idx
+                      ? "border-blue-500"
+                      : "border-transparent hover:border-gray-300"
+                  }`}
+                  onClick={() => setSelect(idx)}
                 />
-                <div className="w-full flex">
-                  {data &&
-                    data.images.map((i, index) => (
-                      <div
-                        className={`${
-                          select === 0 ? "border" : "null"
-                        } cursor-pointer`}
-                      >
-                        <img
-                          src={`${i?.url}`}
-                          alt=""
-                          className="h-[200px] overflow-hidden mr-3 mt-3"
-                          onClick={() => setSelect(index)}
-                        />
-                      </div>
-                    ))}
-                  <div
-                    className={`${
-                      select === 1 ? "border" : "null"
-                    } cursor-pointer`}
-                  ></div>
-                </div>
-              </div>
-              <div className="w-full 800px:w-[50%] pt-5">
-                <h1 className={`${styles.productTitle}`}>{data.name}</h1>
-                <p>{data.description}</p>
-                <div className="flex pt-3">
-                  <h4 className={`${styles.productDiscountPrice}`}>
-                    {data.discountPrice}$
-                  </h4>
-                  <h3 className={`${styles.price}`}>
-                    {data.originalPrice ? data.originalPrice + "$" : null}
-                  </h3>
-                </div>
-
-                <div className="flex items-center mt-12 justify-between pr-3">
-                  <div>
-                    <button
-                      className="bg-gradient-to-r from-teal-400 to-teal-500 text-white font-bold rounded-l px-4 py-2 shadow-lg hover:opacity-75 transition duration-300 ease-in-out"
-                      onClick={decrementCount}
-                    >
-                      -
-                    </button>
-                    <span className="bg-gray-200 text-gray-800 font-medium px-4 py-[11px]">
-                      {count}
-                    </span>
-                    <button
-                      className="bg-gradient-to-r from-teal-400 to-teal-500 text-white font-bold rounded-l px-4 py-2 shadow-lg hover:opacity-75 transition duration-300 ease-in-out"
-                      onClick={incrementCount}
-                    >
-                      +
-                    </button>
-                  </div>
-                  <div>
-                    {click ? (
-                      <AiFillHeart
-                        size={30}
-                        className="cursor-pointer"
-                        onClick={() => removeFromWishlistHandler(data)}
-                        color={click ? "red" : "#333"}
-                        title="Remove from wishlist"
-                      />
-                    ) : (
-                      <AiOutlineHeart
-                        size={30}
-                        className="cursor-pointer"
-                        onClick={() => addToWishlistHandler(data)}
-                        color={click ? "red" : "#333"}
-                        title="Add to wishlist"
-                      />
-                    )}
-                  </div>
-                </div>
-                <div
-                  className={`${styles.button} !mt-6 !rounded !h-11 flex items-center`}
-                  onClick={() => addToCartHandler(data._id)}
-                >
-                  <span className="text-white flex items-center">
-                    Add to cart <AiOutlineShoppingCart className="ml-1" />
-                  </span>
-                </div>
-                <div className="flex items-center pt-8">
-                  <Link to={`/shop/preview/${data?.shop._id}`}>
-                    <img
-                      src={`${data?.shop?.avatar?.url}`}
-                      alt=""
-                      className="w-[50px] h-[50px] rounded-full mr-2"
-                    />
-                  </Link>
-                  <div className="pr-8">
-                    <Link to={`/shop/preview/${data?.shop._id}`}>
-                      <h3 className={`${styles.shop_name} pb-1 pt-1`}>
-                        {data.shop.name}
-                      </h3>
-                    </Link>
-                    <h5 className="pb-3 text-[15px]">
-                      ({averageRating}/5) Ratings
-                    </h5>
-                  </div>
-                  <div
-                    className={`${styles.button} bg-[#6443d1] mt-4 !rounded !h-11`}
-                    onClick={handleMessageSubmit}
-                  >
-                    <span className="text-white flex items-center">
-                      Send Message <AiOutlineMessage className="ml-1" />
-                    </span>
-                  </div>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
-          <ProductDetailsInfo
-            data={data}
-            products={products}
-            totalReviewsLength={totalReviewsLength}
-            averageRating={averageRating}
-          />
-          <br />
-          <br />
+
+          {/* Right: Info */}
+          <div className="w-full lg:w-[50%] flex flex-col justify-between space-y-6">
+            <div>
+              <h1 className="text-2xl font-semibold mb-2">{data.name}</h1>
+              <p className="text-gray-700">{data.description}</p>
+            </div>
+
+            <div className="flex items-center gap-4 text-xl">
+              <span className="font-bold text-red-600">
+                ${data.discountPrice}
+              </span>
+              {data.originalPrice && (
+                <span className="line-through text-gray-400">
+                  ${data.originalPrice}
+                </span>
+              )}
+            </div>
+
+            <div className="flex items-center justify-between">
+              {/* Quantity controls */}
+              <div className="flex items-center">
+                <button
+                  className="bg-gray-200 px-3 py-1 rounded-l hover:bg-gray-300"
+                  onClick={decrementCount}
+                >
+                  -
+                </button>
+                <span className="bg-gray-100 px-4 py-1 border-t border-b">
+                  {count}
+                </span>
+                <button
+                  className="bg-gray-200 px-3 py-1 rounded-r hover:bg-gray-300"
+                  onClick={incrementCount}
+                >
+                  +
+                </button>
+              </div>
+
+              {/* Wishlist */}
+              {click ? (
+                <AiFillHeart
+                  size={28}
+                  className="text-red-500 cursor-pointer"
+                  onClick={() => removeFromWishlistHandler(data)}
+                />
+              ) : (
+                <AiOutlineHeart
+                  size={28}
+                  className="text-gray-600 hover:text-red-500 cursor-pointer"
+                  onClick={() => addToWishlistHandler(data)}
+                />
+              )}
+            </div>
+
+            {/* Add to Cart */}
+            <button
+              className="w-full bg-gradient-to-r from-teal-500 to-teal-600 text-white py-2 rounded hover:opacity-90 transition"
+              onClick={() => addToCartHandler(data._id)}
+            >
+              Add to Cart <AiOutlineShoppingCart className="inline ml-2" />
+            </button>
+
+            {/* Shop Info + Message */}
+            <div className="flex items-center gap-4 mt-6">
+              <Link to={`/shop/preview/${data?.shop._id}`}>
+                <img
+                  src={data?.shop?.avatar?.url}
+                  alt="Shop Avatar"
+                  className="w-[50px] h-[50px] rounded-full border shadow"
+                />
+              </Link>
+              <div>
+                <Link to={`/shop/preview/${data?.shop._id}`}>
+                  <h3 className="font-semibold text-lg">{data.shop.name}</h3>
+                </Link>
+                <p className="text-sm text-gray-600">
+                  ({averageRating}/5) Ratings
+                </p>
+              </div>
+              <button
+                className="ml-auto bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
+                onClick={handleMessageSubmit}
+              >
+                Message Seller <AiOutlineMessage className="inline ml-1" />
+              </button>
+            </div>
+          </div>
         </div>
-      ) : null}
+      </div>
+
+      {/* Bottom Info Tabs - no style change needed unless you want */}
+      <ProductDetailsInfo
+        data={data}
+        products={products}
+        totalReviewsLength={totalReviewsLength}
+        averageRating={averageRating}
+      />
     </div>
+  )}
+</div>
+
   );
 };
 
