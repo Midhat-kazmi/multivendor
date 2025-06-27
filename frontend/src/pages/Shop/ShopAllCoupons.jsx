@@ -1,27 +1,25 @@
-import React from 'react'
-import DashboardHeader from '../../components/Shop/Layout/DashboardHeader'
-import DashboardSideBar from '../../components/Shop/Layout/DashboardSideBar'
+import React from 'react';
+import DashboardHeader from '../../components/Shop/Layout/DashboardHeader';
+import DashboardSideBar from '../../components/Shop/Layout/DashboardSideBar';
 import AllCoupons from "../../components/Shop/AllCoupons";
 
 const ShopAllCoupons = () => {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div>
       <DashboardHeader />
-      <div className="flex flex-col md:flex-row w-full">
+      <div className="flex justify-between w-full">
         {/* Sidebar */}
-        <aside className="w-full md:w-[250px] lg:w-[300px] bg-white shadow-md border-r border-gray-200">
+        <div className="w-[310px]">
           <DashboardSideBar active={9} />
-        </aside>
+        </div>
 
-        {/* Content Area */}
-        <main className="flex-1 p-4 md:p-6 lg:p-8 bg-gray-50">
-          <div className="max-w-7xl mx-auto">
-            <AllCoupons />
-          </div>
-        </main>
+        {/* Main content */}
+        <div className="w-full justify-center flex">
+          <AllCoupons />
+        </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ShopAllCoupons
+export default ShopAllCoupons;
