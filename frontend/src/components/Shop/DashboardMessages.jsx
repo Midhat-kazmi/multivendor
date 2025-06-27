@@ -118,7 +118,8 @@ const DashboardMessages = () => {
           .post(`${server}/message/create-new-message`, message)
           .then((res) => {
             setMessages([...messages, res.data.message]);
-            // updateLastMessage();
+
+            setNewMessage("")
           })
           .catch((error) => {
             console.log(error);
