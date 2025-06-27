@@ -29,6 +29,7 @@ import {
   ShopAllProducts,
   ShopCreateEvents,
   ShopAllEvents,
+  EventDetailsPage,
   ShopAllCoupons,
   ShopPreviewPage,
   ShopAllOrders,
@@ -250,6 +251,8 @@ const App = () => {
             </SellerProtectedRoute>
           }
         />
+<Route path="/event/:id" element={<EventDetailsPage />} />
+
         <Route
           path="/dashboard-coupons"
           element={

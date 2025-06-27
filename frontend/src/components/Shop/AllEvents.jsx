@@ -63,7 +63,8 @@ const AllEvents = () => {
         const d = params.row.name;
         const product_name = d.replace(/\s+/g, "-");
         return (
-          <Link to={`/product/${product_name}`}>
+          <Link to={`/event/${params.id}`}>
+
             <Button>
               <AiOutlineEye size={20} />
             </Button>
