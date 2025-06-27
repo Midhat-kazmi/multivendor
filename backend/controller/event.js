@@ -10,14 +10,15 @@ const router = express.Router();
 //  Create Event
 router.post(
   "/create-event",
+  isSeller,
   upload.array("images"),
   async (req, res, next) => {
     try {
-      const { shopId, ...rest } = req.body;
-      const shop = await Shop.findById(shopId);
+      const sellerId = req.user._id;
+      const shop = await Shop.findById(sellerId);
 
       if (!shop) {
-        return res.status(400).json({ success: false, message: "Invalid shop ID" });
+        return res.status(400).json({ success: false, message: "Invalid shop account" });
       }
 
       const imagesLinks = req.files.map((file) => ({
@@ -26,10 +27,10 @@ router.post(
       }));
 
       const productData = {
-        ...rest,
+        ...req.body,
         images: imagesLinks,
-        shop,
-        shopId,
+        shop: shop,
+        shopId: sellerId,
       };
 
       const event = await Event.create(productData);
