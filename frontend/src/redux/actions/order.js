@@ -35,6 +35,8 @@ export const getAllOrdersOfShop = (shopId) => async (dispatch) => {
       `${server}/order/get-seller-all-orders/${shopId}`
     );
 
+    console.log("API RESPONSE (getAllOrdersOfShop):", data); // 🪵 Add this
+
     dispatch({
       type: "getAllOrdersShopSuccess",
       payload: data.orders,

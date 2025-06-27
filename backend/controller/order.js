@@ -5,7 +5,7 @@ const Order = require("../model/order");
 const Shop = require("../model/shop");
 const Product = require("../model/product");
 
-
+// Create order
 router.post("/create-order", async (req, res) => {
   try {
     const { cart, shippingAddress, user, totalPrice, paymentInfo } = req.body;
@@ -13,11 +13,14 @@ router.post("/create-order", async (req, res) => {
     const shopItemsMap = new Map();
 
     for (const item of cart) {
-      const shopId = item.shopId;
+      const shopId = item.shopId.toString(); // Ensure string
       if (!shopItemsMap.has(shopId)) {
         shopItemsMap.set(shopId, []);
       }
-      shopItemsMap.get(shopId).push(item);
+      shopItemsMap.get(shopId).push({
+        ...item,
+        shopId, // Ensure it's present in each item
+      });
     }
 
     const orders = [];
@@ -39,12 +42,15 @@ router.post("/create-order", async (req, res) => {
   }
 });
 
-// Get all orders of a seller
+// ✅ FIXED: Get all orders of a seller (only one correct version)
 router.get("/get-seller-all-orders/:shopId", async (req, res) => {
   try {
     const orders = await Order.find({
-      "cart.shopId": req.params.shopId,
+      cart: { $elemMatch: { shopId: req.params.shopId } },
     }).sort({ createdAt: -1 });
+
+    console.log("Fetching orders for shopId:", req.params.shopId);
+    console.log("Orders found:", orders.length);
 
     res.status(200).json({ success: true, orders });
   } catch (error) {
@@ -52,19 +58,7 @@ router.get("/get-seller-all-orders/:shopId", async (req, res) => {
   }
 });
 
-// Get all orders of a seller
-router.get("/get-seller-all-orders/:shopId", async (req, res) => {
-  try {
-    const orders = await Order.find({
-      "cart.shopId": req.params.shopId,
-    }).sort({ createdAt: -1 });
-    res.status(200).json({ success: true, orders });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
-  }
-});
-
-// Update order status (seller)
+// Update order status
 router.put("/update-order-status/:id", isSeller, async (req, res) => {
   try {
     const order = await Order.findById(req.params.id);
@@ -72,7 +66,7 @@ router.put("/update-order-status/:id", isSeller, async (req, res) => {
 
     if (req.body.status === "Transferred to delivery partner") {
       for (const o of order.cart) {
-        await updateProductStock(o._id, -o.qty);
+        await updateProductStock(o.productId, -o.qty);
       }
     }
 
@@ -105,7 +99,7 @@ router.put("/update-order-status/:id", isSeller, async (req, res) => {
   }
 });
 
-// Refund request (user)
+// Refund request
 router.put("/order-refund/:id", async (req, res) => {
   try {
     const order = await Order.findById(req.params.id);
@@ -124,7 +118,7 @@ router.put("/order-refund/:id", async (req, res) => {
   }
 });
 
-// Accept refund (seller)
+// Refund success (seller)
 router.put("/order-refund-success/:id", isSeller, async (req, res) => {
   try {
     const order = await Order.findById(req.params.id);
@@ -135,7 +129,7 @@ router.put("/order-refund-success/:id", isSeller, async (req, res) => {
 
     if (req.body.status === "Refund Success") {
       for (const o of order.cart) {
-        await updateProductStock(o._id, o.qty);
+        await updateProductStock(o.productId, o.qty);
       }
     }
 
@@ -152,7 +146,7 @@ router.put("/order-refund-success/:id", isSeller, async (req, res) => {
   }
 });
 
-// All orders for admin
+// Admin orders
 router.get("/admin-all-orders", isAuthenticated, isAdmin("Admin"), async (req, res) => {
   try {
     const orders = await Order.find().sort({

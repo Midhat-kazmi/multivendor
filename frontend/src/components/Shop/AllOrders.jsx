@@ -1,7 +1,6 @@
+import React, { useEffect } from "react";
 import Button from "@mui/material/Button";
 import { DataGrid } from "@mui/x-data-grid";
-
-import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import Loader from "../Layout/Loader";
@@ -9,28 +8,34 @@ import { getAllOrdersOfShop } from "../../redux/actions/order";
 import { AiOutlineArrowRight } from "react-icons/ai";
 
 const AllOrders = () => {
+  const dispatch = useDispatch();
   const { orders, isLoading } = useSelector((state) => state.order);
   const { seller } = useSelector((state) => state.seller);
 
-  const dispatch = useDispatch();
-
-  useEffect(() => {
+useEffect(() => {
+  if (seller && seller._id) {
     dispatch(getAllOrdersOfShop(seller._id));
-  }, [dispatch]);
+  }
+}, [dispatch, seller]);
+
+// Add this for debugging
+useEffect(() => {
+  console.log("Fetched shop orders:", orders);
+}, [orders]);
+
 
   const columns = [
-    { field: "id", headerName: "Order ID", minWidth: 150, flex: 0.7 },
-
+    {
+      field: "orderId",
+      headerName: "Order ID",
+      minWidth: 150,
+      flex: 0.7,
+    },
     {
       field: "status",
       headerName: "Status",
       minWidth: 130,
       flex: 0.7,
-      // cellClassName: (params) => {
-      //   return params.getValue(params.id, "status") === "Delivered"
-      //     ? "greenColor"
-      //     : "redColor";
-      // },
     },
     {
       field: "itemsQty",
@@ -39,7 +44,6 @@ const AllOrders = () => {
       minWidth: 130,
       flex: 0.7,
     },
-
     {
       field: "total",
       headerName: "Total",
@@ -47,7 +51,6 @@ const AllOrders = () => {
       minWidth: 130,
       flex: 0.8,
     },
-
     {
       field: " ",
       flex: 1,
@@ -57,32 +60,33 @@ const AllOrders = () => {
       sortable: false,
       renderCell: (params) => {
         return (
-          <>
-            <Link to={`/order/${params.id}`}>
-              <Button>
-                <AiOutlineArrowRight size={20} />
-              </Button>
-            </Link>
-          </>
+          <Link to={`/order/${params.row.orderId}`}>
+            <Button>
+              <AiOutlineArrowRight size={20} />
+            </Button>
+          </Link>
         );
       },
     },
   ];
 
-  const row = [];
+  const rows = [];
 
-orders &&
-  orders.forEach((order) => {
-    const sellerItems = order.cart.filter((i) => i.shopId === seller._id);
-    if (sellerItems.length > 0) {
-      row.push({
-        id: order._id,
-        itemsQty: sellerItems.length,
-        total: "US$ " + sellerItems.reduce((sum, i) => sum + i.discountPrice * i.qty, 0).toFixed(2),
+  orders &&
+    orders.forEach((order, index) => {
+      const total = order.cart.reduce(
+        (sum, item) => sum + item.discountPrice * item.qty,
+        0
+      );
+
+      rows.push({
+        id: `${order._id}-${index}`, // unique for DataGrid
+        orderId: order._id,          // used for display & link
+        itemsQty: order.cart.length,
+        total: "US$ " + total.toFixed(2),
         status: order.status,
       });
-    }
-  });
+    });
 
   return (
     <>
@@ -91,7 +95,7 @@ orders &&
       ) : (
         <div className="w-full mx-8 pt-1 mt-10 bg-white">
           <DataGrid
-            rows={row}
+            rows={rows}
             columns={columns}
             pageSize={10}
             disableSelectionOnClick
