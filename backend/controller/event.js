@@ -7,19 +7,14 @@ const { isSeller, isAdmin, isAuthenticated } = require("../middleware/auth");
 const upload = require("../utils/multer");
 const router = express.Router();
 
-//  Create Event
 router.post(
   "/create-event",
   isSeller,
   upload.array("images"),
   async (req, res, next) => {
     try {
-      const sellerId = req.user._id;
-      const shop = await Shop.findById(sellerId);
-
-      if (!shop) {
-        return res.status(400).json({ success: false, message: "Invalid shop account" });
-      }
+      const sellerId = req.seller._id;
+      const shop = req.seller;
 
       const imagesLinks = req.files.map((file) => ({
         public_id: file.filename,
@@ -41,10 +36,13 @@ router.post(
       });
     } catch (error) {
       console.error("Create Event Error:", error);
-      return res.status(500).json({ success: false, message: "Event creation failed" });
+      return res
+        .status(500)
+        .json({ success: false, message: "Event creation failed" });
     }
   }
 );
+
 
 //  Get All Events
 router.get("/get-all-events", async (req, res, next) => {
@@ -52,7 +50,9 @@ router.get("/get-all-events", async (req, res, next) => {
     const events = await Event.find();
     res.status(200).json({ success: true, events });
   } catch (error) {
-    return res.status(500).json({ success: false, message: "Failed to fetch events" });
+    return res
+      .status(500)
+      .json({ success: false, message: "Failed to fetch events" });
   }
 });
 
@@ -62,7 +62,9 @@ router.get("/get-all-events/:id", async (req, res, next) => {
     const events = await Event.find({ shopId: req.params.id });
     res.status(200).json({ success: true, events });
   } catch (error) {
-    return res.status(500).json({ success: false, message: "Error fetching events" });
+    return res
+      .status(500)
+      .json({ success: false, message: "Error fetching events" });
   }
 });
 
@@ -72,7 +74,9 @@ router.delete("/delete-shop-event/:id", async (req, res, next) => {
     const event = await Event.findById(req.params.id);
 
     if (!event) {
-      return res.status(404).json({ success: false, message: "Event not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Event not found" });
     }
 
     // Delete image files from uploads folder
@@ -91,7 +95,9 @@ router.delete("/delete-shop-event/:id", async (req, res, next) => {
     });
   } catch (error) {
     console.error("Delete Event Error:", error);
-    return res.status(500).json({ success: false, message: "Error deleting event" });
+    return res
+      .status(500)
+      .json({ success: false, message: "Error deleting event" });
   }
 });
 
@@ -105,7 +111,9 @@ router.get(
       const events = await Event.find().sort({ createdAt: -1 });
       res.status(200).json({ success: true, events });
     } catch (error) {
-      return res.status(500).json({ success: false, message: "Failed to load events" });
+      return res
+        .status(500)
+        .json({ success: false, message: "Failed to load events" });
     }
   }
 );

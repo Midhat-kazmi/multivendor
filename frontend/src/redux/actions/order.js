@@ -2,6 +2,8 @@
 
 import axios from "axios";
 import { server } from "../../server";
+import { toast } from "react-toastify";
+
 
 // Get all orders of user
 export const getAllOrdersOfUser = (userId) => async (dispatch) => {
@@ -65,3 +67,26 @@ export const getAllOrdersOfAdmin = () => async (dispatch) => {
     });
   }
 };
+
+
+export const updateOrderStatus = (orderId, status) => async (dispatch) => {
+  try {
+    dispatch({ type: "updateOrderStatusRequest" });
+
+    const { data } = await axios.put(
+      `${server}/order/update-order-status/${orderId}`,
+      { status },
+      { withCredentials: true }
+    );
+
+    dispatch({ type: "updateOrderStatusSuccess", payload: data.order });
+    toast.success("Order status updated successfully!");
+  } catch (error) {
+    dispatch({
+      type: "updateOrderStatusFailed",
+      payload: error.response?.data?.message || error.message,
+    });
+    toast.error(error.response?.data?.message || "Order status update failed");
+  }
+};
+

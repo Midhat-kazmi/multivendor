@@ -51,6 +51,22 @@ export const orderReducer = createReducer(initialState, (builder) => {
       state.error = action.payload;
     })
 
+    .addCase("updateOrderStatusRequest", (state) => {
+  state.isLoading = true;
+})
+.addCase("updateOrderStatusSuccess", (state, action) => {
+  state.isLoading = false;
+  // Optional: Update specific order in state.orders
+  const updatedOrder = action.payload;
+  state.orders = state.orders.map(order =>
+    order._id === updatedOrder._id ? updatedOrder : order
+  );
+})
+.addCase("updateOrderStatusFailed", (state, action) => {
+  state.isLoading = false;
+  state.error = action.payload;
+})
+
     // clear errors
     .addCase("clearErrors", (state) => {
       state.error = null;
