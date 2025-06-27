@@ -23,39 +23,58 @@ const EventCard = ({ active, data }) => {
         toast.success("Item added to cart successfully!");
       }
     }
-  }
+  };
+
   return (
     <div
-      className={`w-full block bg-white rounded-lg ${
-        active ? "unset" : "mb-12"
-      } lg:flex p-2`}
+      className={`w-full bg-white rounded-xl shadow-md overflow-hidden ${
+        active ? "" : "mb-12"
+      } lg:flex`}
     >
-      <div className="w-full lg:-w[50%] m-auto">
-        <img src={`${data.images[0]?.url}`} alt="" />
+      {/* Image Section */}
+      <div className="w-full lg:w-1/2 flex justify-center items-center p-6">
+        <img
+          src={data.images[0]?.url}
+          alt={data.name}
+          className="w-full max-w-sm object-contain rounded-lg"
+        />
       </div>
-      <div className="w-full lg:[w-50%] flex flex-col justify-center">
-        <h2 className={`${styles.productTitle}`}>{data.name}</h2>
-        <p>{data.description}</p>
-        <div className="flex py-2 justify-between">
-          <div className="flex">
-            <h5 className="font-[500] text-[18px] text-[#d55b45] pr-3 line-through">
+
+      {/* Content Section */}
+      <div className="w-full lg:w-1/2 p-6 flex flex-col justify-center">
+        <h2 className="text-2xl font-bold text-gray-800 mb-2">
+          {data.name}
+        </h2>
+        <p className="text-gray-600 mb-4">{data.description}</p>
+
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center">
+            <h5 className="text-lg text-red-500 line-through mr-2">
               {data.originalPrice}$
             </h5>
-            <h5 className="font-bold text-[20px] text-[#333] font-Roboto">
+            <h5 className="text-xl font-semibold text-gray-900">
               {data.discountPrice}$
             </h5>
           </div>
-          <span className="pr-3 font-[400] text-[17px] text-[#44a55e]">
+          <span className="text-green-600 text-sm">
             {data.sold_out} sold
           </span>
         </div>
+
         <CountDown data={data} />
-        <br />
-        <div className="flex items-center">
+
+        <div className="mt-4 flex items-center">
           <Link to={`/product/${data._id}?isEvent=true`}>
-            <div className={`${styles.button} text-[#fff]`}>See Details</div>
+            <button className="bg-black text-white px-4 py-2 rounded hover:opacity-90 transition">
+              See Details
+            </button>
           </Link>
-          <div className={`${styles.button} text-[#fff] ml-5`} onClick={() => addToCartHandler(data)}>Add to cart</div>
+          <button
+            className="bg-black text-white px-4 py-2 rounded ml-4 hover:opacity-90 transition"
+            onClick={() => addToCartHandler(data)}
+          >
+            Add to cart
+          </button>
         </div>
       </div>
     </div>

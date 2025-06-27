@@ -14,13 +14,16 @@ const AllEvents = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(getAllEventsShop(seller._id));
-  }, [dispatch]);
+    if (seller?._id) {
+      dispatch(getAllEventsShop(seller._id));
+    }
+  }, [dispatch, seller?._id]);
 
   const handleDelete = (id) => {
-    dispatch(deleteEvent(id));
-    window.location.reload();
-  }
+    dispatch(deleteEvent(id)).then(() => {
+      dispatch(getAllEventsShop(seller._id));
+    });
+  };
 
   const columns = [
     { field: "id", headerName: "Product Id", minWidth: 150, flex: 0.7 },
@@ -43,7 +46,6 @@ const AllEvents = () => {
       minWidth: 80,
       flex: 0.5,
     },
-
     {
       field: "sold",
       headerName: "Sold out",
@@ -56,19 +58,16 @@ const AllEvents = () => {
       flex: 0.8,
       minWidth: 100,
       headerName: "",
-      type: "number",
       sortable: false,
       renderCell: (params) => {
         const d = params.row.name;
         const product_name = d.replace(/\s+/g, "-");
         return (
-          <>
-            <Link to={`/product/${product_name}`}>
-              <Button>
-                <AiOutlineEye size={20} />
-              </Button>
-            </Link>
-          </>
+          <Link to={`/product/${product_name}`}>
+            <Button>
+              <AiOutlineEye size={20} />
+            </Button>
+          </Link>
         );
       },
     },
@@ -77,34 +76,22 @@ const AllEvents = () => {
       flex: 0.8,
       minWidth: 120,
       headerName: "",
-      type: "number",
       sortable: false,
-      renderCell: (params) => {
-        return (
-          <>
-            <Button
-            onClick={() => handleDelete(params.id)}
-            >
-              <AiOutlineDelete size={20} />
-            </Button>
-          </>
-        );
-      },
+      renderCell: (params) => (
+        <Button onClick={() => handleDelete(params.id)}>
+          <AiOutlineDelete size={20} />
+        </Button>
+      ),
     },
   ];
 
-  const row = [];
-
-  events &&
-  events.forEach((item) => {
-      row.push({
-        id: item._id,
-        name: item.name,
-        price: "US$ " + item.discountPrice,
-        Stock: item.stock,
-        sold: item.sold_out,
-      });
-    });
+  const rows = events?.map((item) => ({
+    id: item._id,
+    name: item.name,
+    price: "US$ " + item.discountPrice,
+    Stock: item.stock,
+    sold: item.sold_out,
+  })) || [];
 
   return (
     <>
@@ -113,7 +100,7 @@ const AllEvents = () => {
       ) : (
         <div className="w-full mx-8 pt-1 mt-10 bg-white">
           <DataGrid
-            rows={row}
+            rows={rows}
             columns={columns}
             pageSize={10}
             disableSelectionOnClick

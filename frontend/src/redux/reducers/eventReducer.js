@@ -1,7 +1,13 @@
+// Fix reducer: use consistent action names
+
 import { createReducer } from "@reduxjs/toolkit";
 
 const initialState = {
-  isLoading: true,
+  isLoading: false,
+  events: [],
+  event: null,
+  error: null,
+  success: false,
 };
 
 export const eventReducer = createReducer(initialState, (builder) => {
@@ -9,6 +15,7 @@ export const eventReducer = createReducer(initialState, (builder) => {
     // Create Event
     .addCase("eventCreateRequest", (state) => {
       state.isLoading = true;
+      state.success = false;
     })
     .addCase("eventCreateSuccess", (state, action) => {
       state.isLoading = false;
@@ -22,32 +29,33 @@ export const eventReducer = createReducer(initialState, (builder) => {
     })
 
     // Get all events of shop
-    .addCase("getAlleventsShopRequest", (state) => {
+    .addCase("getAllEventsShopRequest", (state) => {
       state.isLoading = true;
     })
-    .addCase("getAlleventsShopSuccess", (state, action) => {
+    .addCase("getAllEventsShopSuccess", (state, action) => {
       state.isLoading = false;
       state.events = action.payload;
     })
-    .addCase("getAlleventsShopFailed", (state, action) => {
+    .addCase("getAllEventsShopFail", (state, action) => {
       state.isLoading = false;
       state.error = action.payload;
     })
 
     // Delete event
-    .addCase("deleteeventRequest", (state) => {
+    .addCase("deleteEventRequest", (state) => {
       state.isLoading = true;
     })
-    .addCase("deleteeventSuccess", (state, action) => {
+    .addCase("deleteEventSuccess", (state, action) => {
       state.isLoading = false;
-      state.message = action.payload;
+      // Remove deleted event from events array
+      state.events = state.events.filter((event) => event._id !== action.payload.id);
     })
-    .addCase("deleteeventFailed", (state, action) => {
+    .addCase("deleteEventFail", (state, action) => {
       state.isLoading = false;
       state.error = action.payload;
     })
 
-    // Get all events (general)
+    // Get all events (public)
     .addCase("getAlleventsRequest", (state) => {
       state.isLoading = true;
     })

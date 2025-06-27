@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { categoriesData } from "../../static/data";
 import { toast } from "react-toastify";
 import { createEvent } from "../../redux/actions/event";
+import { getAllEventsShop } from "../../redux/actions/event";
 
 const CreateEvent = () => {
   const { seller } = useSelector((state) => state.seller);
@@ -54,10 +55,11 @@ const CreateEvent = () => {
     }
     if (success) {
       toast.success("Event created successfully!");
+       dispatch(getAllEventsShop(seller._id));
       navigate("/dashboard-events");
       window.location.reload();
     }
-  }, [dispatch, error, success]);
+  }, [dispatch, error, success, navigate, seller._id]);
 
   const handleImageChange = (e) => {
     e.preventDefault();

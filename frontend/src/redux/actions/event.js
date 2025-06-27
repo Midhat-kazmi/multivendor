@@ -1,13 +1,13 @@
 import axios from "axios";
 import { server } from "../../server";
 
-// Create Event ✅
+// Create Event 
 export const createEvent = (formData) => async (dispatch) => {
   try {
     dispatch({ type: "eventCreateRequest" });
     const config = {
       headers: { "Content-Type": "multipart/form-data" },
-      withCredentials: true, // ✅ cookie sent
+      withCredentials: true, //  cookie sent
     };
     const { data } = await axios.post(
       `${server}/event/create-event`,

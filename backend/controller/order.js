@@ -39,12 +39,13 @@ router.post("/create-order", async (req, res) => {
   }
 });
 
-// Get all orders of a user
-router.get("/get-all-orders/:userId", async (req, res) => {
+// Get all orders of a seller
+router.get("/get-seller-all-orders/:shopId", async (req, res) => {
   try {
-    const orders = await Order.find({ "user._id": req.params.userId }).sort({
-      createdAt: -1,
-    });
+    const orders = await Order.find({
+      "cart.shopId": req.params.shopId,
+    }).sort({ createdAt: -1 });
+
     res.status(200).json({ success: true, orders });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });

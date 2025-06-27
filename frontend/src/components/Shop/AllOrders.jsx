@@ -71,15 +71,18 @@ const AllOrders = () => {
 
   const row = [];
 
-  orders &&
-    orders.forEach((item) => {
+orders &&
+  orders.forEach((order) => {
+    const sellerItems = order.cart.filter((i) => i.shopId === seller._id);
+    if (sellerItems.length > 0) {
       row.push({
-        id: item._id,
-        itemsQty: item.cart.length,
-        total: "US$ " + item.totalPrice,
-        status: item.status,
+        id: order._id,
+        itemsQty: sellerItems.length,
+        total: "US$ " + sellerItems.reduce((sum, i) => sum + i.discountPrice * i.qty, 0).toFixed(2),
+        status: order.status,
       });
-    });
+    }
+  });
 
   return (
     <>
