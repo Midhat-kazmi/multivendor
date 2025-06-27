@@ -1,6 +1,5 @@
-import Button from '@mui/material/Button';
-import { DataGrid } from '@mui/x-data-grid';
-
+import Button from "@mui/material/Button";
+import { DataGrid } from "@mui/x-data-grid";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { AiOutlineDelete } from "react-icons/ai";
@@ -15,11 +14,11 @@ const AllCoupons = () => {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [coupons,setCoupons] = useState([]);
-  const [minAmount, setMinAmout] = useState(null);
-  const [maxAmount, setMaxAmount] = useState(null);
-  const [selectedProducts, setSelectedProducts] = useState(null);
-  const [value, setValue] = useState(null);
+  const [coupons, setCoupons] = useState([]);
+  const [minAmount, setMinAmout] = useState("");
+  const [maxAmount, setMaxAmount] = useState("");
+  const [selectedProducts, setSelectedProducts] = useState("");
+  const [value, setValue] = useState("");
   const { seller } = useSelector((state) => state.seller);
   const { products } = useSelector((state) => state.products);
 
@@ -32,24 +31,25 @@ const AllCoupons = () => {
         withCredentials: true,
       })
       .then((res) => {
-        setIsLoading(false);
         setCoupons(res.data.couponCodes);
-      })
-      .catch((error) => {
         setIsLoading(false);
-      });
-  }, [dispatch]);
+      })
+      .catch(() => setIsLoading(false));
+  }, [dispatch, seller._id]);
 
   const handleDelete = async (id) => {
-    axios.delete(`${server}/coupon/delete-coupon/${id}`,{withCredentials: true}).then((res) => {
-      toast.success("Coupon code deleted succesfully!")
-    })
-    window.location.reload();
+    await axios
+      .delete(`${server}/coupon/delete-coupon/${id}`, {
+        withCredentials: true,
+      })
+      .then(() => {
+        toast.success("Coupon code deleted successfully!");
+        setCoupons(coupons.filter((coupon) => coupon._id !== id));
+      });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     await axios
       .post(
         `${server}/coupon/create-coupon-code`,
@@ -64,178 +64,158 @@ const AllCoupons = () => {
         { withCredentials: true }
       )
       .then((res) => {
-       toast.success("Coupon code created successfully!");
-       setOpen(false);
-       window.location.reload();
+        toast.success("Coupon code created successfully!");
+        setOpen(false);
+        setCoupons([...coupons, res.data.coupon]);
+        // Reset fields
+        setName("");
+        setMinAmout("");
+        setMaxAmount("");
+        setSelectedProducts("");
+        setValue("");
       })
-      .catch((error) => {
-        toast.error(error.response.data.message);
-      });
+      .catch((error) => toast.error(error.response.data.message));
   };
 
   const columns = [
-    { field: "id", headerName: "Id", minWidth: 150, flex: 0.7 },
-    {
-      field: "name",
-      headerName: "Coupon Code",
-      minWidth: 180,
-      flex: 1.4,
-    },
-    {
-      field: "price",
-      headerName: "Value",
-      minWidth: 100,
-      flex: 0.6,
-    },
+    { field: "id", headerName: "ID", minWidth: 150, flex: 0.7 },
+    { field: "name", headerName: "Coupon Code", minWidth: 180, flex: 1.4 },
+    { field: "price", headerName: "Value", minWidth: 100, flex: 0.6 },
     {
       field: "Delete",
+      headerName: "",
       flex: 0.8,
       minWidth: 120,
-      headerName: "",
-      type: "number",
       sortable: false,
-      renderCell: (params) => {
-        return (
-          <>
-            <Button onClick={() => handleDelete(params.id)}>
-              <AiOutlineDelete size={20} />
-            </Button>
-          </>
-        );
-      },
+      renderCell: (params) => (
+        <Button onClick={() => handleDelete(params.id)}>
+          <AiOutlineDelete size={20} className="text-red-600" />
+        </Button>
+      ),
     },
   ];
 
-  const row = [];
-
-  coupons &&
-  coupons.forEach((item) => {
-      row.push({
-        id: item._id,
-        name: item.name,
-        price: item.value + " %",
-        sold: 10,
-      });
-    });
+  const rows = coupons.map((item) => ({
+    id: item._id,
+    name: item.name,
+    price: `${item.value} %`,
+  }));
 
   return (
     <>
       {isLoading ? (
         <Loader />
       ) : (
-        <div className="w-full mx-8 pt-1 mt-10 bg-white">
-          <div className="w-full flex justify-end">
-            <div
-              className={`${styles.button} !w-max !h-[45px] px-3 !rounded-[5px] mr-3 mb-3`}
+        <div className="w-full px-4 md:px-8 pt-4 mt-4 bg-white rounded shadow">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-semibold text-gray-700">All Coupons</h2>
+            <button
               onClick={() => setOpen(true)}
+              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
             >
-              <span className="text-white">Create Coupon Code</span>
-            </div>
+              Create Coupon
+            </button>
           </div>
+
           <DataGrid
-            rows={row}
+            rows={rows}
             columns={columns}
             pageSize={10}
-            disableSelectionOnClick
             autoHeight
+            disableSelectionOnClick
           />
+
           {open && (
-            <div className="fixed top-0 left-0 w-full h-screen bg-[#00000062] z-[20000] flex items-center justify-center">
-              <div className="w-[90%] 800px:w-[40%] h-[80vh] bg-white rounded-md shadow p-4">
-                <div className="w-full flex justify-end">
+            <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+              <div className="w-[90%] sm:w-[500px] bg-white rounded-lg p-6 shadow-lg">
+                <div className="flex justify-end mb-2">
                   <RxCross1
-                    size={30}
+                    size={25}
                     className="cursor-pointer"
                     onClick={() => setOpen(false)}
                   />
                 </div>
-                <h5 className="text-[30px] font-Poppins text-center">
-                  Create Coupon code
-                </h5>
-                {/* create coupoun code */}
-                <form onSubmit={handleSubmit} aria-required={true}>
-                  <br />
+                <h3 className="text-xl font-bold text-center mb-4">Create Coupon</h3>
+                <form onSubmit={handleSubmit} className="space-y-4">
                   <div>
-                    <label className="pb-2">
-                      Name <span className="text-red-500">*</span>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Coupon Code Name <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
-                      name="name"
                       required
                       value={name}
-                      className="mt-2 appearance-none block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                       onChange={(e) => setName(e.target.value)}
-                      placeholder="Enter your coupon code name..."
+                      placeholder="Coupon name"
+                      className="mt-1 block w-full border border-gray-300 rounded px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
                     />
                   </div>
-                  <br />
+
                   <div>
-                    <label className="pb-2">
-                      Discount Percentenge{" "}
-                      <span className="text-red-500">*</span>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Discount Percentage <span className="text-red-500">*</span>
                     </label>
                     <input
-                      type="text"
-                      name="value"
-                      value={value}
+                      type="number"
                       required
-                      className="mt-2 appearance-none block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      value={value}
                       onChange={(e) => setValue(e.target.value)}
-                      placeholder="Enter your coupon code value..."
+                      placeholder="e.g., 10"
+                      className="mt-1 block w-full border border-gray-300 rounded px-3 py-2"
                     />
                   </div>
-                  <br />
-                  <div>
-                    <label className="pb-2">Min Amount</label>
-                    <input
-                      type="number"
-                      name="value"
-                      value={minAmount}
-                      className="mt-2 appearance-none block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                      onChange={(e) => setMinAmout(e.target.value)}
-                      placeholder="Enter your coupon code min amount..."
-                    />
+
+                  <div className="flex gap-3">
+                    <div className="w-1/2">
+                      <label className="block text-sm font-medium text-gray-700">
+                        Min Amount
+                      </label>
+                      <input
+                        type="number"
+                        value={minAmount}
+                        onChange={(e) => setMinAmout(e.target.value)}
+                        placeholder="e.g., 100"
+                        className="mt-1 block w-full border border-gray-300 rounded px-3 py-2"
+                      />
+                    </div>
+                    <div className="w-1/2">
+                      <label className="block text-sm font-medium text-gray-700">
+                        Max Amount
+                      </label>
+                      <input
+                        type="number"
+                        value={maxAmount}
+                        onChange={(e) => setMaxAmount(e.target.value)}
+                        placeholder="e.g., 500"
+                        className="mt-1 block w-full border border-gray-300 rounded px-3 py-2"
+                      />
+                    </div>
                   </div>
-                  <br />
+
                   <div>
-                    <label className="pb-2">Max Amount</label>
-                    <input
-                      type="number"
-                      name="value"
-                      value={maxAmount}
-                      className="mt-2 appearance-none block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                      onChange={(e) => setMaxAmount(e.target.value)}
-                      placeholder="Enter your coupon code max amount..."
-                    />
-                  </div>
-                  <br />
-                  <div>
-                    <label className="pb-2">Selected Product</label>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Select Product
+                    </label>
                     <select
-                      className="w-full mt-2 border h-[35px] rounded-[5px]"
                       value={selectedProducts}
                       onChange={(e) => setSelectedProducts(e.target.value)}
+                      className="mt-1 block w-full border border-gray-300 rounded px-3 py-2"
                     >
-                      <option value="Choose your selected products">
-                        Choose a selected product
-                      </option>
-                      {products &&
-                        products.map((i) => (
-                          <option value={i.name} key={i.name}>
-                            {i.name}
-                          </option>
-                        ))}
+                      <option disabled>Choose product</option>
+                      {products?.map((prod) => (
+                        <option key={prod._id} value={prod.name}>
+                          {prod.name}
+                        </option>
+                      ))}
                     </select>
                   </div>
-                  <br />
-                  <div>
-                    <input
-                      type="submit"
-                      value="Create"
-                      className="mt-2 appearance-none block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                    />
-                  </div>
+
+                  <button
+                    type="submit"
+                    className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 transition"
+                  >
+                    Create Coupon
+                  </button>
                 </form>
               </div>
             </div>

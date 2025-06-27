@@ -1,4 +1,3 @@
-// redux/reducers/sellerReducer.js
 import { createReducer } from "@reduxjs/toolkit";
 
 const initialState = {
@@ -26,6 +25,7 @@ export const sellerReducer = createReducer(initialState, (builder) => {
       state.isLoading = false;
       state.error = action.payload;
       state.isSeller = false;
+      // Optional: keep seller data for debugging
       // state.seller = null;
     })
 
@@ -43,6 +43,14 @@ export const sellerReducer = createReducer(initialState, (builder) => {
       state.isLoading = false;
       state.error = action.payload;
       state.sellers = [];
+    })
+
+    // Seller logout
+    .addCase("sellerLogout", (state) => {
+      state.isLoading = false;
+      state.isSeller = false;
+      state.seller = null;
+      state.error = null;
     })
 
     // Clear errors
