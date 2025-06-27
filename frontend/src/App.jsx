@@ -251,7 +251,13 @@ const App = () => {
             </SellerProtectedRoute>
           }
         />
-<Route path="/event/:id" element={<EventDetailsPage />} />
+        <Route 
+        path="/event/:id" 
+        element={
+        <EventDetailsPage 
+        />
+        } 
+        />
 
         <Route
           path="/dashboard-coupons"
