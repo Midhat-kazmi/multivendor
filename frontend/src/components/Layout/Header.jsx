@@ -50,11 +50,11 @@ const Header = ({ activeHeading }) => {
 
   return (
     <>
-      {/* Top Bar */}
+      {/* Top Header */}
       <div className={`${styles.section}`}>
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between py-2">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between py-3 space-y-3 md:space-y-0">
           {/* Logo */}
-          <div className="mb-3 lg:mb-0">
+          <div>
             <Link to="/">
               <img
                 src="https://shopo.quomodothemes.website/assets/images/logo.svg"
@@ -64,22 +64,21 @@ const Header = ({ activeHeading }) => {
             </Link>
           </div>
 
-          {/* Search Box */}
-          <div className="w-full lg:w-[50%] relative mb-3 lg:mb-0">
+          {/* Search Bar */}
+          <div className="w-full md:w-[50%] relative">
             <input
               type="text"
               placeholder="Search Product..."
               value={searchTerm}
               onChange={handleSearchChange}
-              className="h-[36px] w-full px-2 border-[#3957db] border-2 rounded-md"
+              className="h-[38px] w-full px-3 pr-10 border-2 border-[#3957db] rounded-md"
             />
             <AiOutlineSearch
-              size={24}
-              className="absolute right-2 top-2.5 cursor-pointer"
+              size={22}
+              className="absolute right-3 top-[9px] text-gray-600 cursor-pointer"
             />
-           {searchData && searchData.length !== 0 && (
-  <div className="absolute bg-white shadow z-[999] w-full mt-1 max-h-[300px] overflow-y-auto p-2">
-
+            {searchData && searchData.length !== 0 && (
+              <div className="absolute bg-white shadow z-[999] w-full mt-1 max-h-[300px] overflow-y-auto p-2">
                 {searchData.map((item, index) => (
                   <Link to={`/product/${item._id}`} key={index}>
                     <div className="flex items-center py-2">
@@ -88,7 +87,7 @@ const Header = ({ activeHeading }) => {
                         alt=""
                         className="w-[40px] h-[40px] mr-3"
                       />
-                      <h1>{item.name}</h1>
+                      <h1 className="text-sm">{item.name}</h1>
                     </div>
                   </Link>
                 ))}
@@ -96,13 +95,15 @@ const Header = ({ activeHeading }) => {
             )}
           </div>
 
-          {/* Dashboard / Seller Button */}
-          <div className={styles.button}>
+          {/* Seller Button */}
+          <div className="w-full md:w-auto">
             <Link to={isSeller ? "/dashboard" : "/shop-create"}>
-              <h1 className="text-white flex items-center">
-                {isSeller ? "Go to Dashboard" : "Become Seller"}{" "}
-                <IoIosArrowForward className="ml-1" />
-              </h1>
+              <div className={styles.button + " flex justify-center"}>
+                <h1 className="text-white flex items-center text-sm md:text-base">
+                  {isSeller ? "Go to Dashboard" : "Become Seller"}{" "}
+                  <IoIosArrowForward className="ml-1" />
+                </h1>
+              </div>
             </Link>
           </div>
         </div>
@@ -114,9 +115,19 @@ const Header = ({ activeHeading }) => {
           active ? "fixed top-0 left-0 shadow-sm" : "relative"
         }`}
       >
-        <div className={`${styles.section} flex items-center justify-between relative`}>
-          {/* Categories Dropdown */}
-          <div className="relative hidden lg:block">
+        <div className={`${styles.section} flex items-center justify-between`}>
+          {/* Hamburger (Mobile) */}
+          <div className="block lg:hidden">
+            <div
+              className="cursor-pointer"
+              onClick={() => setDropDown(!dropDown)}
+            >
+              <BiMenuAltLeft size={30} color="white" />
+            </div>
+          </div>
+
+          {/* All Categories Dropdown (Desktop Only) */}
+          <div className="hidden lg:block relative">
             <div
               onClick={() => setDropDown(!dropDown)}
               className="h-[48px] w-[240px] flex items-center bg-white pl-10 pr-3 rounded-t-md cursor-pointer relative"
@@ -125,7 +136,6 @@ const Header = ({ activeHeading }) => {
               <span className="text-sm font-medium">All Categories</span>
               <IoIosArrowDown size={16} className="ml-auto" />
             </div>
-
             {dropDown && (
               <div className="absolute top-full left-0 z-50 bg-white w-full shadow">
                 <DropDown categoriesData={categoriesData} setDropDown={setDropDown} />
@@ -133,41 +143,55 @@ const Header = ({ activeHeading }) => {
             )}
           </div>
 
+          {/* DropDown for Mobile */}
+          {dropDown && (
+            <div className="lg:hidden absolute top-[60px] left-0 z-40 w-full bg-white shadow-md">
+              <DropDown categoriesData={categoriesData} setDropDown={setDropDown} />
+            </div>
+          )}
+
           {/* Navbar Links */}
-          <Navbar active={activeHeading} />
+          <div className="hidden lg:block">
+            <Navbar active={activeHeading} />
+          </div>
 
           {/* Icons */}
           <div className="flex items-center space-x-4">
+            {/* Wishlist */}
             <div
               className="relative cursor-pointer"
               onClick={() => setOpenWishlist(true)}
             >
-              <AiOutlineHeart size={28} color="white" />
+              <AiOutlineHeart size={24} color="white" />
               <span className="absolute -top-1 -right-1 bg-green-500 text-white text-xs w-4 h-4 rounded-full flex items-center justify-center">
                 {wishlist?.length}
               </span>
             </div>
+
+            {/* Cart */}
             <div
               className="relative cursor-pointer"
               onClick={() => setOpenCart(true)}
             >
-              <AiOutlineShoppingCart size={28} color="white" />
+              <AiOutlineShoppingCart size={24} color="white" />
               <span className="absolute -top-1 -right-1 bg-green-500 text-white text-xs w-4 h-4 rounded-full flex items-center justify-center">
                 {cart?.length}
               </span>
             </div>
+
+            {/* Profile */}
             <div className="cursor-pointer">
               {isAuthenticated ? (
                 <Link to="/profile">
                   <img
                     src={user?.avatar?.url}
-                    className="w-[50px] h-[50px] rounded-full"
+                    className="w-[40px] h-[40px] rounded-full object-cover"
                     alt="User avatar"
                   />
                 </Link>
               ) : (
                 <Link to="/login">
-                  <CgProfile size={28} color="white" />
+                  <CgProfile size={24} color="white" />
                 </Link>
               )}
             </div>
