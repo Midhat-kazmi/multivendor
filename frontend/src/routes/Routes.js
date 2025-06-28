@@ -1,4 +1,4 @@
-import LoginPage from "../pages/Login";
+import LoginPage from "../pages/login";
 import SignupPage from "../pages/Signup.jsx";
 import ActivationPage from "../pages/ActivationPage";
 import HomePage from "../pages/HomePage";
