@@ -1,6 +1,6 @@
 import React from 'react';
 import DashboardHeader from '../../components/Shop/Layout/DashboardHeader';
-import DashboardSideBar from '../../components/Shop/Layout/DashboardSideBar';
+import DashboardSideBar from '../../components/Shop/Layout/DashboardSidebar';
 import AllRefundOrders from "../../components/Shop/AllRefundOrders";
 
 const ShopAllRefunds = () => {

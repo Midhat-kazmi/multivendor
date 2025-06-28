@@ -1,6 +1,6 @@
 import React from 'react'
 import DashboardHeader from '../../components/Shop/Layout/DashboardHeader'
-import DashboardSidebar from '../../components/Shop/Layout/DashboardSideBar'
+import DashboardSidebar from '../../components/Shop/Layout/DashboardSidebar'
 import CreateProduct from "../../components/Shop/CreateProduct"
 
 
