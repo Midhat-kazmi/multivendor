@@ -1,6 +1,6 @@
 import React from "react";
 import DashboardHeader from "../../components/Shop/Layout/DashboardHeader";
-import DashboardSideBar from "../../components/Shop/Layout/DashboardSidebar";
+import DashboardSidebar from "../../components/Shop/Layout/DashboardSidebar";
 import DashboardHero from "../../components/Shop/DashboardHero";
 
 const ShopDashboardPage = () => {
@@ -9,7 +9,7 @@ const ShopDashboardPage = () => {
           <DashboardHeader />
           <div className="flex items-start justify-between w-full">
             <div className="w-[300px] 800px:w-[330px]">
-              <DashboardSideBar active={1} />
+              <DashboardSidebar active={1} />
             </div>
             <DashboardHero />
           </div>
