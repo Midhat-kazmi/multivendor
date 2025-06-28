@@ -26,7 +26,8 @@ const Header = ({ activeHeading }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchData, setSearchData] = useState(null);
   const [active, setActive] = useState(false);
-  const [DropDown, setDropdown] = useState(false);
+  const [dropDownVisible, setDropDownVisible] = useState(false); // ✅ renamed
+  const [dropDown, setDropDown] = useState(false); // ✅ for mobile
   const [openCart, setOpenCart] = useState(false);
   const [openWishlist, setOpenWishlist] = useState(false);
 
@@ -120,7 +121,7 @@ const Header = ({ activeHeading }) => {
           <div className="block lg:hidden">
             <div
               className="cursor-pointer"
-              onClick={() => setDropdown(!dropDown)}
+              onClick={() => setDropDown(!dropDown)}
             >
               <BiMenuAltLeft size={30} color="white" />
             </div>
@@ -129,16 +130,19 @@ const Header = ({ activeHeading }) => {
           {/* All Categories Dropdown (Desktop Only) */}
           <div className="hidden lg:block relative">
             <div
-              onClick={() => setDropdown(!DropDown)}
+              onClick={() => setDropDownVisible(!dropDownVisible)}
               className="h-[48px] w-[240px] flex items-center bg-white pl-10 pr-3 rounded-t-md cursor-pointer relative"
             >
               <BiMenuAltLeft size={25} className="absolute left-2 top-2.5" />
               <span className="text-sm font-medium">All Categories</span>
               <IoIosArrowDown size={16} className="ml-auto" />
             </div>
-            {DropDown && (
+            {dropDownVisible && (
               <div className="absolute top-full left-0 z-50 bg-white w-full shadow">
-                <DropDown categoriesData={categoriesData} setDropdown={setDropdown} />
+                <DropDown
+                  categoriesData={categoriesData}
+                  setDropDown={setDropDownVisible}
+                />
               </div>
             )}
           </div>
@@ -146,7 +150,10 @@ const Header = ({ activeHeading }) => {
           {/* DropDown for Mobile */}
           {dropDown && (
             <div className="lg:hidden absolute top-[60px] left-0 z-40 w-full bg-white shadow-md">
-              <DropDown categoriesData={categoriesData} setDropDown={setDropdown} />
+              <DropDown
+                categoriesData={categoriesData}
+                setDropDown={setDropDown}
+              />
             </div>
           )}
 
