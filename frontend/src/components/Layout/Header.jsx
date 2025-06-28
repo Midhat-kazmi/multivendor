@@ -10,7 +10,7 @@ import {
 import { IoIosArrowDown, IoIosArrowForward } from "react-icons/io";
 import { BiMenuAltLeft } from "react-icons/bi";
 import { CgProfile } from "react-icons/cg";
-import DropDown from "./DropDown";
+import DropDown from "./Dropdown";
 import Navbar from "./Navbar";
 import { useSelector } from "react-redux";
 import Cart from "../cart/Cart";
@@ -26,7 +26,7 @@ const Header = ({ activeHeading }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchData, setSearchData] = useState(null);
   const [active, setActive] = useState(false);
-  const [dropDown, setDropDown] = useState(false);
+  const [DropDown, setDropdown] = useState(false);
   const [openCart, setOpenCart] = useState(false);
   const [openWishlist, setOpenWishlist] = useState(false);
 
@@ -120,7 +120,7 @@ const Header = ({ activeHeading }) => {
           <div className="block lg:hidden">
             <div
               className="cursor-pointer"
-              onClick={() => setDropDown(!dropDown)}
+              onClick={() => setDropdown(!dropDown)}
             >
               <BiMenuAltLeft size={30} color="white" />
             </div>
@@ -129,16 +129,16 @@ const Header = ({ activeHeading }) => {
           {/* All Categories Dropdown (Desktop Only) */}
           <div className="hidden lg:block relative">
             <div
-              onClick={() => setDropDown(!dropDown)}
+              onClick={() => setDropdown(!DropDown)}
               className="h-[48px] w-[240px] flex items-center bg-white pl-10 pr-3 rounded-t-md cursor-pointer relative"
             >
               <BiMenuAltLeft size={25} className="absolute left-2 top-2.5" />
               <span className="text-sm font-medium">All Categories</span>
               <IoIosArrowDown size={16} className="ml-auto" />
             </div>
-            {dropDown && (
+            {DropDown && (
               <div className="absolute top-full left-0 z-50 bg-white w-full shadow">
-                <DropDown categoriesData={categoriesData} setDropDown={setDropDown} />
+                <DropDown categoriesData={categoriesData} setDropdown={setDropdown} />
               </div>
             )}
           </div>
@@ -146,7 +146,7 @@ const Header = ({ activeHeading }) => {
           {/* DropDown for Mobile */}
           {dropDown && (
             <div className="lg:hidden absolute top-[60px] left-0 z-40 w-full bg-white shadow-md">
-              <DropDown categoriesData={categoriesData} setDropDown={setDropDown} />
+              <DropDown categoriesData={categoriesData} setDropDown={setDropdown} />
             </div>
           )}
 
