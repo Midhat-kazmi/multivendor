@@ -13,7 +13,7 @@ import { CgProfile } from "react-icons/cg";
 import DropDown from "./Dropdown";
 import Navbar from "./Navbar";
 import { useSelector } from "react-redux";
-import Cart from "../cart/Cart";
+import Cart from "../Cart/Cart";
 import Wishlist from "../Wishlist/Wishlist";
 
 const Header = ({ activeHeading }) => {
