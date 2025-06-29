@@ -9,6 +9,8 @@ const sendMail = require("../utils/sendMail");
 const upload = require("../utils/multer");
 require("dotenv").config();
 const { isAuthenticated, isAdmin } = require("../middleware/auth");
+const cloudinary = require("../utils/cloudinary");
+
 
 // Create Activation Token
 const createActivationToken = (user) => {
@@ -38,46 +40,45 @@ const sendToken = (user, statusCode, res) => {
 };
 
 // Register user and send activation email
-router.post("/create-user", upload.single("avatar"), async (req, res, next) => {
+router.post("/create-user", async (req, res) => {
   try {
-    const { name, email, password } = req.body;
-    const file = req.file;
+    const { name, email, password, avatar } = req.body;
 
-    if (!name || !email || !password || !file) {
-      if (file) {
-        fs.unlinkSync(file.path);
-      }
-      return res.status(400).json({ success: false, message: "All fields including avatar are required" });
-    }
-
-    const userExists = await User.findOne({ email });
-    if (userExists) {
-      fs.unlinkSync(file.path);
+    const userEmail = await User.findOne({ email });
+    if (userEmail) {
       return res.status(400).json({ success: false, message: "User already exists" });
     }
 
-    const avatarData = {
-      public_id: file.filename,
-      url: `${req.protocol}://${req.get("host")}/uploads/${file.filename}`,
+    const myCloud = await cloudinary.v2.uploader.upload(avatar, {
+      folder: "avatars",
+    });
+
+    const user = {
+      name,
+      email,
+      password,
+      avatar: {
+        public_id: myCloud.public_id,
+        url: myCloud.secure_url,
+      },
     };
 
-    const user = { name, email, password, avatar: avatarData };
     const activationToken = createActivationToken(user);
     const activationUrl = `http://localhost:5173/activation/${activationToken}`;
 
     await sendMail({
       email: user.email,
       subject: "Activate your account",
-      message: `Hello ${user.name}, please click the link to activate your account: ${activationUrl}`,
+      message: `Hello ${user.name}, please click on the link to activate your account: ${activationUrl}`,
     });
 
-    res.status(201).json({ success: true, message: `Please check your email: ${user.email} to activate your account.` });
+    return res.status(201).json({
+      success: true,
+      message: `Please check your email: ${user.email} to activate your account.`,
+    });
   } catch (error) {
-    console.error("User creation failed:", error);
-    if (req.file) {
-      fs.unlinkSync(req.file.path);
-    }
-    res.status(500).json({ success: false, message: "Something went wrong during registration." });
+    console.error("Create User Error:", error.message);
+    return res.status(500).json({ success: false, message: error.message });
   }
 });
 
@@ -207,35 +208,40 @@ router.put("/update-user-info", isAuthenticated, async (req, res) => {
 });
 
 // Update avatar
-router.put("/update-avatar", isAuthenticated, upload.single("avatar"), async (req, res) => {
+router.put("/update-avatar", isAuthenticated, async (req, res) => {
   try {
+    const { avatar } = req.body; // avatar should be a Base64 string
     const user = await User.findById(req.user.id);
+
     if (!user) {
-      if (req.file) {
-        fs.unlinkSync(req.file.path);
-      }
       return res.status(404).json({ success: false, message: "User not found" });
     }
 
+    // Delete previous avatar from Cloudinary if it exists
     if (user.avatar?.public_id) {
-      const oldPath = path.join(__dirname, "..", "uploads", user.avatar.public_id);
-      if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+      await cloudinary.v2.uploader.destroy(user.avatar.public_id);
     }
 
-    if (!req.file) {
-      return res.status(400).json({ success: false, message: "No file uploaded" });
-    }
+    // Upload new avatar to Cloudinary
+    const myCloud = await cloudinary.v2.uploader.upload(avatar, {
+      folder: "avatars",
+      width: 150,
+      crop: "scale",
+    });
 
-    const filename = req.file.filename;
-    const avatarUrl = `${req.protocol}://${req.get("host")}/uploads/${filename}`;
-    user.avatar = { public_id: filename, url: avatarUrl };
+    user.avatar = {
+      public_id: myCloud.public_id,
+      url: myCloud.secure_url,
+    };
 
     await user.save();
-    res.status(200).json({ success: true, user });
+
+    res.status(200).json({
+      success: true,
+      user,
+    });
   } catch (error) {
-    if (req.file) {
-      fs.unlinkSync(req.file.path);
-    }
+    console.error("Update Avatar Error:", error.message);
     res.status(500).json({ success: false, message: "Failed to update avatar" });
   }
 });

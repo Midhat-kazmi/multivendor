@@ -25,6 +25,10 @@ app.use("/uploads", express.static(path.join(__dirname, "..", "uploads")));
 
 
 app.use(express.json());
+
+app.get("/", (req, res) => {
+  res.send("API is running...");
+});
 // import routes
 const user = require("./controller/user");
 const shop = require("./controller/shop");
@@ -47,6 +51,8 @@ app.use("/api/v2/event", event);
 app.use("/api/v2/coupon", coupon);
 app.use("/api/v2/payment", payment);
 app.use("/api/v2/withdraw", withdraw);
+
+
 
 
 

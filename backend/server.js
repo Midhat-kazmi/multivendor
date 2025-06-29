@@ -5,6 +5,8 @@ const app = require("./app");
 const connectDatabase = require("./db/Database");
 const express = require("express");
 const path = require("path");
+const cloudinary = require("cloudinary");
+
 
 // Serve static files from /uploads
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
@@ -33,6 +35,13 @@ if (!process.env.PORT) {
 
 // Connect to MongoDB
 connectDatabase();
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+})
+
 
 // Start server
 const server = app.listen(process.env.PORT, () => {
