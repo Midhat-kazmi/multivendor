@@ -9,8 +9,6 @@ const sendMail = require("../utils/sendMail");
 const upload = require("../utils/multer");
 require("dotenv").config();
 const { isAuthenticated, isAdmin } = require("../middleware/auth");
-const cloudinary = require("../utils/cloudinary");
-
 
 // Create Activation Token
 const createActivationToken = (user) => {
@@ -49,18 +47,11 @@ router.post("/create-user", async (req, res) => {
       return res.status(400).json({ success: false, message: "User already exists" });
     }
 
-    const myCloud = await cloudinary.v2.uploader.upload(avatar, {
-      folder: "avatars",
-    });
-
     const user = {
       name,
       email,
       password,
-      avatar: {
-        public_id: myCloud.public_id,
-        url: myCloud.secure_url,
-      },
+      avatar, // store avatar as base64 or image URL
     };
 
     const activationToken = createActivationToken(user);
@@ -119,22 +110,13 @@ const loginUser = async (req, res) => {
 
     const user = await User.findOne({ email }).select("+password");
 
-if (!user || !user.password) {
-  return res.status(401).json({ success: false, message: "Invalid email or password" });
-}
+    if (!user || !user.password) {
+      return res.status(401).json({ success: false, message: "Invalid email or password" });
+    }
 
-const isPasswordValid = await bcrypt.compare(password, user.password);
-if (!isPasswordValid) {
-  return res.status(401).json({ success: false, message: "wrong password " });
-}
-
-
-    if (user.avatar && user.avatar.url) {
-      const filename = path.basename(user.avatar.url.replace(/\\/g, "/"));
-      user.avatar = {
-        public_id: filename,
-        url: `${req.protocol}://${req.get("host")}/uploads/${filename}`,
-      };
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(401).json({ success: false, message: "Wrong password" });
     }
 
     const token = user.getJwtToken();
@@ -210,30 +192,14 @@ router.put("/update-user-info", isAuthenticated, async (req, res) => {
 // Update avatar
 router.put("/update-avatar", isAuthenticated, async (req, res) => {
   try {
-    const { avatar } = req.body; // avatar should be a Base64 string
+    const { avatar } = req.body;
     const user = await User.findById(req.user.id);
 
     if (!user) {
       return res.status(404).json({ success: false, message: "User not found" });
     }
 
-    // Delete previous avatar from Cloudinary if it exists
-    if (user.avatar?.public_id) {
-      await cloudinary.v2.uploader.destroy(user.avatar.public_id);
-    }
-
-    // Upload new avatar to Cloudinary
-    const myCloud = await cloudinary.v2.uploader.upload(avatar, {
-      folder: "avatars",
-      width: 150,
-      crop: "scale",
-    });
-
-    user.avatar = {
-      public_id: myCloud.public_id,
-      url: myCloud.secure_url,
-    };
-
+    user.avatar = avatar;
     await user.save();
 
     res.status(200).json({
@@ -246,7 +212,6 @@ router.put("/update-avatar", isAuthenticated, async (req, res) => {
   }
 });
 
-
 // Update User Address
 router.put("/update-user-addresses", isAuthenticated, async (req, res) => {
   try {
@@ -255,21 +220,10 @@ router.put("/update-user-addresses", isAuthenticated, async (req, res) => {
 
     const { country, city, address1, address2, zipCode, addressType } = req.body;
 
-    const newAddress = {
-      country,
-      city,
-      address1,
-      address2,
-      zipCode,
-      addressType,
-    };
+    const newAddress = { country, city, address1, address2, zipCode, addressType };
 
-    // Optionally check for duplicate addresses
     const isDuplicate = user.addresses.some(
-      (addr) =>
-        addr.address1 === address1 &&
-        addr.address2 === address2 &&
-        addr.zipCode === zipCode
+      (addr) => addr.address1 === address1 && addr.address2 === address2 && addr.zipCode === zipCode
     );
 
     if (isDuplicate) {
@@ -286,16 +240,12 @@ router.put("/update-user-addresses", isAuthenticated, async (req, res) => {
   }
 });
 
-
 router.delete("/delete-user-address/:id", isAuthenticated, async (req, res) => {
   try {
     const userId = req.user._id;
     const addressId = req.params.id;
 
-    await User.updateOne(
-      { _id: userId },
-      { $pull: { addresses: { _id: addressId } } }
-    );
+    await User.updateOne({ _id: userId }, { $pull: { addresses: { _id: addressId } } });
 
     const user = await User.findById(userId);
     res.status(200).json({ success: true, user });
@@ -329,7 +279,6 @@ router.put("/update-user-password", isAuthenticated, async (req, res) => {
   }
 });
 
-
 router.get("/user-info/:id", async (req, res) => {
   try {
     const user = await User.findById(req.params.id).select("-password");
@@ -342,19 +291,10 @@ router.get("/user-info/:id", async (req, res) => {
   }
 });
 
-
 router.delete("/delete-user/:id", isAuthenticated, isAdmin("Admin"), async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
     if (!user) return res.status(404).json({ success: false, message: "User not found" });
-
-    // Delete avatar from uploads folder
-    if (user.avatar?.public_id) {
-      const filePath = path.join(__dirname, "..", "uploads", user.avatar.public_id);
-      if (fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath);
-      }
-    }
 
     await User.findByIdAndDelete(req.params.id);
     res.status(200).json({ success: true, message: "User deleted successfully" });
