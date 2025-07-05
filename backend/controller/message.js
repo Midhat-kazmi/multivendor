@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const Messages = require("../model/messages");
+const Messages = require("../model/message");
 const cloudinary = require("cloudinary").v2;
 
 // ========================= CREATE NEW MESSAGE =========================

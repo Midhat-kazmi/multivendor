@@ -4,9 +4,9 @@ const fs = require("fs");
 const path = require("path");
 const jwt = require("jsonwebtoken");
 const cloudinary = require("cloudinary").v2;
-const { upload } = require("../multer");
+const { upload } = require("../utils/multer");
 const sendMail = require("../utils/sendMail");
-const sendShopToken = require("../utils/shopToken");
+const sendShopToken = require("../utils/sendShopToken");
 const { isSeller, isAuthenticated, isAdmin } = require("../middleware/auth");
 const Shop = require("../model/shop");
 
