@@ -2,56 +2,40 @@ const express = require("express");
 const router = express.Router();
 const path = require("path");
 const fs = require("fs");
-const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const cloudinary = require("cloudinary").v2;
+const { upload } = require("../multer");
 const User = require("../model/user");
+const sendToken = require("../utils/jwtToken");
 const sendMail = require("../utils/sendMail");
-const upload = require("../utils/multer");
-require("dotenv").config();
 const { isAuthenticated, isAdmin } = require("../middleware/auth");
 
-// Create Activation Token
-const createActivationToken = (user) => {
-  return jwt.sign(user, process.env.ACTIVATION_SECRET, { expiresIn: "5m" });
-};
-
-// Create token and save in cookie
-const sendToken = (user, statusCode, res) => {
-  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY, {
-    expiresIn: process.env.JWT_EXPIRES,
-  });
-
-  const options = {
-    expires: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
-    httpOnly: true,
-    sameSite: "none",
-    secure: true,
-  };
-
-  res.status(statusCode)
-    .cookie("token", token, options)
-    .json({
-      success: true,
-      user,
-      token,
-    });
-};
-
-// Register user and send activation email
+// =============== Register User ===============
 router.post("/create-user", async (req, res) => {
   try {
     const { name, email, password, avatar } = req.body;
+
+    if (!name || !email || !password || !avatar) {
+      return res.status(400).json({ success: false, message: "All fields are required" });
+    }
 
     const userEmail = await User.findOne({ email });
     if (userEmail) {
       return res.status(400).json({ success: false, message: "User already exists" });
     }
 
+    const myCloud = await cloudinary.uploader.upload(avatar, {
+      folder: "avatars",
+    });
+
     const user = {
       name,
       email,
       password,
-      avatar, // store avatar as base64 or image URL
+      avatar: {
+        public_id: myCloud.public_id,
+        url: myCloud.secure_url,
+      },
     };
 
     const activationToken = createActivationToken(user);
@@ -59,248 +43,227 @@ router.post("/create-user", async (req, res) => {
 
     await sendMail({
       email: user.email,
-      subject: "Activate your account",
-      message: `Hello ${user.name}, please click on the link to activate your account: ${activationUrl}`,
+      subject: "Activate Your Account!",
+      message: `Hello!\nDear ${user.name}\nPlease click on the link to activate your account:\n${activationUrl}`,
     });
 
-    return res.status(201).json({
+    res.status(201).json({
       success: true,
-      message: `Please check your email: ${user.email} to activate your account.`,
+      message: `Please check your email ${user.email} to activate your account!`,
     });
   } catch (error) {
-    console.error("Create User Error:", error.message);
-    return res.status(500).json({ success: false, message: error.message });
+    res.status(500).json({ success: false, message: error.message });
   }
 });
 
-// Activate User
+const createActivationToken = (user) => {
+  return jwt.sign(user, process.env.ACTIVATION_SECRET, {
+    expiresIn: process.env.JWT_EXPIRES,
+  });
+};
+
+// =============== Activate Account ===============
 router.post("/activation", async (req, res) => {
   try {
     const { activation_token } = req.body;
-    if (!activation_token) {
-      return res.status(400).json({ success: false, message: "No activation token provided" });
-    }
-
     const newUser = jwt.verify(activation_token, process.env.ACTIVATION_SECRET);
     const { name, email, password, avatar } = newUser;
 
-    const userExists = await User.findOne({ email });
-    if (userExists) {
-      return res.status(200).json({ success: true, message: "Account already activated. Please log in.", user: userExists });
+    let user = await User.findOne({ email });
+    if (user) {
+      return res.status(400).json({ success: false, message: "User already exists" });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const user = await User.create({ name, email, password: hashedPassword, avatar });
-
-    res.status(201).json({ success: true, message: "Account activated successfully", user });
+    user = await User.create({ name, email, password, avatar });
+    sendToken(user, 201, res);
   } catch (error) {
-    console.error("Activation failed:", error);
-    res.status(500).json({ success: false, message: "Activation failed" });
+    res.status(500).json({ success: false, message: "Invalid token or server error" });
   }
 });
 
-// Login User
-const loginUser = async (req, res) => {
+// =============== Login ===============
+router.post("/login-user", async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    if (!email || !password) {
-      return res.status(400).json({ success: false, message: "All fields are required" });
-    }
+    if (!email || !password)
+      return res.status(400).json({ success: false, message: "All fields are required!" });
 
     const user = await User.findOne({ email }).select("+password");
+    if (!user) return res.status(404).json({ success: false, message: "User not found!" });
 
-    if (!user || !user.password) {
-      return res.status(401).json({ success: false, message: "Invalid email or password" });
-    }
+    const isValid = await user.comparePassword(password);
+    if (!isValid)
+      return res.status(400).json({ success: false, message: "Invalid credentials!" });
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-      return res.status(401).json({ success: false, message: "Wrong password" });
-    }
-
-    const token = user.getJwtToken();
-
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
-
-    return res.status(200).json({
-      success: true,
-      message: "Login successful",
-      user,
-      token,
-    });
+    sendToken(user, 201, res);
   } catch (error) {
-    console.error("Login Error:", error);
-    return res.status(500).json({ success: false, message: "Login failed" });
+    res.status(500).json({ success: false, message: error.message });
   }
-};
+});
 
-router.post("/login-user", loginUser);
-
-// Get current user
-router.get("/getuser", isAuthenticated, async (req, res) => {
+// =============== Load User ===============
+router.get("/get-user", isAuthenticated, async (req, res) => {
   try {
-    const user = await User.findById(req.user._id).select("-password -__v -createdAt -updatedAt");
-    if (!user) return res.status(404).json({ success: false, message: "User not found" });
+    const user = await User.findById(req.user._id);
+    if (!user) return res.status(404).json({ success: false, message: "User not found!" });
+
     res.status(200).json({ success: true, user });
   } catch (error) {
-    res.status(500).json({ success: false, message: "Error fetching user" });
+    res.status(500).json({ success: false, message: error.message });
   }
 });
 
-// Logout User
+// =============== Logout ===============
 router.get("/logout", isAuthenticated, (req, res) => {
-  res.cookie("token", null, {
+  res.cookie("token", "", {
     expires: new Date(Date.now()),
     httpOnly: true,
-    sameSite: "none",
-    secure: true,
   });
 
-  res.status(200).json({
-    success: true,
-    message: "Logged out successfully",
-  });
+  res.status(200).json({ success: true, message: "Logged out successfully!" });
 });
 
-// Update user info
+// =============== Update User Info ===============
 router.put("/update-user-info", isAuthenticated, async (req, res) => {
   try {
-    const { email, password, phoneNumber, name } = req.body;
+    const { name, email, password, phoneNumber } = req.body;
     const user = await User.findOne({ email }).select("+password");
-    if (!user) return res.status(404).json({ success: false, message: "User not found" });
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) return res.status(401).json({ success: false, message: "Incorrect password" });
+    const isValid = await user.comparePassword(password);
+    if (!isValid)
+      return res.status(400).json({ success: false, message: "Incorrect password!" });
 
     user.name = name;
     user.email = email;
     user.phoneNumber = phoneNumber;
+    await user.save();
+
+    res.status(200).json({ success: true, user });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// =============== Update Avatar ===============
+router.put("/update-avatar", isAuthenticated, async (req, res) => {
+  try {
+    let user = await User.findById(req.user._id);
+    if (req.body.avatar !== "") {
+      await cloudinary.uploader.destroy(user.avatar.public_id);
+
+      const myCloud = await cloudinary.uploader.upload(req.body.avatar, {
+        folder: "avatars",
+        width: 150,
+      });
+
+      user.avatar = {
+        public_id: myCloud.public_id,
+        url: myCloud.secure_url,
+      };
+    }
 
     await user.save();
     res.status(200).json({ success: true, user });
   } catch (error) {
-    res.status(500).json({ success: false, message: "Error updating user info" });
+    res.status(500).json({ success: false, message: error.message });
   }
 });
 
-// Update avatar
-router.put("/update-avatar", isAuthenticated, async (req, res) => {
-  try {
-    const { avatar } = req.body;
-    const user = await User.findById(req.user.id);
-
-    if (!user) {
-      return res.status(404).json({ success: false, message: "User not found" });
-    }
-
-    user.avatar = avatar;
-    await user.save();
-
-    res.status(200).json({
-      success: true,
-      user,
-    });
-  } catch (error) {
-    console.error("Update Avatar Error:", error.message);
-    res.status(500).json({ success: false, message: "Failed to update avatar" });
-  }
-});
-
-// Update User Address
+// =============== Update Addresses ===============
 router.put("/update-user-addresses", isAuthenticated, async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
-    if (!user) return res.status(404).json({ success: false, message: "User not found" });
-
-    const { country, city, address1, address2, zipCode, addressType } = req.body;
-
-    const newAddress = { country, city, address1, address2, zipCode, addressType };
-
-    const isDuplicate = user.addresses.some(
-      (addr) => addr.address1 === address1 && addr.address2 === address2 && addr.zipCode === zipCode
+    const existingType = user.addresses.find(
+      (addr) => addr.addressType === req.body.addressType
     );
 
-    if (isDuplicate) {
-      return res.status(400).json({ success: false, message: "Address already exists" });
+    if (existingType) {
+      return res
+        .status(400)
+        .json({ success: false, message: `${req.body.addressType} already exists` });
     }
 
-    user.addresses.push(newAddress);
+    const existingAddress = user.addresses.find((addr) => addr._id === req.body._id);
+    if (existingAddress) {
+      Object.assign(existingAddress, req.body);
+    } else {
+      user.addresses.push(req.body);
+    }
+
     await user.save();
-
-    res.status(200).json({ success: true, message: "Address added successfully", user });
-  } catch (error) {
-    console.error("Update Address Error:", error);
-    res.status(500).json({ success: false, message: "Failed to update address" });
-  }
-});
-
-router.delete("/delete-user-address/:id", isAuthenticated, async (req, res) => {
-  try {
-    const userId = req.user._id;
-    const addressId = req.params.id;
-
-    await User.updateOne({ _id: userId }, { $pull: { addresses: { _id: addressId } } });
-
-    const user = await User.findById(userId);
     res.status(200).json({ success: true, user });
   } catch (error) {
-    console.error("Delete address failed:", error);
-    res.status(500).json({ success: false, message: "Failed to delete address" });
+    res.status(500).json({ success: false, message: error.message });
   }
 });
 
+// =============== Delete Address ===============
+router.delete("/delete-user-address/:id", isAuthenticated, async (req, res) => {
+  try {
+    await User.updateOne(
+      { _id: req.user._id },
+      { $pull: { addresses: { _id: req.params.id } } }
+    );
+    const user = await User.findById(req.user._id);
+    res.status(200).json({ success: true, user });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// =============== Update Password ===============
 router.put("/update-user-password", isAuthenticated, async (req, res) => {
   try {
     const user = await User.findById(req.user._id).select("+password");
-    if (!user) return res.status(404).json({ success: false, message: "User not found" });
+    const isMatch = await user.comparePassword(req.body.oldPassword);
 
-    const isPasswordMatched = await bcrypt.compare(req.body.oldPassword, user.password);
-    if (!isPasswordMatched) {
+    if (!isMatch)
       return res.status(400).json({ success: false, message: "Old password is incorrect" });
-    }
 
-    if (req.body.newPassword !== req.body.confirmPassword) {
+    if (req.body.newPassword !== req.body.confirmPassword)
       return res.status(400).json({ success: false, message: "Passwords do not match" });
-    }
 
-    user.password = await bcrypt.hash(req.body.newPassword, 10);
+    user.password = req.body.newPassword;
     await user.save();
 
-    res.status(200).json({ success: true, message: "Password updated successfully" });
+    res.status(200).json({ success: true, message: "Password updated successfully!" });
   } catch (error) {
-    console.error("Update password error:", error);
-    res.status(500).json({ success: false, message: "Failed to update password" });
+    res.status(500).json({ success: false, message: error.message });
   }
 });
 
+// =============== Get User by ID ===============
 router.get("/user-info/:id", async (req, res) => {
   try {
-    const user = await User.findById(req.params.id).select("-password");
-    if (!user) return res.status(404).json({ success: false, message: "User not found" });
-
+    const user = await User.findById(req.params.id);
     res.status(200).json({ success: true, user });
   } catch (error) {
-    console.error("Get user info error:", error);
-    res.status(500).json({ success: false, message: "Failed to fetch user info" });
+    res.status(500).json({ success: false, message: error.message });
   }
 });
 
-router.delete("/delete-user/:id", isAuthenticated, isAdmin("Admin"), async (req, res) => {
+// =============== Admin: Get All Users ===============
+router.get("/admin-all-users", isAuthenticated, isAdmin("Admin"), async (req, res) => {
+  try {
+    const users = await User.find().sort({ createdAt: -1 });
+    res.status(200).json({ success: true, users });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// =============== Admin: Delete User ===============
+router.delete("/admin-delete-user/:id", isAuthenticated, isAdmin("Admin"), async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
-    if (!user) return res.status(404).json({ success: false, message: "User not found" });
+    if (!user)
+      return res.status(404).json({ success: false, message: "User not found!" });
 
     await User.findByIdAndDelete(req.params.id);
-    res.status(200).json({ success: true, message: "User deleted successfully" });
+    res.status(200).json({ success: true, message: "User deleted successfully!" });
   } catch (error) {
-    console.error("Delete user error:", error);
-    res.status(500).json({ success: false, message: "Failed to delete user" });
+    res.status(500).json({ success: false, message: error.message });
   }
 });
 

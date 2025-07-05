@@ -1,27 +1,10 @@
 const mongoose = require("mongoose");
 
 const orderSchema = new mongoose.Schema({
-  cart: [
-    {
-      productId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Product",
-      },
-      shopId: {
-        type: String,
-        required: true,
-      },
-      qty: {
-        type: Number,
-        required: true,
-      },
-      discountPrice: {
-        type: Number,
-        required: true,
-      },
-      name: String,
-    },
-  ],
+  cart: {
+    type: Array,
+    required: true,
+  },
   shippingAddress: {
     type: Object,
     required: true,
@@ -39,9 +22,15 @@ const orderSchema = new mongoose.Schema({
     default: "Processing",
   },
   paymentInfo: {
-    id: { type: String },
-    status: { type: String },
-    type: { type: String },
+    id: {
+      type: String,
+    },
+    status: {
+      type: String,
+    },
+    type: {
+      type: String,
+    },
   },
   paidAt: {
     type: Date,
