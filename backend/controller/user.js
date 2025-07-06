@@ -9,7 +9,6 @@ const sendMail = require("../utils/sendMail");
 const upload = require("../utils/multer");
 require("dotenv").config();
 const { isAuthenticated, isAdmin } = require("../middleware/auth");
-const cloudinary = require("../utils/cloudinary");
 
 
 // Create Activation Token

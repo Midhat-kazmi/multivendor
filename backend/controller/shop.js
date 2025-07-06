@@ -1,42 +1,35 @@
 const express = require("express");
+const router = express.Router();
 const path = require("path");
 const fs = require("fs");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
-const sendMail = require("../utils/sendMail");
 const Shop = require("../model/shop");
-const { isSeller, isAuthenticated, isAdmin } = require("../middleware/auth");
+const sendMail = require("../utils/sendMail");
 const upload = require("../utils/multer");
+const { isSeller, isAuthenticated, isAdmin } = require("../middleware/auth");
 require("dotenv").config();
 
-const router = express.Router();
-
 // Create Activation Token
-const createActivationToken = (seller) => {
-  return jwt.sign(seller, process.env.ACTIVATION_SECRET, { expiresIn: "30m" });
+const createActivationToken = (shop) => {
+  return jwt.sign(shop, process.env.ACTIVATION_SECRET, { expiresIn: "30m" });
 };
 
-// Send token
+// Send token and set cookie
 const sendShopToken = (shop, statusCode, res) => {
-  const token = jwt.sign({ id: shop._id }, process.env.JWT_SECRET_KEY, {
-    expiresIn: process.env.JWT_EXPIRES,
-  });
+  const token = shop.getJwtToken();
 
-  const options = {
-    expires: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
-    httpOnly: true,
-    sameSite: "none",
-    secure: true,
-  };
-
-  res.status(statusCode).cookie("shop_token", token, options).json({
-    success: true,
-    shopName: shop.shopName,
-    token,
-  });
+  res.status(statusCode)
+    .cookie("shop_token", token, {
+      expires: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
+      httpOnly: true,
+      sameSite: "none",
+      secure: true,
+    })
+    .json({ success: true, shopName: shop.shopName, token });
 };
 
-// ======================= REGISTER + AUTH =======================
+// ======================= CREATE SHOP =======================
 
 router.post("/create-shop", upload.single("avatar"), async (req, res) => {
   try {
@@ -47,15 +40,20 @@ router.post("/create-shop", upload.single("avatar"), async (req, res) => {
       return res.status(400).json({ success: false, message: "All fields including avatar are required" });
     }
 
-    const shopExists = await Shop.findOne({ email });
-    if (shopExists) {
-      fs.unlinkSync(req.file.path);
+    const existingShop = await Shop.findOne({ email });
+    if (existingShop) {
+      if (req.file) fs.unlinkSync(req.file.path);
       return res.status(400).json({ success: false, message: "Shop with this email already exists" });
     }
 
+    // Upload avatar to Cloudinary
+    const myCloud = await cloudinary.uploader.upload(req.file.path, {
+      folder: "shopAvatars",
+    });
+
     const avatar = {
-      public_id: req.file.filename,
-      url: `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`,
+      public_id: myCloud.public_id,
+      url: myCloud.secure_url,
     };
 
     const shop = { shopName, email, password, avatar, address, phoneNumber, zipCode };
@@ -65,19 +63,21 @@ router.post("/create-shop", upload.single("avatar"), async (req, res) => {
     await sendMail({
       email,
       subject: "Activate your shop",
-      message: `Hello ${shopName}, please click to activate your shop: ${activationUrl}`,
+      message: `Hello ${shopName}, please click here to activate your shop: ${activationUrl}`,
     });
 
     res.status(201).json({
       success: true,
-      message: `Check your email (${shop.email}) to activate your shop.`,
+      message: `Check your email (${email}) to activate your shop.`,
     });
   } catch (error) {
-    console.error("Shop creation error:", error);
+    console.error("Create Shop Error:", error);
     if (req.file) fs.unlinkSync(req.file.path);
     res.status(500).json({ success: false, message: "Shop registration failed" });
   }
 });
+
+// ======================= ACTIVATE SHOP =======================
 
 router.post("/activation", async (req, res) => {
   try {
@@ -92,15 +92,10 @@ router.post("/activation", async (req, res) => {
 
     const shopExists = await Shop.findOne({ email });
     if (shopExists) {
-      return res.status(200).json({
-        success: true,
-        message: "Shop already activated. Please login.",
-        shop: shopExists,
-      });
+      return res.status(200).json({ success: true, message: "Shop already activated. Please login.", shop: shopExists });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-
     const shop = await Shop.create({
       shopName,
       email,
@@ -118,6 +113,8 @@ router.post("/activation", async (req, res) => {
   }
 });
 
+// ======================= LOGIN =======================
+
 router.post("/login-shop", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -127,61 +124,32 @@ router.post("/login-shop", async (req, res) => {
     }
 
     const shop = await Shop.findOne({ email }).select("+password");
-    if (!shop || !shop.password) {
-      return res.status(401).json({ success: false, message: "Invalid credentials" });
-    }
+    if (!shop) return res.status(401).json({ success: false, message: "Invalid credentials" });
 
     const isMatch = await bcrypt.compare(password, shop.password);
-    if (!isMatch) {
-      return res.status(401).json({ success: false, message: "Incorrect password" });
-    }
+    if (!isMatch) return res.status(401).json({ success: false, message: "Incorrect password" });
 
-    if (shop.avatar?.url) {
-      const filename = path.basename(shop.avatar.url.replace(/\\/g, "/"));
-      shop.avatar = {
-        public_id: filename,
-        url: `${req.protocol}://${req.get("host")}/uploads/${filename}`,
-      };
-    }
-
-    const token = jwt.sign({ id: shop._id }, process.env.JWT_SECRET_KEY, {
-      expiresIn: process.env.JWT_EXPIRES,
-    });
-
-    res.cookie("shop_token", token, {
-      expires: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
-      httpOnly: true,
-      sameSite: "none",
-      secure: true,
-    });
-
-    res.status(200).json({ success: true, message: "Login successful", shop, token });
+    sendShopToken(shop, 200, res);
   } catch (error) {
     console.error("Login error:", error);
     res.status(500).json({ success: false, message: "Login failed" });
   }
 });
 
-// ======================= LOGOUT API =======================
+// ======================= LOGOUT =======================
 
-// Logout seller
 router.get("/logout", (req, res) => {
   res.cookie("shop_token", "", {
     httpOnly: true,
     expires: new Date(0),
     sameSite: "none",
-    secure: false, // make false if you're using HTTP instead of HTTPS locally
+    secure: true,
   });
 
-  res.status(200).json({
-    success: true,
-    message: "Logout successful",
-  });
+  res.status(200).json({ success: true, message: "Logout successful" });
 });
 
-
-
-// ======================= PROFILE =======================
+// ======================= GET PROFILE =======================
 
 router.get("/get-shop", isSeller, async (req, res) => {
   try {
@@ -190,7 +158,6 @@ router.get("/get-shop", isSeller, async (req, res) => {
 
     res.status(200).json({ success: true, shop });
   } catch (error) {
-    console.error("Get shop error:", error);
     res.status(500).json({ success: false, message: "Could not get shop" });
   }
 });
@@ -204,30 +171,43 @@ router.get("/get-shop-info/:id", async (req, res) => {
   }
 });
 
+// ======================= UPDATE AVATAR =======================
+
 router.put("/update-shop-avatar", isSeller, async (req, res) => {
   try {
     const shop = await Shop.findById(req.seller._id);
     if (!shop) return res.status(404).json({ success: false, message: "Seller not found" });
 
+    // Delete old avatar from Cloudinary
+    if (shop.avatar?.public_id) {
+      await cloudinary.uploader.destroy(shop.avatar.public_id);
+    }
+
+    const myCloud = await cloudinary.uploader.upload(req.body.avatar, {
+      folder: "shopAvatars",
+      width: 150,
+      crop: "scale",
+    });
+
     shop.avatar = {
-      public_id: `updated_${Date.now()}`,
-      url: req.body.avatar,
+      public_id: myCloud.public_id,
+      url: myCloud.secure_url,
     };
 
     await shop.save();
-
-    res.status(200).json({ success: true, seller: shop });
+    res.status(200).json({ success: true, shop });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 });
 
+// ======================= UPDATE INFO =======================
+
 router.put("/update-seller-info", isSeller, async (req, res) => {
   try {
     const { shopName, description, address, phoneNumber, zipCode } = req.body;
 
-    const shop = await Shop.findById(req.seller._id); // ✅ Fixed bug here
-
+    const shop = await Shop.findById(req.seller._id);
     if (!shop) return res.status(404).json({ success: false, message: "Seller not found" });
 
     shop.shopName = shopName;
@@ -237,7 +217,6 @@ router.put("/update-seller-info", isSeller, async (req, res) => {
     shop.zipCode = zipCode;
 
     await shop.save();
-
     res.status(200).json({ success: true, shop });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -260,6 +239,11 @@ router.delete("/delete-seller/:id", isAuthenticated, isAdmin("Admin"), async (re
     const seller = await Shop.findById(req.params.id);
     if (!seller) return res.status(404).json({ success: false, message: "Seller not found" });
 
+    // Delete avatar from Cloudinary
+    if (seller.avatar?.public_id) {
+      await cloudinary.uploader.destroy(seller.avatar.public_id);
+    }
+
     await Shop.findByIdAndDelete(req.params.id);
     res.status(200).json({ success: true, message: "Seller deleted successfully" });
   } catch (error) {
@@ -267,7 +251,7 @@ router.delete("/delete-seller/:id", isAuthenticated, isAdmin("Admin"), async (re
   }
 });
 
-// ======================= WITHDRAW METHODS =======================
+// ======================= PAYMENT METHODS =======================
 
 router.put("/update-payment-methods", isSeller, async (req, res) => {
   try {
