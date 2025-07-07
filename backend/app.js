@@ -9,7 +9,6 @@ const cors = require("cors");
 const path = require("path");
 
 // CORS config
-const cors = require("cors");
 
 app.use(
   cors({
