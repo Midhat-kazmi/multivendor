@@ -11,6 +11,7 @@ const sendMail = require("../utils/sendMail");
 const { isAuthenticated, isAdmin } = require("../middleware/auth");
 
 // =============== Register User ===============
+// =============== Register User ===============
 router.post("/create-user", async (req, res) => {
   try {
     const { name, email, password, avatar } = req.body;
@@ -39,47 +40,31 @@ router.post("/create-user", async (req, res) => {
     };
 
     const activationToken = createActivationToken(user);
-    const activationUrl = `http://localhost:5173/activation/${activationToken}`;
+
+    // ✅ Use frontend domain from env var (important for production)
+    const activationUrl = `${process.env.FRONTEND_URL}/activation/${activationToken}`;
 
     await sendMail({
       email: user.email,
       subject: "Activate Your Account!",
-      message: `Hello!\nDear ${user.name}\nPlease click on the link to activate your account:\n${activationUrl}`,
+      message: `Hello ${user.name},\n\nPlease click the link below to activate your account:\n${activationUrl}\n\nIf you did not request this, you can ignore this email.`,
     });
 
     res.status(201).json({
       success: true,
-      message: `Please check your email ${user.email} to activate your account!`,
+      message: `Please check your email (${user.email}) to activate your account!`,
     });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 });
 
+// 🔐 Create Activation Token Helper
 const createActivationToken = (user) => {
   return jwt.sign(user, process.env.ACTIVATION_SECRET, {
     expiresIn: process.env.JWT_EXPIRES,
   });
 };
-
-// =============== Activate Account ===============
-router.post("/activation", async (req, res) => {
-  try {
-    const { activation_token } = req.body;
-    const newUser = jwt.verify(activation_token, process.env.ACTIVATION_SECRET);
-    const { name, email, password, avatar } = newUser;
-
-    let user = await User.findOne({ email });
-    if (user) {
-      return res.status(400).json({ success: false, message: "User already exists" });
-    }
-
-    user = await User.create({ name, email, password, avatar });
-    sendToken(user, 201, res);
-  } catch (error) {
-    res.status(500).json({ success: false, message: "Invalid token or server error" });
-  }
-});
 
 // =============== Login ===============
 router.post("/login-user", async (req, res) => {
@@ -119,6 +104,8 @@ router.get("/logout", isAuthenticated, (req, res) => {
   res.cookie("token", "", {
     expires: new Date(Date.now()),
     httpOnly: true,
+     secure: true,       // Ensures the cookie is sent only over HTTPS
+   sameSite: "none",
   });
 
   res.status(200).json({ success: true, message: "Logged out successfully!" });

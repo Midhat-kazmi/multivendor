@@ -9,10 +9,15 @@ const cors = require("cors");
 const path = require("path");
 
 // CORS config
-app.use(cors({
-  origin: "http://localhost:5173",
-  credentials: true,
-}));
+const cors = require("cors");
+
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL,
+    credentials: true,
+  })
+);
+
 
 // Middleware to parse JSON and URL encoded data
 app.use(express.json({ limit: "15mb" }));

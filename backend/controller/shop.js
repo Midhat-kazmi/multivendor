@@ -17,6 +17,7 @@ const createActivationToken = (seller) => {
 };
 
 // ========== Create Shop ==========
+// ========== Create Shop ==========
 router.post("/create-shop", async (req, res) => {
   try {
     const { name, email, password, address, zipCode, phoneNumber, avatar } = req.body;
@@ -48,12 +49,14 @@ router.post("/create-shop", async (req, res) => {
     };
 
     const activationToken = createActivationToken(seller);
-    const activationUrl = `http://localhost:5173/activation/${activationToken}`;
+
+    // ✅ Use env variable for frontend link
+    const activationUrl = `${process.env.FRONTEND_URL}/activation/${activationToken}`;
 
     await sendMail({
       email: seller.email,
       subject: "Activate Your Seller Account!",
-      message: `Hello ${seller.name}, activate your account: \n${activationUrl}`,
+      message: `Hello ${seller.name}, activate your account:\n${activationUrl}`,
     });
 
     res.status(201).json({
@@ -65,33 +68,6 @@ router.post("/create-shop", async (req, res) => {
   }
 });
 
-// ========== Activate Seller ==========
-router.post("/activation", async (req, res) => {
-  try {
-    const { activation_token } = req.body;
-    const newSeller = jwt.verify(activation_token, process.env.ACTIVATION_SECRET);
-    const { name, email, password, avatar, zipCode, address, phoneNumber } = newSeller;
-
-    const existingSeller = await Shop.findOne({ email });
-    if (existingSeller) {
-      return res.status(400).json({ success: false, message: "Seller already exists" });
-    }
-
-    const seller = await Shop.create({
-      name,
-      email,
-      password,
-      avatar,
-      zipCode,
-      address,
-      phoneNumber,
-    });
-
-    sendShopToken(seller, 201, res);
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
-  }
-});
 
 // ========== Login Seller ==========
 router.post("/login-shop", async (req, res) => {
@@ -132,6 +108,8 @@ router.get("/logout", async (req, res) => {
   try {
     res.cookie("shop_token", "", {
       expires: new Date(Date.now()),
+       secure: true,       // Ensures the cookie is sent only over HTTPS
+     sameSite: "none",
       httpOnly: true,
     });
     res.status(200).json({ success: true, message: "Logged out successfully" });
