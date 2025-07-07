@@ -1,23 +1,17 @@
 {
   "version": 2,
+  "name": "multivendor",
+
   "builds": [
     {
-      "src": "index.js",
+      "src": "server.js",
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
-      "src": "/api/(.*)",
-      "dest": "/index.js"
-    },
-    {
-      "src": "/uploads/(.*)",
-      "dest": "/uploads/$1"
-    },
-    {
       "src": "/(.*)",
-      "dest": "/index.js"
+      "dest": "/server.js"
     }
   ]
 }

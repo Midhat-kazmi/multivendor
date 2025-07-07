@@ -1,39 +1,77 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-
+const withdraw = require("./withdraw");
 const shopSchema = new mongoose.Schema({
-  shopName: {
+  name: {
     type: String,
     required: [true, "Please enter your shop name!"],
-    trim: true,
   },
   email: {
     type: String,
-    required: [true, "Please enter your email!"],
+    required: [true, "Please enter your shop email!"],
     unique: true,
-    lowercase: true,
     trim: true,
-  },
-
-  zipCode: {
-    type: String,
-    required: [true, "Please enter your zip code!"],
-  },
-  address: {
-    type: String,
-    required: [true, "Please enter your address!"],
+    lowercase: true,
   },
   password: {
     type: String,
-    required: [true, "Please enter your password!"],
+    required: [true, "Please enter your password"],
     minLength: [4, "Password should be greater than 4 characters"],
     select: false,
   },
+  phoneNumber: {
+    type: Number,
+    trim: true,
+    required: true,
+  },
+  description: {
+    type: String,
+  },
+  address: [
+    {
+      type: String,
+      reuired: true,
+    },
+  ],
+  role: {
+    type: String,
+    default: "Seller",
+  },
+  zipCode: {
+    type: Number,
+    required: true,
+  },
+  withdrawMethod: {
+    type: Object,
+  },
+  availableBalance: {
+    type: Number,
+    default: 0,
+  },
+  transections: [
+    {
+      amount: {
+        type: Number,
+        required: true,
+      },
+      status: {
+        type: String,
+        default: "Processing",
+      },
+      createdAt: {
+        type: Date,
+        default: Date.now(),
+      },
+      updatedAt: {
+        type: Date,
+      },
+    },
+  ],
   avatar: {
     public_id: {
       type: String,
-       required: true,
+      required: true,
     },
     url: {
       type: String,
@@ -44,41 +82,29 @@ const shopSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  role: {
-    type: String,
-    default: "seller",
-  },
-  description: {
-  type: String,
-  default: "", // optional
-},
-phoneNumber: {
-  type: String,
-  default: "", // optional
-},
-
+  resetPasswordToken: String,
+  resetPasswordTime: Date,
 });
-//shopSchema.pre("save", async function (next) {
-  //if (!this.isModified("password")) return next();
 
-  //try {
-  //  this.password = await bcrypt.hash(this.password, 10);
-   // next();
-  //} catch (err) {
-  //  return next(err);
-  //}
-//});
+// Hash password before saving to database
+shopSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) {
+    return next();
+  }
 
-//  Method to get signed JWT token
+  this.password = await bcrypt.hash(this.password, 10);
+});
+
+// Generate JWT token for authentication
 shopSchema.methods.getJwtToken = function () {
   return jwt.sign({ id: this._id }, process.env.JWT_SECRET_KEY, {
-    expiresIn: process.env.JWT_EXPIRES || "7d",
+    expiresIn: process.env.JWT_EXPIRES,
   });
 };
 
-// Compare plain and hashed password
+// Compare entered password with stored hashed password
 shopSchema.methods.comparePassword = async function (enteredPassword) {
-  return bcrypt.compare(enteredPassword, this.password);
+  return await bcrypt.compare(enteredPassword, this.password);
 };
 
 module.exports = mongoose.model("Shop", shopSchema);

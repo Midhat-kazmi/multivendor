@@ -1,31 +1,31 @@
 const mongoose = require("mongoose");
-
-const productSchema = new mongoose.Schema({
+const ProductSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: [true, "Please enter your product name!"],
+    required: [true, "Please Enter Your Product Name!"],
   },
   description: {
     type: String,
-    required: [true, "Please enter your product description!"],
+    require: [true, "Please Enter Your Product description!"],
   },
   category: {
     type: String,
-    required: [true, "Please enter your product category!"],
+    required: [true, "Please Enter Your Product category!"],
   },
   tags: {
     type: String,
+    required: [true, "Please Enter Your Product Tags!"],
   },
   originalPrice: {
     type: Number,
   },
   discountPrice: {
     type: Number,
-    required: [true, "Please enter your product price!"],
+    required: [true, "Please Enter Your Discount Price!"],
   },
   stock: {
     type: Number,
-    required: [true, "Please enter your product stock!"],
+    required: [true, "Please Enter Your Product Stock!"],
   },
   images: [
     {
@@ -39,6 +39,18 @@ const productSchema = new mongoose.Schema({
       },
     },
   ],
+  shopId: {
+    type: String,
+    required: true,
+  },
+  shop: {
+    type: Object,
+    required: true,
+  },
+  sold_out: {
+    type: Number,
+    default: 0,
+  },
   reviews: [
     {
       user: {
@@ -53,31 +65,18 @@ const productSchema = new mongoose.Schema({
       productId: {
         type: String,
       },
-      createdAt:{
+      createdAt: {
         type: Date,
         default: Date.now(),
-      }
+      },
     },
   ],
   ratings: {
     type: Number,
-  },
-  shopId: {
-    type: String,
-    required: true,
-  },
-  shop: {
-    type: Object,
-    required: true,
-  },
-  sold_out: {
-    type: Number,
-    default: 0,
   },
   createdAt: {
     type: Date,
     default: Date.now(),
   },
 });
-
-module.exports = mongoose.model("Product", productSchema);
+module.exports = mongoose.model("product", ProductSchema);
