@@ -24,7 +24,9 @@ const EventDetailsPage = () => {
           alt={event.name}
           className="w-1/2 h-auto object-contain mb-4 rounded-lg"
         />
-        <p className="mb-2 text-lg">Price: <strong>US$ {event.discountPrice}</strong></p>
+        <p className="mb-2 text-lg">
+          Price: <strong>US$ {event.discountPrice}</strong>
+        </p>
         <p className="mb-2 text-lg">Stock: {event.stock}</p>
         <p className="mb-2 text-lg">Sold: {event.sold_out}</p>
       </div>

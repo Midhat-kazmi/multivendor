@@ -78,7 +78,7 @@ const OrderDetails = () => {
       {Array.isArray(data?.cart) && data.cart.map((item, index) => (
         <div className="w-full flex items-start mb-5" key={index}>
         <img
-  src={`${server}${item?.product?.images?.[0]?.url}`}
+  src={data.images[0]?.url}
   alt={item.name}
   className="w-[80px] h-[80px] object-cover rounded"
 />

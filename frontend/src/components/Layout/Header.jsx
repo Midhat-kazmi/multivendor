@@ -26,8 +26,8 @@ const Header = ({ activeHeading }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchData, setSearchData] = useState(null);
   const [active, setActive] = useState(false);
-  const [dropDownVisible, setDropDownVisible] = useState(false); // ✅ renamed
-  const [dropDown, setDropDown] = useState(false); // ✅ for mobile
+  const [dropDownVisible, setDropDownVisible] = useState(false);
+  const [dropDown, setDropDown] = useState(false);
   const [openCart, setOpenCart] = useState(false);
   const [openWishlist, setOpenWishlist] = useState(false);
 
@@ -191,9 +191,9 @@ const Header = ({ activeHeading }) => {
               {isAuthenticated ? (
                 <Link to="/profile">
                   <img
-                    src={user?.avatar?.url}
+                    src={user?.avatar?.url || "/default-avatar.png"}
                     className="w-[40px] h-[40px] rounded-full object-cover"
-                    alt="User avatar"
+                    alt="User Avatar"
                   />
                 </Link>
               ) : (

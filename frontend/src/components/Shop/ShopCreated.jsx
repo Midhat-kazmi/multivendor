@@ -191,8 +191,7 @@ const ShopCreated = () => {
                 <span className="inline-block h-8 w-8 rounded-full overflow-hidden">
                   {avatar ? (
                     <img
-                      src={URL.createObjectURL(avatar)}
-                      alt="avatar"
+src={data.images[0]?.url}                      alt="avatar"
                       className="h-full w-full object-cover rounded-full"
                     />
                   ) : (
