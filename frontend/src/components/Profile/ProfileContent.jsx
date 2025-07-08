@@ -5,7 +5,7 @@ import {
   AiOutlineDelete,
 } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
-import { server } from "../../server";
+import { backend_url,server } from "../../server";
 import styles from "../../styles/styles";
 import { DataGrid } from '@mui/x-data-grid';
 import Button from '@mui/material/Button';
