@@ -12,7 +12,7 @@ const path = require("path");
 
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL,
+    origin: "https://multivendor-five.vercel.app",
     
     credentials: true,
   })
