@@ -84,9 +84,9 @@ const Header = ({ activeHeading }) => {
                   <Link to={`/product/${item._id}`} key={index}>
                     <div className="flex items-center py-2">
                       <img
-                        src={item.images[0]?.url}
-                        alt=""
-                        className="w-[40px] h-[40px] mr-3"
+                        src={item.images[0]?.url || "/no-image.png"}
+                        alt={item.name}
+                        className="w-[40px] h-[40px] mr-3 object-cover rounded"
                       />
                       <h1 className="text-sm">{item.name}</h1>
                     </div>

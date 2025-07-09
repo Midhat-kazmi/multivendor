@@ -22,9 +22,6 @@ const ProductDetailsCard = ({ setOpen, data }) => {
   const dispatch = useDispatch();
   const [count, setCount] = useState(1);
   const [click, setClick] = useState(false);
-  //   const [select, setSelect] = useState(false);
-
-  const handleMessageSubmit = () => {};
 
   const decrementCount = () => {
     if (count > 1) {
@@ -37,98 +34,102 @@ const ProductDetailsCard = ({ setOpen, data }) => {
   };
 
   const addToCartHandler = (id) => {
-    const isItemExists = cart && cart.find((i) => i._id === id);
+    const isItemExists = cart?.find((i) => i._id === id);
     if (isItemExists) {
       toast.error("Item already in cart!");
+    } else if (data.stock < count) {
+      toast.error("Product stock limited!");
     } else {
-      if (data.stock < count) {
-        toast.error("Product stock limited!");
-      } else {
-        const cartData = { ...data, qty: count };
-        dispatch(addToCart(cartData));
-        toast.success("Item added to cart successfully!");
-      }
+      dispatch(addToCart({ ...data, qty: count }));
+      toast.success("Item added to cart successfully!");
     }
   };
 
   useEffect(() => {
-    if (wishlist && wishlist.find((i) => i._id === data._id)) {
+    if (wishlist?.find((i) => i._id === data._id)) {
       setClick(true);
     } else {
       setClick(false);
     }
   }, [wishlist]);
 
-  const removeFromWishlistHandler = (data) => {
-    setClick(!click);
+  const removeFromWishlistHandler = () => {
+    setClick(false);
     dispatch(removeFromWishlist(data));
   };
 
-  const addToWishlistHandler = (data) => {
-    setClick(!click);
+  const addToWishlistHandler = () => {
+    setClick(true);
     dispatch(addToWishlist(data));
   };
 
   return (
     <div className="bg-[#fff]">
-      {data ? (
+      {data && (
         <div className="fixed w-full h-screen top-0 left-0 bg-[#00000030] z-40 flex items-center justify-center">
           <div className="w-[90%] 800px:w-[60%] h-[90vh] overflow-y-scroll 800px:h-[75vh] bg-white rounded-md shadow-sm relative p-4">
             <RxCross1
               size={30}
-              className="absolute right-3 top-3 z-50"
+              className="absolute right-3 top-3 z-50 cursor-pointer"
               onClick={() => setOpen(false)}
             />
 
             <div className="block w-full 800px:flex">
+              {/* LEFT SIDE */}
               <div className="w-full 800px:w-[50%]">
-                <img src={`${data.images && data.images[0]?.url}`} alt="" />
-                <div className="flex">
-                  <Link to={`/shop/preview/${data.shop._id}`} className="flex">
+                <img
+                  src={data.images?.[0]?.url || "/default-product.png"}
+                  alt={data.name}
+                  className="w-full object-contain max-h-[300px]"
+                />
+                <div className="flex mt-4 items-center">
+                  <Link to={`/shop/preview/${data.shop._id}`} className="flex items-center">
                     <img
-                      src={data.images[0]?.url}
-                      alt=""
-                      className="w-[50px] h-[50px] rounded-full mr-2"
+                      src={data.images?.[0]?.url || "/default-product.png"}
+                      alt="Shop"
+                      className="w-[50px] h-[50px] rounded-full mr-2 object-cover"
                     />
                     <div>
-                      <h3 className={`${styles.shop_name}`}>
-                        {data.shop.name}
-                      </h3>
-                      <h5 className="pb-3 text-[15px]">
-                        {data?.ratings} Ratings
-                      </h5>
+                      <h3 className={`${styles.shop_name}`}>{data.shop.name}</h3>
+                      <h5 className="text-[15px]">{data?.ratings} Ratings</h5>
                     </div>
                   </Link>
                 </div>
                 <div
-                  className={`${styles.button} bg-[#000] mt-4 rounded-[4px] h-11`}
-                  onClick={handleMessageSubmit}
+                  className={`${styles.button} bg-black mt-4 rounded-[4px] h-11 cursor-pointer`}
                 >
-                  <span className="text-[#fff] flex items-center">
+                  <span className="text-white flex items-center justify-center">
                     Send Message <AiOutlineMessage className="ml-1" />
                   </span>
                 </div>
-                <h5 className="text-[16px] text-[red] mt-5">(50) Sold out</h5>
+                <h5 className="text-[16px] text-[red] mt-5">
+                  ({data.sold_out || 0}) Sold out
+                </h5>
               </div>
 
-              <div className="w-full 800px:w-[50%] pt-5 pl-[5px] pr-[5px]">
+              {/* RIGHT SIDE */}
+              <div className="w-full 800px:w-[50%] pt-5 px-2">
                 <h1 className={`${styles.productTitle} text-[20px]`}>
                   {data.name}
                 </h1>
-                <p>{data.description}</p>
+                <p className="text-sm text-gray-700 mt-2">{data.description}</p>
 
-                <div className="flex pt-3">
+                <div className="flex pt-3 items-center">
                   <h4 className={`${styles.productDiscountPrice}`}>
                     {data.discountPrice}$
                   </h4>
-                  <h3 className={`${styles.price}`}>
-                    {data.originalPrice ? data.originalPrice + "$" : null}
-                  </h3>
+                  {data.originalPrice && (
+                    <h3 className={`${styles.price} ml-3`}>
+                      {data.originalPrice}$
+                    </h3>
+                  )}
                 </div>
+
+                {/* Quantity + Wishlist */}
                 <div className="flex items-center mt-12 justify-between pr-3">
                   <div>
                     <button
-                      className="bg-gradient-to-r from-teal-400 to-teal-500 text-white font-bold rounded-l px-4 py-2 shadow-lg hover:opacity-75 transition duration-300 ease-in-out"
+                      className="bg-gradient-to-r from-teal-400 to-teal-500 text-white font-bold rounded-l px-4 py-2 shadow hover:opacity-75 transition"
                       onClick={decrementCount}
                     >
                       -
@@ -137,44 +138,48 @@ const ProductDetailsCard = ({ setOpen, data }) => {
                       {count}
                     </span>
                     <button
-                      className="bg-gradient-to-r from-teal-400 to-teal-500 text-white font-bold rounded-l px-4 py-2 shadow-lg hover:opacity-75 transition duration-300 ease-in-out"
+                      className="bg-gradient-to-r from-teal-400 to-teal-500 text-white font-bold rounded-r px-4 py-2 shadow hover:opacity-75 transition"
                       onClick={incrementCount}
                     >
                       +
                     </button>
                   </div>
+
                   <div>
                     {click ? (
                       <AiFillHeart
                         size={30}
                         className="cursor-pointer"
-                        onClick={() => removeFromWishlistHandler(data)}
-                        color={click ? "red" : "#333"}
+                        onClick={removeFromWishlistHandler}
+                        color="red"
                         title="Remove from wishlist"
                       />
                     ) : (
                       <AiOutlineHeart
                         size={30}
                         className="cursor-pointer"
-                        onClick={() => addToWishlistHandler(data)}
+                        onClick={addToWishlistHandler}
+                        color="#333"
                         title="Add to wishlist"
                       />
                     )}
                   </div>
                 </div>
+
+                {/* Add to Cart */}
                 <div
-                  className={`${styles.button} mt-6 rounded-[4px] h-11 flex items-center`}
+                  className={`${styles.button} mt-6 rounded-[4px] h-11 flex items-center justify-center cursor-pointer`}
                   onClick={() => addToCartHandler(data._id)}
                 >
-                  <span className="text-[#fff] flex items-center">
-                    Add to cart <AiOutlineShoppingCart className="ml-1" />
+                  <span className="text-white flex items-center">
+                    Add to cart <AiOutlineShoppingCart className="ml-2" />
                   </span>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      ) : null}
+      )}
     </div>
   );
 };

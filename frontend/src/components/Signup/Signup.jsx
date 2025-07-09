@@ -12,39 +12,57 @@ const Signup = () => {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [visible, setVisible] = useState(false);
-  const [avatar, setAvatar] = useState(null); // Use null instead of empty string
+  const [avatar, setAvatar] = useState(null); // file
+  const [avatarPreview, setAvatarPreview] = useState(null); // base64 or object URL
 
   const handleFileInputChange = (e) => {
-    const file = e.target.files[0]; // Get the first file from the input element
+    const file = e.target.files[0];
     if (file) {
-      setAvatar(file); // Set the file object directly
+      setAvatar(file);
+      setAvatarPreview(URL.createObjectURL(file));
     }
+  };
+
+  const convertToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const formData = new FormData();
-    formData.append("name", name);
-    formData.append("email", email);
-    formData.append("password", password);
-    formData.append("avatar", avatar); 
-    axios
-      axios.post(`${server}/user/create-user`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-        withCredentials:true
-      })
-      .then((res) => {
-        toast.success(res.data.message);
-        setName("");
-        setEmail("");
-        setPassword("");
-        setAvatar(null); // Reset avatar state after successful submission
-      })
-      .catch((error) => {
-        toast.error(error.response.data.message);
-        console.log(error.response.data.message);
+    try {
+      if (!avatar) {
+        toast.error("Please upload an avatar!");
+        return;
+      }
+
+      const avatarBase64 = await convertToBase64(avatar);
+
+      const data = {
+        name,
+        email,
+        password,
+        avatar: avatarBase64,
+      };
+
+      const response = await axios.post(`${server}/user/create-user`, data, {
+        withCredentials: true,
       });
+
+      toast.success(response.data.message);
+      setName("");
+      setEmail("");
+      setPassword("");
+      setAvatar(null);
+      setAvatarPreview(null);
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Signup failed");
+    }
   };
 
   return (
@@ -57,6 +75,7 @@ const Signup = () => {
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
           <form className="space-y-6" onSubmit={handleSubmit}>
+            {/* Name */}
             <div>
               <label htmlFor="name" className="block text-sm font-medium text-gray-700">
                 Full Name
@@ -74,6 +93,7 @@ const Signup = () => {
               </div>
             </div>
 
+            {/* Email */}
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                 Email address
@@ -91,6 +111,7 @@ const Signup = () => {
               </div>
             </div>
 
+            {/* Password */}
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                 Password
@@ -121,15 +142,17 @@ const Signup = () => {
               </div>
             </div>
 
+            {/* Avatar Upload */}
             <div>
               <label htmlFor="avatar" className="block text-sm font-medium text-gray-700">
                 Avatar
               </label>
               <div className="mt-2 flex items-center">
                 <span className="inline-block h-8 w-8 rounded-full overflow-hidden">
-                  {avatar ? (
+                  {avatarPreview ? (
                     <img
-src={data.images[0]?.url}                      alt="avatar"
+                      src={avatarPreview}
+                      alt="avatar preview"
                       className="h-full w-full object-cover rounded-full"
                     />
                   ) : (
@@ -153,6 +176,7 @@ src={data.images[0]?.url}                      alt="avatar"
               </div>
             </div>
 
+            {/* Submit Button */}
             <div>
               <button
                 type="submit"
@@ -161,6 +185,8 @@ src={data.images[0]?.url}                      alt="avatar"
                 Submit
               </button>
             </div>
+
+            {/* Redirect to login */}
             <div className={`${styles.normalFlex} w-full`}>
               <h4>Already have an account?</h4>
               <Link to="/login" className="text-blue-600 pl-2">
