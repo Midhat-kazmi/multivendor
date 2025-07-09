@@ -189,8 +189,6 @@ router.get("/admin-all-sellers", isAuthenticated, isAdmin("Admin"), async (req, 
 });
 
 // ========== Admin: Delete Seller ==========
-// ========== Admin: Delete Seller ==========
-// DELETE /admin-delete-seller/:id
 router.delete("/admin-delete-seller/:id", isAuthenticated, isAdmin("Admin"), async (req, res) => {
   try {
     const seller = await Shop.findById(req.params.id);
@@ -199,7 +197,7 @@ router.delete("/admin-delete-seller/:id", isAuthenticated, isAdmin("Admin"), asy
       return res.status(404).json({ success: false, message: "Seller not found" });
     }
 
-    // ✅ Delete avatar from Cloudinary if it exists
+    //  Delete avatar from Cloudinary if it exists
     if (seller.avatar?.public_id) {
       await cloudinary.uploader.destroy(seller.avatar.public_id);
     }
