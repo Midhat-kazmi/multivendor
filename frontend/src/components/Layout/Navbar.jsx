@@ -12,7 +12,7 @@ const Navbar = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(`${server}/user/getuser`, {
+        const response = await axios.get(`${server}/user/get-user`, {
           withCredentials: true,
         });
         
