@@ -6,7 +6,7 @@ const ProductSchema = new mongoose.Schema({
   },
   description: {
     type: String,
-    require: [true, "Please Enter Your Product description!"],
+    required: [true, "Please Enter Your Product description!"],
   },
   category: {
     type: String,

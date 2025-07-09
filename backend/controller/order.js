@@ -42,7 +42,7 @@ router.post("/create-order", async (req, res) => {
   }
 });
 
-// ✅ FIXED: Get all orders of a seller (only one correct version)
+//  Get all orders of a seller 
 router.get("/get-seller-all-orders/:shopId", async (req, res) => {
   try {
     const orders = await Order.find({
@@ -158,5 +158,25 @@ router.get("/admin-all-orders", isAuthenticated, isAdmin("Admin"), async (req, r
     res.status(500).json({ success: false, message: error.message });
   }
 });
+
+// Delete an order (Admin only)
+router.delete("/admin-delete-order/:id", isAuthenticated, isAdmin("Admin"), async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id);
+    if (!order) {
+      return res.status(404).json({ success: false, message: "Order not found" });
+    }
+
+    await Order.findByIdAndDelete(req.params.id);
+
+    res.status(200).json({
+      success: true,
+      message: "Order deleted successfully",
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
 
 module.exports = router;

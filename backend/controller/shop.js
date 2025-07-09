@@ -50,8 +50,8 @@ router.post("/create-shop", async (req, res) => {
 
     const activationToken = createActivationToken(seller);
 
-    // ✅ Use env variable for frontend link
-    const activationUrl = `${process.env.FRONTEND_URL}/activation/${activationToken}`;
+    //  Use env variable for frontend link
+    const activationUrl = `https://multivendor-five.vercel.app/activation/${activationToken}`;
 
     await sendMail({
       email: seller.email,
@@ -189,18 +189,30 @@ router.get("/admin-all-sellers", isAuthenticated, isAdmin("Admin"), async (req, 
 });
 
 // ========== Admin: Delete Seller ==========
+// ========== Admin: Delete Seller ==========
+// DELETE /admin-delete-seller/:id
 router.delete("/admin-delete-seller/:id", isAuthenticated, isAdmin("Admin"), async (req, res) => {
   try {
     const seller = await Shop.findById(req.params.id);
+
     if (!seller) {
       return res.status(404).json({ success: false, message: "Seller not found" });
     }
+
+    // ✅ Delete avatar from Cloudinary if it exists
+    if (seller.avatar?.public_id) {
+      await cloudinary.uploader.destroy(seller.avatar.public_id);
+    }
+
+    // Delete the seller from the database
     await Shop.findByIdAndDelete(req.params.id);
+
     res.status(200).json({ success: true, message: "Seller deleted successfully" });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 });
+
 
 // ========== Seller: Update Withdraw Method ==========
 router.put("/update-payment-methods", isSeller, async (req, res) => {

@@ -61,7 +61,6 @@ router.delete("/delete-shop-product/:id", isSeller, async (req, res, next) => {
       return res.status(404).json({ success: false, message: "Product not found" });
     }
 
-    // Delete from cloudinary
     for (const image of product.images) {
       await cloudinary.uploader.destroy(image.public_id);
     }
@@ -73,6 +72,7 @@ router.delete("/delete-shop-product/:id", isSeller, async (req, res, next) => {
     return next(error);
   }
 });
+
 
 // Get all products
 router.get("/get-all-products", async (req, res, next) => {

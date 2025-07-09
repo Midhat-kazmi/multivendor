@@ -6,7 +6,7 @@ const EventSchema = new mongoose.Schema({
   },
   description: {
     type: String,
-    require: [true, "Please Enter Your event Product discription!"],
+    required: [true, "Please Enter Your event Product discription!"],
   },
   category: {
     type: String,

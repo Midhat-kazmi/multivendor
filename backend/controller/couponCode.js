@@ -1,18 +1,15 @@
 const express = require("express");
-const Shop = require("../model/shop");
-const { isSeller } = require("../middleware/auth");
-const CouponCode = require("../model/couponCode");
 const router = express.Router();
+const CouponCode = require("../model/couponCode");
+const { isSeller } = require("../middleware/auth");
 
-// create coupoun code
-router.post("/create-coupon-code", isSeller, async (req, res, next) => {
+// ========== Create Coupon ==========
+router.post("/create-coupon-code", isSeller, async (req, res) => {
   try {
-    const isCouponCodeExists = await CouponCode.find({
-      name: req.body.name,
-    });
+    const existingCoupon = await CouponCode.findOne({ name: req.body.name });
 
-    if (isCouponCodeExists.length !== 0) {
-      return next("Coupon code already exists!", 400);
+    if (existingCoupon) {
+      return res.status(400).json({ success: false, message: "Coupon code already exists!" });
     }
 
     const createdCoupon = await CouponCode.create(req.body);
@@ -22,51 +19,64 @@ router.post("/create-coupon-code", isSeller, async (req, res, next) => {
       coupon: createdCoupon,
     });
   } catch (error) {
-    return next(error, 400);
+    res.status(500).json({ success: false, message: error.message });
   }
 });
 
-// get all coupons of a shop
-router.get("/get-coupon/:id", isSeller, async (req, res, next) => {
+// ========== Get All Coupons for a Shop ==========
+router.get("/get-coupon/:id", isSeller, async (req, res) => {
   try {
     const couponCodes = await CouponCode.find({ shopId: req.seller.id });
-    res.status(201).json({
+
+    res.status(200).json({
       success: true,
       couponCodes,
     });
   } catch (error) {
-    return next(error, 400);
+    res.status(500).json({ success: false, message: error.message });
   }
 });
 
-// delete coupoun code of a shop
-router.delete("/delete-coupon/:id", isSeller, async (req, res, next) => {
+// ========== Delete Coupon ==========
+router.delete("/delete-coupon/:id", isSeller, async (req, res) => {
   try {
-    const couponCode = await CouponCode.findByIdAndDelete(req.params.id);
+    const coupon = await CouponCode.findById(req.params.id);
 
-    if (!couponCode) {
-      return next("Coupon code dosen't exists!", 400);
+    if (!coupon) {
+      return res.status(404).json({ success: false, message: "Coupon code doesn't exist!" });
     }
-    res.status(201).json({
+
+    // Optional: Ensure only the coupon's shop can delete it
+    if (coupon.shopId.toString() !== req.seller._id.toString()) {
+      return res.status(403).json({ success: false, message: "Not authorized to delete this coupon" });
+    }
+
+    await coupon.deleteOne();
+
+    res.status(200).json({
       success: true,
       message: "Coupon code deleted successfully!",
     });
   } catch (error) {
-    return next(error, 400);
+    res.status(500).json({ success: false, message: error.message });
   }
 });
 
-// get coupon code value by its name
-router.get("/get-coupon-value/:name", async (req, res, next) => {
+// ========== Get Coupon by Name ==========
+router.get("/get-coupon-value/:name", async (req, res) => {
   try {
     const couponCode = await CouponCode.findOne({ name: req.params.name });
+
+    if (!couponCode) {
+      return res.status(404).json({ success: false, message: "Coupon not found" });
+    }
 
     res.status(200).json({
       success: true,
       couponCode,
     });
   } catch (error) {
-    return next(error, 400);
+    res.status(500).json({ success: false, message: error.message });
   }
 });
 

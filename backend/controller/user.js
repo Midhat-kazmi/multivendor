@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const path = require("path");
-const fs = require("fs");
 const jwt = require("jsonwebtoken");
 const cloudinary = require("cloudinary").v2;
 const { upload } = require("../utils/multer");
@@ -10,7 +9,6 @@ const sendToken = require("../utils/jwtToken");
 const sendMail = require("../utils/sendMail");
 const { isAuthenticated, isAdmin } = require("../middleware/auth");
 
-// =============== Register User ===============
 // =============== Register User ===============
 router.post("/create-user", async (req, res) => {
   try {
@@ -41,8 +39,8 @@ router.post("/create-user", async (req, res) => {
 
     const activationToken = createActivationToken(user);
 
-    // ✅ Use frontend domain from env var (important for production)
-    const activationUrl = `${process.env.FRONTEND_URL}/activation/${activationToken}`;
+    //  Use frontend domain from env var (important for production)
+    const activationUrl = `https://multivendor-five.vercel.app/activation/${activationToken}`;
 
     await sendMail({
       email: user.email,
@@ -244,14 +242,24 @@ router.get("/admin-all-users", isAuthenticated, isAdmin("Admin"), async (req, re
 router.delete("/admin-delete-user/:id", isAuthenticated, isAdmin("Admin"), async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
-    if (!user)
-      return res.status(404).json({ success: false, message: "User not found!" });
 
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found!" });
+    }
+
+    //  Delete avatar from Cloudinary
+    if (user.avatar?.public_id) {
+      await cloudinary.uploader.destroy(user.avatar.public_id);
+    }
+
+    //  Delete user from MongoDB
     await User.findByIdAndDelete(req.params.id);
+
     res.status(200).json({ success: true, message: "User deleted successfully!" });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 });
+
 
 module.exports = router;
