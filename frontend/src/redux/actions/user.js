@@ -5,7 +5,7 @@ import { server } from "../../server";
 export const loadUser = () => async (dispatch) => {
   try {
     dispatch({ type: "LoadUserRequest" });
-    const { data } = await axios.get(`${server}/user/getuser`, {
+    const { data } = await axios.get(`${server}/user/get-user`, {
       withCredentials: true,
     });
     dispatch({ type: "LoadUserSuccess", payload: data.user });
@@ -21,7 +21,7 @@ export const loadUser = () => async (dispatch) => {
 export const loadSeller = () => async (dispatch) => {
   try {
     dispatch({ type: "LoadSellerRequest" });
-    const { data } = await axios.get(`${server}/shop/get-shop`, {
+    const { data } = await axios.get(`${server}/shop/get-seller`, {
       withCredentials: true,
     });
 

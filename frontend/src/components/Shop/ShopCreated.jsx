@@ -20,6 +20,11 @@ const ShopCreated = () => {
   const handleFileInputChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      // Optional: Add file size check
+      if (file.size > 2 * 1024 * 1024) {
+        toast.error("Image size should be less than 2MB");
+        return;
+      }
       setAvatar(file);
     }
   };
@@ -42,15 +47,13 @@ const ShopCreated = () => {
     formData.append("avatar", avatar);
 
     try {
-      const response = await axios.post(
-        `${server}/shop/create-shop`,
-        formData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-          withCredentials: true,
-        }
-      );
+      const response = await axios.post(`${server}/shop/create-shop`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+        withCredentials: true,
+      });
+
       toast.success(response.data.message);
+      // Clear form
       setEmail("");
       setShopName("");
       setPassword("");
@@ -71,131 +74,117 @@ const ShopCreated = () => {
           Create your shop
         </h2>
       </div>
+
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
           <form className="space-y-6" onSubmit={handleSubmit}>
             {/* Shop Name */}
             <div>
-              <label htmlFor="shopName" className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-gray-700">
                 Shop Name
               </label>
               <input
                 type="text"
-                name="shopName"
-                id="shopName"
                 required
                 value={shopName}
                 onChange={(e) => setShopName(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
 
             {/* Email */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-gray-700">
                 Email address
               </label>
               <input
                 type="email"
-                name="email"
-                id="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
 
-            {/* Password with toggle */}
+            {/* Password */}
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-gray-700">
                 Password
               </label>
               <div className="mt-1 relative">
                 <input
                   type={showPassword ? "text" : "password"}
-                  name="password"
-                  id="password"
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500"
                 />
                 <div
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5 cursor-pointer"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm cursor-pointer"
                 >
-                  {showPassword ? (
-                    <FiEye className="text-gray-500" />
-                  ) : (
-                    <FiEyeOff className="text-gray-500" />
-                  )}
+                  {showPassword ? <FiEye /> : <FiEyeOff />}
                 </div>
               </div>
             </div>
 
             {/* Phone Number */}
             <div>
-              <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-gray-700">
                 Phone Number
               </label>
               <input
                 type="text"
-                name="phoneNumber"
-                id="phoneNumber"
                 required
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
 
             {/* Zip Code */}
             <div>
-              <label htmlFor="zipCode" className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-gray-700">
                 Zip Code
               </label>
               <input
                 type="text"
-                name="zipCode"
-                id="zipCode"
                 required
                 value={zipCode}
                 onChange={(e) => setZipCode(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
 
             {/* Address */}
             <div>
-              <label htmlFor="address" className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-gray-700">
                 Address
               </label>
               <textarea
-                name="address"
-                id="address"
                 required
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
                 rows={3}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
 
             {/* Avatar Upload */}
             <div>
-              <label htmlFor="avatar" className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-gray-700">
                 Shop Avatar
               </label>
               <div className="mt-2 flex items-center">
                 <span className="inline-block h-8 w-8 rounded-full overflow-hidden">
                   {avatar ? (
                     <img
-src={data.images[0]?.url}                      alt="avatar"
+                      src={URL.createObjectURL(avatar)}
+                      alt="avatar"
                       className="h-full w-full object-cover rounded-full"
                     />
                   ) : (
-                    <RxAvatar className="h-8 w-8" />
+                    <RxAvatar className="h-8 w-8 text-gray-500" />
                   )}
                 </span>
                 <label
@@ -205,7 +194,6 @@ src={data.images[0]?.url}                      alt="avatar"
                   <span>Upload</span>
                   <input
                     type="file"
-                    name="avatar"
                     id="file-input"
                     accept=".jpg,.jpeg,.png"
                     onChange={handleFileInputChange}
@@ -225,7 +213,7 @@ src={data.images[0]?.url}                      alt="avatar"
               </button>
             </div>
 
-            {/* Already have an account */}
+            {/* Already have account */}
             <div className={`${styles.noramlFlex} w-full justify-center`}>
               <h4 className="text-sm text-gray-600">Already have an account?</h4>
               <Link to="/shop-login" className="text-blue-600 pl-2 text-sm">

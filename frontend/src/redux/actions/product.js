@@ -1,13 +1,13 @@
 import axios from "axios";
 import { server } from "../../server";
 
-// Create Product ✅
+// Create Product 
 export const createProduct = (newForm) => async (dispatch) => {
   try {
     dispatch({ type: "productCreateRequest" });
     const config = {
       headers: { "Content-Type": "multipart/form-data" },
-      withCredentials: true, // ✅ ensures auth cookie is sent
+      withCredentials: true, //ensures auth cookie is sent
     };
     const { data } = await axios.post(
       `${server}/product/create-product`,
@@ -23,13 +23,13 @@ export const createProduct = (newForm) => async (dispatch) => {
   }
 };
 
-// Get All Products of a Shop ✅
+// Get All Products of a Shop 
 export const getAllProductsShop = (id) => async (dispatch) => {
   try {
     dispatch({ type: "getAllProductsShopRequest" });
     const { data } = await axios.get(
       `${server}/product/get-all-products-shop/${id}`,
-      { withCredentials: true } // ✅ key fix to preserve auth
+      { withCredentials: true } //  key fix to preserve auth
     );
     dispatch({ type: "getAllProductsShopSuccess", payload: data.products });
   } catch (error) {
@@ -40,7 +40,7 @@ export const getAllProductsShop = (id) => async (dispatch) => {
   }
 };
 
-// Delete Product ✅
+// Delete Product 
 export const deleteProduct = (id) => async (dispatch) => {
   try {
     dispatch({ type: "deleteProductRequest" });
