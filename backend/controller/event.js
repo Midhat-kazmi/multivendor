@@ -67,6 +67,7 @@ router.get("/get-all-events/:id", async (req, res) => {
 });
 
 // ================== DELETE SHOP EVENT ==================
+// ================== DELETE SHOP EVENT ==================
 router.delete("/delete-shop-event/:id", isSeller, async (req, res) => {
   try {
     const event = await Event.findById(req.params.id);
@@ -75,15 +76,10 @@ router.delete("/delete-shop-event/:id", isSeller, async (req, res) => {
       return res.status(404).json({ success: false, message: "Event not found" });
     }
 
-    // Delete associated local image files
-    event.images.forEach((img) => {
-      const filePath = `uploads/${img.public_id}`;
-      if (fs.existsSync(filePath)) {
-        fs.unlink(filePath, (err) => {
-          if (err) console.error("File delete error:", err);
-        });
-      }
-    });
+    // Delete images from Cloudinary
+    for (const img of event.images) {
+      await cloudinary.uploader.destroy(img.public_id);
+    }
 
     await Event.findByIdAndDelete(req.params.id);
 
