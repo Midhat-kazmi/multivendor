@@ -85,7 +85,7 @@ router.post("/login-user", async (req, res) => {
   }
 });
 
-// =============== Load User ===============
+// =============== Load User ==============
 router.get("/get-user", isAuthenticated, async (req, res) => {
   try {
     const user = await User.findById(req.user._id);

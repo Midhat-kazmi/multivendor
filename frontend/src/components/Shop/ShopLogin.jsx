@@ -29,7 +29,7 @@ const ShopLogin = () => {
       dispatch({ type: "LoadSellerRequest" });
       
       console.log("Fetching shop data...");
-      const { data: sellerData } = await axios.get(`${server}/shop/get-shop`, {
+      const { data: sellerData } = await axios.get(`${server}/shop/get-seller`, {
         withCredentials: true,
       });
       console.log("Get shop response:", sellerData);

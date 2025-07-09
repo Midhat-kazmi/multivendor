@@ -3,6 +3,7 @@ import { server } from "../../server";
 
 // get all sellers --- admin
 export const getAllSellers = () => async (dispatch) => {
+  
   try {
     dispatch({
       type: "getAllSellersRequest",
@@ -30,7 +31,7 @@ export const getAllSellers = () => async (dispatch) => {
   try {
     dispatch({ type: "LoadSellerRequest" });
 
-    const { data } = await axios.get(`${server}/shop/get-shop`, {
+    const { data } = await axios.get(`${server}/shop/get-seller`, {
       withCredentials: true,
     });
 
