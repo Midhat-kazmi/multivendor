@@ -12,7 +12,7 @@ const sendShopToken = require("../utils/sendShopToken");
 // Create activation token
 const createActivationToken = (seller) => {
   return jwt.sign(seller, process.env.ACTIVATION_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES,
+    expiresIn: "5m",
   });
 };
 
