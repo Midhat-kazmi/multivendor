@@ -17,7 +17,6 @@ const createActivationToken = (seller) => {
 };
 
 // ========== Create Shop ==========
-// ========== Create Shop ==========
 router.post("/create-shop", async (req, res) => {
   try {
     const { name, email, password, address, zipCode, phoneNumber, avatar } = req.body;

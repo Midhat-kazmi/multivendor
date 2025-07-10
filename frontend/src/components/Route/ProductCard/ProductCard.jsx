@@ -25,6 +25,7 @@ const ProductCard = ({ data, isEvent }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
+      console.log("Product images:", data.images);
     if (wishlist && wishlist.find((i) => i._id === data._id)) {
       setClick(true);
     } else {
