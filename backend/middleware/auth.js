@@ -18,9 +18,6 @@ exports.isAuthenticated = (async(req,res,next) => {
 
 
 
-const jwt = require("jsonwebtoken");
-const Shop = require("../model/shop");
-
 exports.isSeller = async (req, res, next) => {
   try {
     const token = req.cookies.shop_token;
@@ -41,14 +38,13 @@ exports.isSeller = async (req, res, next) => {
       return res.status(404).json({ success: false, message: "Shop not found" });
     }
 
-    req.seller = shop;
+    req.seller = shop
     next();
   } catch (error) {
     console.error("Auth middleware error:", error);
     res.status(401).json({ success: false, message: "Unauthorized access" });
   }
 };
-
 
 
 exports.isAdmin = (...roles) => {
