@@ -1,5 +1,5 @@
 import LoginPage from "../pages/login";
-import SignupPage from "../pages/Signup.jsx";
+import SignupPage from "../pages/Signup";
 import ActivationPage from "../pages/ActivationPage";
 import HomePage from "../pages/HomePage";
 import ProductsPage from "../pages/ProductsPage";
