@@ -24,6 +24,9 @@ const ShopLogin = () => {
         { withCredentials: true }
       );
       console.log("Login response:", res.data);
+
+          await new Promise((resolve) => setTimeout(resolve, 300));
+
       
       // Dispatch loadSeller action after successful login
       dispatch({ type: "LoadSellerRequest" });
