@@ -41,7 +41,7 @@ const ShopInfo = ({ isOwner }) => {
     dispatch({ type: "sellerLogout" });
 
     // Optional: Clear any stored seller tokens or info
-    localStorage.removeItem("seller_token");
+    localStorage.removeItem("shop_token");
 
     toast.success("Logged out successfully");
     navigate("/shop-login");
