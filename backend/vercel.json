@@ -1,7 +1,6 @@
 {
   "version": 2,
   "name": "multivendor",
-
   "builds": [
     {
       "src": "server.js",
@@ -10,7 +9,15 @@
   ],
   "routes": [
     {
-      "src": "/(.*)",
+      "src": "/uploads/(.*)", 
+      "dest": "/uploads/$1"
+    },
+    {
+      "src": "/api/(.*)", 
+      "dest": "/server.js"
+    },
+    {
+      "src": "/(.*)",  
       "dest": "/server.js"
     }
   ]
