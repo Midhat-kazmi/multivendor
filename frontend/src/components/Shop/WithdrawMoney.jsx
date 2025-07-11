@@ -6,7 +6,7 @@ import { RxCross1 } from "react-icons/rx";
 import axios from "axios";
 import { server } from "../../server";
 import { toast } from "react-toastify";
-import { loadSeller } from "../../redux/actions/user";
+import { loadSeller } from "../../redux/actions/seller";
 import { AiOutlineDelete } from "react-icons/ai";
 
 const WithdrawMoney = () => {

@@ -4,7 +4,7 @@ import { server } from "../../server";
 import { AiOutlineCamera } from "react-icons/ai";
 import styles from "../../styles/styles";
 import axios from "axios";
-import { loadSeller } from "../../redux/actions/user";
+import { loadSeller } from "../../redux/actions/seller";
 import { toast } from "react-toastify";
 
 const ShopSettings = () => {
