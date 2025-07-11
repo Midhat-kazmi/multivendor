@@ -1,5 +1,3 @@
-// Fix reducer: use consistent action names
-
 import { createReducer } from "@reduxjs/toolkit";
 
 const initialState = {
@@ -12,23 +10,23 @@ const initialState = {
 
 export const eventReducer = createReducer(initialState, (builder) => {
   builder
-    // Create Event
     .addCase("eventCreateRequest", (state) => {
       state.isLoading = true;
-      state.success = false;
+      state.error = null;
     })
     .addCase("eventCreateSuccess", (state, action) => {
       state.isLoading = false;
-      state.event = action.payload;
       state.success = true;
+      state.event = action.payload;
     })
     .addCase("eventCreateFail", (state, action) => {
       state.isLoading = false;
       state.error = action.payload;
       state.success = false;
     })
-
-    // Get all events of shop
+    .addCase("eventCreateReset", (state) => {
+      state.success = false;
+    })
     .addCase("getAllEventsShopRequest", (state) => {
       state.isLoading = true;
     })
@@ -40,35 +38,28 @@ export const eventReducer = createReducer(initialState, (builder) => {
       state.isLoading = false;
       state.error = action.payload;
     })
-
-    // Delete event
     .addCase("deleteEventRequest", (state) => {
       state.isLoading = true;
     })
     .addCase("deleteEventSuccess", (state, action) => {
       state.isLoading = false;
-      // Remove deleted event from events array
-      state.events = state.events.filter((event) => event._id !== action.payload.id);
+      state.events = state.events.filter((e) => e._id !== action.payload.id);
     })
     .addCase("deleteEventFail", (state, action) => {
       state.isLoading = false;
       state.error = action.payload;
     })
-
-    // Get all events (public)
     .addCase("getAlleventsRequest", (state) => {
       state.isLoading = true;
     })
     .addCase("getAlleventsSuccess", (state, action) => {
       state.isLoading = false;
-      state.allEvents = action.payload;
+      state.events = action.payload;
     })
     .addCase("getAlleventsFailed", (state, action) => {
       state.isLoading = false;
       state.error = action.payload;
     })
-
-    // Clear errors
     .addCase("clearErrors", (state) => {
       state.error = null;
     });
