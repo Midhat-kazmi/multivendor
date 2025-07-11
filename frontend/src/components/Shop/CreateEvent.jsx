@@ -93,22 +93,20 @@ const CreateEvent = () => {
       return;
     }
 
-    const formData = new FormData();
-    formData.append("name", name);
-    formData.append("description", description);
-    formData.append("category", category);
-    formData.append("tags", tags);
-    formData.append("originalPrice", originalPrice || 0);
-    formData.append("discountPrice", discountPrice);
-    formData.append("stock", stock);
-    formData.append("start_Date", startDate.toISOString());
-    formData.append("end_Date", endDate.toISOString());
+    const payload = {
+      name,
+      description,
+      category,
+      tags,
+      originalPrice: originalPrice || 0,
+      discountPrice,
+      stock,
+      start_Date: startDate.toISOString(),
+      end_Date: endDate.toISOString(),
+      images, // base64 images
+    };
 
-    images.forEach((img) => {
-      formData.append("images", img); 
-    });
-
-    dispatch(createEvent(formData));
+    dispatch(createEvent(payload));
   };
 
   return (
