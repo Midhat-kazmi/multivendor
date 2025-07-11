@@ -52,7 +52,9 @@ import {
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { loadSeller, loadUser } from "./redux/actions/user";
+import {  loadUser } from "./redux/actions/user";
+import {  loadSeller } from "./redux/actions/seller";
+
 import ProtectedRoute from "./routes/ProtectedRoute";
 import ProtectedAdminRoute from "./routes/ProtectedAdminRoute";
 import { ShopHomePage } from "./ShopRoutes";

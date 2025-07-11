@@ -1,6 +1,10 @@
 import axios from "axios";
 import { server } from "../../server";
 
+
+
+
+
 // Get all sellers --- admin
 export const getAllSellers = () => async (dispatch) => {
   try {
