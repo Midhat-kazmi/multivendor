@@ -9,8 +9,8 @@ const EventCard = ({ active, data }) => {
   const { cart } = useSelector((state) => state.cart);
   const dispatch = useDispatch();
 
-  // Don't render if no data
-  if (!data) return null;
+  // FIX: Skip rendering if data is missing or malformed
+  if (!data || !data.images || !Array.isArray(data.images)) return null;
 
   const addToCartHandler = () => {
     const isItemExists = cart?.find((item) => item._id === data._id);
@@ -33,7 +33,7 @@ const EventCard = ({ active, data }) => {
       {/* Image Section */}
       <div className="w-full lg:w-1/2 flex items-center justify-center">
         <img
-          src={data.images?.[0]?.url || "/fallback.jpg"}
+          src={data.images[0]?.url || "/fallback.jpg"}
           alt={data.name || "Product"}
           className="w-full max-w-[350px] h-auto object-contain rounded-lg"
         />
