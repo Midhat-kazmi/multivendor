@@ -15,7 +15,6 @@ router.post("/create-event", isSeller, async (req, res) => {
       return res.status(404).json({ success: false, message: "Shop doesn't exist!" });
     }
 
-    // Ensure images is an array
     let images = [];
     if (typeof req.body.images === "string") {
       images.push(req.body.images);
@@ -36,24 +35,15 @@ router.post("/create-event", isSeller, async (req, res) => {
       });
     }
 
-    // Convert dates from string to Date
-    const startDate = new Date(req.body.start_Date);
-    const endDate = new Date(req.body.end_Date);
-
     const eventData = {
-      name: req.body.name,
-      description: req.body.description,
-      category: req.body.category,
-      tags: req.body.tags,
-      originalPrice: req.body.originalPrice || 0,
-      discountPrice: req.body.discountPrice,
-      stock: req.body.stock,
-      images: imagesLinks,
+      ...req.body,
       shopId: shop._id,
       shop: shop,
-      start_Date: startDate,
-      end_Date: endDate,
+      images: imagesLinks,
     };
+
+    // ✅ LOG the event data before saving
+    console.log("eventData:", eventData);
 
     const event = await Event.create(eventData);
 
@@ -61,9 +51,12 @@ router.post("/create-event", isSeller, async (req, res) => {
       success: true,
       event,
     });
+
   } catch (error) {
-    console.error("Event creation error:", error.message);
-    res.status(500).json({ success: false, message: "Event creation failed" });
+    // ✅ LOG the actual error
+    console.error("Event creation error:", error.message, error.stack);
+    
+    res.status(500).json({ success: false, message: error.message });
   }
 });
 
