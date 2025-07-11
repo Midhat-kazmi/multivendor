@@ -79,7 +79,8 @@ const UserInbox = () => {
     const getMessage = async () => {
       try {
         const response = await axios.get(
-          `${server}/message/get-all-messages/${currentChat?._id}`
+          `${server}/message/get-all-messages/${currentChat?._id}`,
+          { withCredentials: true }
         );
         setMessages(response.data.messages);
       } catch (error) {

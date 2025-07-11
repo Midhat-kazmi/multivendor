@@ -292,13 +292,13 @@ const ShippingInfo = ({
                   type="checkbox"
                   className="mr-3"
                   value={item.addressType}
-                  onClick={() =>
-                    setAddress1(item.address1) ||
-                    setAddress2(item.address2) ||
-                    setZipCode(item.zipCode) ||
-                    setCountry(item.country) ||
-                    setCity(item.city)
-                  }
+                  onClick={() => {
+                    setAddress1(item.address1);
+                    setAddress2(item.address2);
+                    setZipCode(item.zipCode);
+                    setCountry(item.country);
+                    setCity(item.city);
+                  }}
                 />
                 <h2>{item.addressType}</h2>
               </div>
