@@ -20,7 +20,6 @@ const ShopCreated = () => {
   const handleFileInputChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Optional: Add file size check
       if (file.size > 2 * 1024 * 1024) {
         toast.error("Image size should be less than 2MB");
         return;
@@ -28,6 +27,14 @@ const ShopCreated = () => {
       setAvatar(file);
     }
   };
+
+  const toBase64 = (file) =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (err) => reject(err);
+    });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -37,22 +44,25 @@ const ShopCreated = () => {
       return;
     }
 
-    const formData = new FormData();
-    formData.append("email", email);
-    formData.append("shopName", shopName);
-    formData.append("password", password);
-    formData.append("zipCode", zipCode);
-    formData.append("address", address);
-    formData.append("phoneNumber", phoneNumber);
-    formData.append("avatar", avatar);
-
     try {
-      const response = await axios.post(`${server}/shop/create-shop`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-        withCredentials: true,
-      });
+      const base64Avatar = await toBase64(avatar);
+
+      const response = await axios.post(
+        `${server}/shop/create-shop`,
+        {
+          email,
+          shopName,
+          password,
+          zipCode,
+          address,
+          phoneNumber,
+          avatar: base64Avatar,
+        },
+        { withCredentials: true }
+      );
 
       toast.success(response.data.message);
+
       // Clear form
       setEmail("");
       setShopName("");
@@ -78,11 +88,8 @@ const ShopCreated = () => {
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
           <form className="space-y-6" onSubmit={handleSubmit}>
-            {/* Shop Name */}
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Shop Name
-              </label>
+              <label className="block text-sm font-medium text-gray-700">Shop Name</label>
               <input
                 type="text"
                 required
@@ -92,11 +99,8 @@ const ShopCreated = () => {
               />
             </div>
 
-            {/* Email */}
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Email address
-              </label>
+              <label className="block text-sm font-medium text-gray-700">Email address</label>
               <input
                 type="email"
                 required
@@ -106,11 +110,8 @@ const ShopCreated = () => {
               />
             </div>
 
-            {/* Password */}
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Password
-              </label>
+              <label className="block text-sm font-medium text-gray-700">Password</label>
               <div className="mt-1 relative">
                 <input
                   type={showPassword ? "text" : "password"}
@@ -128,11 +129,8 @@ const ShopCreated = () => {
               </div>
             </div>
 
-            {/* Phone Number */}
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Phone Number
-              </label>
+              <label className="block text-sm font-medium text-gray-700">Phone Number</label>
               <input
                 type="text"
                 required
@@ -142,11 +140,8 @@ const ShopCreated = () => {
               />
             </div>
 
-            {/* Zip Code */}
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Zip Code
-              </label>
+              <label className="block text-sm font-medium text-gray-700">Zip Code</label>
               <input
                 type="text"
                 required
@@ -156,11 +151,8 @@ const ShopCreated = () => {
               />
             </div>
 
-            {/* Address */}
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Address
-              </label>
+              <label className="block text-sm font-medium text-gray-700">Address</label>
               <textarea
                 required
                 value={address}
@@ -170,11 +162,8 @@ const ShopCreated = () => {
               />
             </div>
 
-            {/* Avatar Upload */}
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Shop Avatar
-              </label>
+              <label className="block text-sm font-medium text-gray-700">Shop Avatar</label>
               <div className="mt-2 flex items-center">
                 <span className="inline-block h-8 w-8 rounded-full overflow-hidden">
                   {avatar ? (
@@ -203,7 +192,6 @@ const ShopCreated = () => {
               </div>
             </div>
 
-            {/* Submit Button */}
             <div>
               <button
                 type="submit"
@@ -213,7 +201,6 @@ const ShopCreated = () => {
               </button>
             </div>
 
-            {/* Already have account */}
             <div className={`${styles.noramlFlex} w-full justify-center`}>
               <h4 className="text-sm text-gray-600">Already have an account?</h4>
               <Link to="/shop-login" className="text-blue-600 pl-2 text-sm">

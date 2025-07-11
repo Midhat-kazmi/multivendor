@@ -83,7 +83,7 @@ router.post("/login-shop", async (req, res) => {
     if (!isValid)
       return res.status(400).json({ success: false, message: "Invalid credentials" });
 
-    sendShopToken(seller, 201, res);
+    sendShopToken(seller, 201, res, true);
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
