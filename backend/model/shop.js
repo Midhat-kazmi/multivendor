@@ -3,7 +3,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const withdraw = require("./withdraw");
 const shopSchema = new mongoose.Schema({
-  name: {
+shopName: {
     type: String,
     required: [true, "Please enter your shop name!"],
   },

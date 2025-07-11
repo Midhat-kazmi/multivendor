@@ -19,9 +19,9 @@ const createActivationToken = (seller) => {
 // ========== Create Shop ==========
 router.post("/create-shop", async (req, res) => {
   try {
-    const { name, email, password, address, zipCode, phoneNumber, avatar } = req.body;
+    const { shopName, email, password, address, zipCode, phoneNumber, avatar } = req.body;
 
-    if (!name || !email || !password) {
+    if (!shopName || !email || !password) {
       return res.status(400).json({ success: false, message: "All fields are required" });
     }
 
@@ -35,7 +35,7 @@ router.post("/create-shop", async (req, res) => {
     });
 
     const seller = {
-      name,
+      shopName,
       email,
       password,
       address,
@@ -160,11 +160,11 @@ router.put("/update-shop-avatar", isSeller, async (req, res) => {
 // ========== Update Seller Info ==========
 router.put("/update-seller-info", isSeller, async (req, res) => {
   try {
-    const { name, description, address, phoneNumber, zipCode } = req.body;
+    const { shopName, description, address, phoneNumber, zipCode } = req.body;
     const seller = await Shop.findById(req.seller._id);
     if (!seller) return res.status(404).json({ success: false, message: "Seller not found" });
 
-    seller.name = name;
+    seller.name = shopName;
     seller.description = description;
     seller.address = address;
     seller.phoneNumber = phoneNumber;
