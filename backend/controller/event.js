@@ -9,15 +9,13 @@ const { isSeller, isAuthenticated, isAdmin } = require("../middleware/auth");
 // ================== CREATE EVENT ==================
 router.post("/create-event", isSeller, async (req, res) => {
   try {
-    const shopId = req.body.shopId;
-    const shop = await Shop.findById(shopId);
+    const shop = req.seller; // use authenticated shop
 
     if (!shop) {
       return res.status(404).json({ success: false, message: "Shop doesn't exist!" });
     }
 
     let images = [];
-
     if (typeof req.body.images === "string") {
       images.push(req.body.images);
     } else {
@@ -39,8 +37,9 @@ router.post("/create-event", isSeller, async (req, res) => {
 
     const eventData = {
       ...req.body,
+      shopId: shop._id,     // secure and trusted
+      shop: shop,           //  actual shop object
       images: imagesLinks,
-      shop,
     };
 
     const event = await Event.create(eventData);

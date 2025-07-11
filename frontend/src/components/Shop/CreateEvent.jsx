@@ -103,7 +103,7 @@ const CreateEvent = () => {
     formData.append("stock", stock);
     formData.append("shopId", seller._id);
     formData.append("start_Date", startDate.toISOString());
-    formData.append("Finish_Date", endDate.toISOString());
+    formData.append("end_Date", endDate.toISOString());
 
     images.forEach((img) => {
       formData.append("images", img); // Base64 string
