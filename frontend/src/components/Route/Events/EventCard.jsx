@@ -1,19 +1,52 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import {
+  AiFillHeart,
+  AiOutlineEye,
+  AiOutlineHeart,
+  AiOutlineShoppingCart,
+} from "react-icons/ai";
 import { Link } from "react-router-dom";
+import styles from "../../../styles/styles";
 import { useDispatch, useSelector } from "react-redux";
+import {
+  addToWishlist,
+  removeFromWishlist,
+} from "../../../redux/actions/wishlist";
 import { addToCart } from "../../../redux/actions/cart";
 import { toast } from "react-toastify";
+import ProductDetailsCard from "../ProductDetailsCard/ProductDetailCard";
 import CountDown from "./CountDown";
+import Ratings from "../../Products/Ratings";
 
-const EventCard = ({ active, data }) => {
+const EventCard = ({ data }) => {
+  const { wishlist } = useSelector((state) => state.wishlist);
   const { cart } = useSelector((state) => state.cart);
+  const [click, setClick] = useState(false);
+  const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
 
-  // FIX: Skip rendering if data is missing or malformed
+  useEffect(() => {
+    if (wishlist && wishlist.find((i) => i._id === data._id)) {
+      setClick(true);
+    } else {
+      setClick(false);
+    }
+  }, [wishlist]);
+
   if (!data || !data.images || !Array.isArray(data.images)) return null;
 
+  const removeFromWishlistHandler = () => {
+    setClick(false);
+    dispatch(removeFromWishlist(data));
+  };
+
+  const addToWishlistHandler = () => {
+    setClick(true);
+    dispatch(addToWishlist(data));
+  };
+
   const addToCartHandler = () => {
-    const isItemExists = cart?.find((item) => item._id === data._id);
+    const isItemExists = cart?.find((i) => i._id === data._id);
     if (isItemExists) {
       toast.error("Item already in cart!");
     } else if (data.stock < 1) {
@@ -25,63 +58,96 @@ const EventCard = ({ active, data }) => {
   };
 
   return (
-    <div
-      className={`w-full bg-white rounded-lg shadow-sm ${
-        active ? "" : "mb-12"
-      } lg:flex p-4 gap-6`}
-    >
-      {/* Image Section */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center">
-        <img
-          src={data.images[0]?.url || "/fallback.jpg"}
-          alt={data.name || "Product"}
-          className="w-full max-w-[350px] h-auto object-contain rounded-lg"
-        />
-      </div>
+    <>
+      <div className="w-full h-[430px] bg-white rounded-lg shadow-sm p-3 relative cursor-pointer">
+        {/* Product Image */}
+        <Link to={`/product/${data._id}?isEvent=true`}>
+          <img
+            src={data.images[0]?.url || "/fallback.jpg"}
+            alt={data.name}
+            className="w-full h-[170px] object-contain"
+          />
+        </Link>
 
-      {/* Details Section */}
-      <div className="w-full lg:w-1/2 flex flex-col justify-center">
-        <h2 className="text-2xl font-semibold mb-2 text-gray-800">
-          {data.name}
-        </h2>
-        <p className="text-gray-600 text-sm mb-3">{data.description}</p>
+        {/* Shop name */}
+        <Link to={`/shop/preview/${data?.shop._id}`}>
+          <h5 className={`${styles.shop_name}`}>{data.shop.name}</h5>
+        </Link>
 
-        {/* Price and Sold */}
-        <div className="flex items-center justify-between py-2">
-          <div className="flex items-center space-x-2">
-            {data.originalPrice > data.discountPrice && (
-              <h5 className="text-red-500 line-through text-lg font-medium">
-                ${data.originalPrice}
-              </h5>
-            )}
-            <h5 className="text-gray-800 text-xl font-bold">
+        {/* Product name */}
+        <Link to={`/product/${data._id}?isEvent=true`}>
+          <h4 className="pb-1 font-[500]">
+            {data.name.length > 40 ? data.name.slice(0, 40) + "..." : data.name}
+          </h4>
+        </Link>
+
+        {/* Ratings */}
+        <div className="flex">
+          <Ratings rating={data?.ratings} />
+        </div>
+
+        {/* Price + Sold */}
+        <div className="py-2 flex items-center justify-between">
+          <div className="flex">
+            <h5 className={`${styles.productDiscountPrice}`}>
               ${data.discountPrice}
             </h5>
+            {data.originalPrice > data.discountPrice && (
+              <h4 className={`${styles.price}`}>
+                ${data.originalPrice}
+              </h4>
+            )}
           </div>
-          <span className="text-green-600 text-base font-medium">
+          <span className="font-[400] text-[17px] text-[#68d284]">
             {data.sold_out} sold
           </span>
         </div>
 
         {/* Countdown Timer */}
-        <CountDown data={data} />
+        <div className="mt-1">
+          <CountDown data={data} />
+        </div>
 
-        {/* Buttons */}
-        <div className="flex items-center mt-4 space-x-4">
-          <Link to={`/product/${data._id}?isEvent=true`}>
-            <button className="bg-[#333] text-white px-5 py-2 rounded hover:bg-black transition">
-              See Details
-            </button>
-          </Link>
-          <button
+        {/* Side icons */}
+        <div>
+          {click ? (
+            <AiFillHeart
+              size={22}
+              className="cursor-pointer absolute right-2 top-5"
+              onClick={removeFromWishlistHandler}
+              color="red"
+              title="Remove from wishlist"
+            />
+          ) : (
+            <AiOutlineHeart
+              size={22}
+              className="cursor-pointer absolute right-2 top-5"
+              onClick={addToWishlistHandler}
+              color="#333"
+              title="Add to wishlist"
+            />
+          )}
+
+          <AiOutlineEye
+            size={22}
+            className="cursor-pointer absolute right-2 top-14"
+            onClick={() => setOpen(true)}
+            color="#333"
+            title="Quick view"
+          />
+
+          <AiOutlineShoppingCart
+            size={25}
+            className="cursor-pointer absolute right-2 top-24"
             onClick={addToCartHandler}
-            className="bg-[#E94560] text-white px-5 py-2 rounded hover:bg-[#d0334f] transition"
-          >
-            Add to Cart
-          </button>
+            color="#444"
+            title="Add to cart"
+          />
+
+          {open && <ProductDetailsCard setOpen={setOpen} data={data} />}
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
