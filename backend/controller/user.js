@@ -3,7 +3,6 @@ const router = express.Router();
 const path = require("path");
 const jwt = require("jsonwebtoken");
 const cloudinary = require("cloudinary").v2;
-const { upload } = require("../utils/multer");
 const User = require("../model/user");
 const sendToken = require("../utils/jwtToken");
 const sendMail = require("../utils/sendMail");
