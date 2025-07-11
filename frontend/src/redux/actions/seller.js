@@ -1,18 +1,14 @@
 import axios from "axios";
 import { server } from "../../server";
 
-// get all sellers --- admin
+// Get all sellers --- admin
 export const getAllSellers = () => async (dispatch) => {
-  
   try {
-    dispatch({
-      type: "getAllSellersRequest",
-    });
+    dispatch({ type: "getAllSellersRequest" });
 
     const { data } = await axios.get(`${server}/shop/admin-all-sellers`, {
       withCredentials: true,
     });
-    
 
     dispatch({
       type: "getAllSellersSuccess",
@@ -26,8 +22,8 @@ export const getAllSellers = () => async (dispatch) => {
   }
 };
 
-// Load seller data --> Login ->
- export const loadSeller = () => async (dispatch) => {
+// Load seller data --> Login
+export const loadSeller = () => async (dispatch) => {
   try {
     dispatch({ type: "LoadSellerRequest" });
 
@@ -35,13 +31,13 @@ export const getAllSellers = () => async (dispatch) => {
       withCredentials: true,
     });
 
-    if (!data.shop) {
-      throw new Error("No shop data received");
+    if (!data.seller) {
+      throw new Error("No seller data received");
     }
 
     dispatch({
       type: "LoadSellerSuccess",
-      payload: data.shop,
+      payload: data.seller,
     });
   } catch (error) {
     dispatch({
