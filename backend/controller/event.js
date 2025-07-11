@@ -15,6 +15,7 @@ router.post("/create-event", isSeller, async (req, res) => {
       return res.status(404).json({ success: false, message: "Shop doesn't exist!" });
     }
 
+    // Ensure images is an array
     let images = [];
     if (typeof req.body.images === "string") {
       images.push(req.body.images);
@@ -35,11 +36,23 @@ router.post("/create-event", isSeller, async (req, res) => {
       });
     }
 
+    // Convert dates from string to Date
+    const startDate = new Date(req.body.start_Date);
+    const endDate = new Date(req.body.end_Date);
+
     const eventData = {
-      ...req.body,
-      shopId: shop._id,     // secure and trusted
-      shop: shop,           //  actual shop object
+      name: req.body.name,
+      description: req.body.description,
+      category: req.body.category,
+      tags: req.body.tags,
+      originalPrice: req.body.originalPrice || 0,
+      discountPrice: req.body.discountPrice,
+      stock: req.body.stock,
       images: imagesLinks,
+      shopId: shop._id,
+      shop: shop,
+      start_Date: startDate,
+      end_Date: endDate,
     };
 
     const event = await Event.create(eventData);
@@ -49,7 +62,7 @@ router.post("/create-event", isSeller, async (req, res) => {
       event,
     });
   } catch (error) {
-    console.error("Event creation error:", error);
+    console.error("Event creation error:", error.message);
     res.status(500).json({ success: false, message: "Event creation failed" });
   }
 });
@@ -60,7 +73,7 @@ router.get("/get-all-events/:id", async (req, res) => {
     const events = await Event.find({ shopId: req.params.id });
     res.status(200).json({ success: true, events });
   } catch (error) {
-    console.error("Get shop events error:", error);
+    console.error("Get shop events error:", error.message);
     res.status(500).json({ success: false, message: "Failed to get shop events" });
   }
 });
@@ -86,7 +99,7 @@ router.delete("/delete-shop-event/:id", isSeller, async (req, res) => {
       message: "Event deleted successfully!",
     });
   } catch (error) {
-    console.error("Delete event error:", error);
+    console.error("Delete event error:", error.message);
     res.status(500).json({ success: false, message: "Event deletion failed" });
   }
 });
@@ -97,7 +110,7 @@ router.get("/get-all-events", async (req, res) => {
     const events = await Event.find();
     res.status(200).json({ success: true, events });
   } catch (error) {
-    console.error("Get all events error:", error);
+    console.error("Get all events error:", error.message);
     res.status(500).json({ success: false, message: "Failed to fetch events" });
   }
 });
@@ -108,7 +121,7 @@ router.get("/admin-all-events", isAuthenticated, isAdmin("Admin"), async (req, r
     const events = await Event.find().sort({ createdAt: -1 });
     res.status(200).json({ success: true, events });
   } catch (error) {
-    console.error("Admin get events error:", error);
+    console.error("Admin get events error:", error.message);
     res.status(500).json({ success: false, message: "Failed to load events" });
   }
 });
