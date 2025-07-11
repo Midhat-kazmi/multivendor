@@ -15,6 +15,7 @@ const AllEvents = () => {
 
   useEffect(() => {
     if (seller?._id) {
+      console.log("Fetching events for seller:", seller._id);
       dispatch(getAllEventsShop(seller._id));
     }
   }, [dispatch, seller?._id]);
@@ -25,34 +26,14 @@ const AllEvents = () => {
     });
   };
 
+  if (!seller?._id) return <Loader />;
+
   const columns = [
     { field: "id", headerName: "Product Id", minWidth: 150, flex: 0.7 },
-    {
-      field: "name",
-      headerName: "Name",
-      minWidth: 180,
-      flex: 1.4,
-    },
-    {
-      field: "price",
-      headerName: "Price",
-      minWidth: 100,
-      flex: 0.6,
-    },
-    {
-      field: "Stock",
-      headerName: "Stock",
-      type: "number",
-      minWidth: 80,
-      flex: 0.5,
-    },
-    {
-      field: "sold",
-      headerName: "Sold out",
-      type: "number",
-      minWidth: 130,
-      flex: 0.6,
-    },
+    { field: "name", headerName: "Name", minWidth: 180, flex: 1.4 },
+    { field: "price", headerName: "Price", minWidth: 100, flex: 0.6 },
+    { field: "Stock", headerName: "Stock", type: "number", minWidth: 80, flex: 0.5 },
+    { field: "sold", headerName: "Sold out", type: "number", minWidth: 130, flex: 0.6 },
     {
       field: "Preview",
       flex: 0.8,
@@ -64,7 +45,6 @@ const AllEvents = () => {
         const product_name = d.replace(/\s+/g, "-");
         return (
           <Link to={`/event/${params.id}`}>
-
             <Button>
               <AiOutlineEye size={20} />
             </Button>

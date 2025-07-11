@@ -1,7 +1,7 @@
 import axios from "axios";
 import { server } from "../../server";
 
-// Create Event
+// ================== CREATE EVENT ==================
 export const createEvent = (formData) => async (dispatch) => {
   try {
     dispatch({ type: "eventCreateRequest" });
@@ -24,15 +24,18 @@ export const createEvent = (formData) => async (dispatch) => {
   }
 };
 
-
-// Get Events by Shop 
-export const getAllEventsShop = (id) => async (dispatch) => {
+// ================== GET EVENTS BY SHOP ==================
+export const getAllEventsShop = (shopId) => async (dispatch) => {
   try {
+    if (!shopId) return; // ✅ Guard against undefined shopId
+
     dispatch({ type: "getAllEventsShopRequest" });
+
     const { data } = await axios.get(
-      `${server}/event/get-all-events/${id}`,
-      { withCredentials: true } // added
+      `${server}/event/get-all-events/${shopId}`,
+      { withCredentials: true }
     );
+
     dispatch({ type: "getAllEventsShopSuccess", payload: data.events });
   } catch (error) {
     dispatch({
@@ -42,15 +45,17 @@ export const getAllEventsShop = (id) => async (dispatch) => {
   }
 };
 
-// Delete Event 
-export const deleteEvent = (id) => async (dispatch) => {
+// ================== DELETE EVENT ==================
+export const deleteEvent = (eventId) => async (dispatch) => {
   try {
     dispatch({ type: "deleteEventRequest" });
+
     const { data } = await axios.delete(
-      `${server}/event/delete-shop-event/${id}`,
+      `${server}/event/delete-shop-event/${eventId}`,
       { withCredentials: true }
     );
-    dispatch({ type: "deleteEventSuccess", payload: { id } });
+
+    dispatch({ type: "deleteEventSuccess", payload: { id: eventId } });
   } catch (error) {
     dispatch({
       type: "deleteEventFail",
@@ -59,11 +64,13 @@ export const deleteEvent = (id) => async (dispatch) => {
   }
 };
 
-// Get All Events (Public)
+// ================== GET ALL EVENTS (Public) ==================
 export const getAllEvents = () => async (dispatch) => {
   try {
     dispatch({ type: "getAlleventsRequest" });
+
     const { data } = await axios.get(`${server}/event/get-all-events`);
+
     dispatch({ type: "getAlleventsSuccess", payload: data.events });
   } catch (error) {
     dispatch({
@@ -72,6 +79,3 @@ export const getAllEvents = () => async (dispatch) => {
     });
   }
 };
-
-
-

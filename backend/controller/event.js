@@ -63,6 +63,7 @@ router.post("/create-event", isSeller, async (req, res) => {
 // ================== GET ALL EVENTS OF A SHOP ==================
 router.get("/get-all-events/:id", async (req, res) => {
   try {
+    console.log("GET EVENTS for Shop ID:", req.params.id); 
     const events = await Event.find({ shopId: req.params.id });
     res.status(200).json({ success: true, events });
   } catch (error) {
@@ -70,6 +71,7 @@ router.get("/get-all-events/:id", async (req, res) => {
     res.status(500).json({ success: false, message: "Failed to get shop events" });
   }
 });
+
 
 // ================== DELETE SHOP EVENT ==================
 router.delete("/delete-shop-event/:id", isSeller, async (req, res) => {
