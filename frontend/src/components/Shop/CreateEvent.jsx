@@ -112,78 +112,178 @@ const CreateEvent = () => {
     dispatch(createEvent(formData));
   };
 
-  return (
-    <div className="w-[90%] 800px:w-[50%] bg-white shadow h-[80vh] rounded-[4px] p-3 overflow-y-scroll">
-      <h5 className="text-[30px] font-Poppins text-center">Create Event</h5>
-      <form onSubmit={handleSubmit}>
-        <br />
+ return (
+  <div className="w-full max-w-4xl mx-auto bg-white shadow-md rounded-xl p-6 overflow-y-auto max-h-[85vh]">
+    <h2 className="text-2xl font-semibold text-center mb-6 font-Poppins">Create Event</h2>
+
+    <form onSubmit={handleSubmit} className="space-y-4">
+      {/* Name */}
+      <div>
+        <label className="block font-medium">
+          Name <span className="text-red-500">*</span>
+        </label>
+        <input
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className="w-full border border-gray-300 rounded-md px-4 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          placeholder="Event product name"
+        />
+      </div>
+
+      {/* Description */}
+      <div>
+        <label className="block font-medium">
+          Description <span className="text-red-500">*</span>
+        </label>
+        <textarea
+          rows="5"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          className="w-full border border-gray-300 rounded-md px-4 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          placeholder="Description..."
+        />
+      </div>
+
+      {/* Category */}
+      <div>
+        <label className="block font-medium">
+          Category <span className="text-red-500">*</span>
+        </label>
+        <select
+          className="w-full border border-gray-300 rounded-md px-4 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+        >
+          <option value="">Choose a category</option>
+          {categoriesData.map((cat) => (
+            <option value={cat.title} key={cat.title}>
+              {cat.title}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* Tags */}
+      <div>
+        <label className="block font-medium">Tags</label>
+        <input
+          type="text"
+          value={tags}
+          onChange={(e) => setTags(e.target.value)}
+          className="w-full border border-gray-300 rounded-md px-4 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          placeholder="Tags..."
+        />
+      </div>
+
+      {/* Prices & Stock */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div>
-          <label className="pb-2">Name <span className="text-red-500">*</span></label>
-          <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="input" placeholder="Event product name" />
+          <label className="block font-medium">Original Price</label>
+          <input
+            type="number"
+            value={originalPrice}
+            onChange={(e) => setOriginalPrice(e.target.value)}
+            className="w-full border border-gray-300 rounded-md px-4 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
         </div>
-        <br />
         <div>
-          <label className="pb-2">Description <span className="text-red-500">*</span></label>
-          <textarea rows="5" value={description} onChange={(e) => setDescription(e.target.value)} className="input" placeholder="Description..." />
+          <label className="block font-medium">
+            Discount Price <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="number"
+            value={discountPrice}
+            onChange={(e) => setDiscountPrice(e.target.value)}
+            className="w-full border border-gray-300 rounded-md px-4 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
         </div>
-        <br />
         <div>
-          <label className="pb-2">Category <span className="text-red-500">*</span></label>
-          <select className="input" value={category} onChange={(e) => setCategory(e.target.value)}>
-            <option value="">Choose a category</option>
-            {categoriesData.map((cat) => (
-              <option value={cat.title} key={cat.title}>{cat.title}</option>
-            ))}
-          </select>
+          <label className="block font-medium">
+            Stock <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="number"
+            value={stock}
+            onChange={(e) => setStock(e.target.value)}
+            className="w-full border border-gray-300 rounded-md px-4 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
         </div>
-        <br />
+      </div>
+
+      {/* Dates */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label className="pb-2">Tags</label>
-          <input type="text" value={tags} onChange={(e) => setTags(e.target.value)} className="input" placeholder="Tags..." />
+          <label className="block font-medium">
+            Start Date <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="date"
+            min={today}
+            value={startDate ? startDate.toISOString().slice(0, 10) : ""}
+            onChange={handleStartDateChange}
+            className="w-full border border-gray-300 rounded-md px-4 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
         </div>
-        <br />
         <div>
-          <label className="pb-2">Original Price</label>
-          <input type="number" value={originalPrice} onChange={(e) => setOriginalPrice(e.target.value)} className="input" />
+          <label className="block font-medium">
+            End Date <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="date"
+            min={minEndDate}
+            value={endDate ? endDate.toISOString().slice(0, 10) : ""}
+            onChange={handleEndDateChange}
+            className="w-full border border-gray-300 rounded-md px-4 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
         </div>
-        <br />
-        <div>
-          <label className="pb-2">Discount Price <span className="text-red-500">*</span></label>
-          <input type="number" value={discountPrice} onChange={(e) => setDiscountPrice(e.target.value)} className="input" />
+      </div>
+
+      {/* Image Upload */}
+      <div>
+        <label className="block font-medium">
+          Upload Images <span className="text-red-500">*</span>
+        </label>
+        <input
+          type="file"
+          multiple
+          accept="image/*"
+          onChange={handleImageChange}
+          className="hidden"
+          id="upload"
+        />
+        <label
+          htmlFor="upload"
+          className="cursor-pointer inline-flex items-center space-x-2 text-blue-600 mt-2 hover:underline"
+        >
+          <AiOutlinePlusCircle size={24} />
+          <span>Choose Images</span>
+        </label>
+        <div className="flex flex-wrap gap-3 mt-4">
+          {imagePreview.map((url, index) => (
+            <img
+              key={index}
+              src={url}
+              alt="Preview"
+              className="w-28 h-28 object-cover rounded-md border"
+            />
+          ))}
         </div>
-        <br />
-        <div>
-          <label className="pb-2">Stock <span className="text-red-500">*</span></label>
-          <input type="number" value={stock} onChange={(e) => setStock(e.target.value)} className="input" />
-        </div>
-        <br />
-        <div>
-          <label className="pb-2">Start Date <span className="text-red-500">*</span></label>
-          <input type="date" min={today} value={startDate ? startDate.toISOString().slice(0, 10) : ""} onChange={handleStartDateChange} className="input" />
-        </div>
-        <br />
-        <div>
-          <label className="pb-2">End Date <span className="text-red-500">*</span></label>
-          <input type="date" min={minEndDate} value={endDate ? endDate.toISOString().slice(0, 10) : ""} onChange={handleEndDateChange} className="input" />
-        </div>
-        <br />
-        <div>
-          <label className="pb-2">Upload Images <span className="text-red-500">*</span></label>
-          <input type="file" multiple accept="image/*" onChange={handleImageChange} className="hidden" id="upload" />
-          <div className="w-full flex items-center flex-wrap">
-            <label htmlFor="upload">
-              <AiOutlinePlusCircle size={30} className="mt-3" color="#555" />
-            </label>
-            {imagePreview.map((url, index) => (
-              <img key={index} src={url} alt="" className="h-[120px] w-[120px] object-cover m-2" />
-            ))}
-          </div>
-        </div>
-        <br />
-        <input type="submit" value="Create" className="input cursor-pointer bg-blue-500 text-white font-semibold" />
-      </form>
-    </div>
-  );
+      </div>
+
+      {/* Submit Button */}
+      <div>
+        <button
+          type="submit"
+          className="w-full bg-blue-600 text-white py-2 rounded-md font-semibold hover:bg-blue-700 transition"
+        >
+          Create Event
+        </button>
+      </div>
+    </form>
+  </div>
+);
+
 };
 
 export default CreateEvent;
