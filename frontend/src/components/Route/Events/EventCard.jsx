@@ -1,15 +1,18 @@
 import React from "react";
-import CountDown from "./CountDown";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../../../redux/actions/cart";
 import { toast } from "react-toastify";
+import CountDown from "./CountDown";
 
 const EventCard = ({ active, data }) => {
   const { cart } = useSelector((state) => state.cart);
   const dispatch = useDispatch();
 
-  const addToCartHandler = (data) => {
+  // Don't render if no data
+  if (!data) return null;
+
+  const addToCartHandler = () => {
     const isItemExists = cart?.find((item) => item._id === data._id);
     if (isItemExists) {
       toast.error("Item already in cart!");
@@ -31,7 +34,7 @@ const EventCard = ({ active, data }) => {
       <div className="w-full lg:w-1/2 flex items-center justify-center">
         <img
           src={data.images?.[0]?.url || "/fallback.jpg"}
-          alt={data.name}
+          alt={data.name || "Product"}
           className="w-full max-w-[350px] h-auto object-contain rounded-lg"
         />
       </div>
@@ -71,7 +74,7 @@ const EventCard = ({ active, data }) => {
             </button>
           </Link>
           <button
-            onClick={() => addToCartHandler(data)}
+            onClick={addToCartHandler}
             className="bg-[#E94560] text-white px-5 py-2 rounded hover:bg-[#d0334f] transition"
           >
             Add to Cart
