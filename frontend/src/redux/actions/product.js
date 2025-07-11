@@ -2,18 +2,21 @@ import axios from "axios";
 import { server } from "../../server";
 
 // Create Product 
-export const createProduct = (newForm) => async (dispatch) => {
+export const createProduct = (productData) => async (dispatch) => {
   try {
     dispatch({ type: "productCreateRequest" });
+
     const config = {
-      headers: { "Content-Type": "multipart/form-data" },
-      withCredentials: true, //ensures auth cookie is sent
+      headers: { "Content-Type": "application/json" },
+      withCredentials: true,
     };
+
     const { data } = await axios.post(
       `${server}/product/create-product`,
-      newForm,
+      JSON.stringify(productData),
       config
     );
+
     dispatch({ type: "productCreateSuccess", payload: data });
   } catch (error) {
     dispatch({
@@ -22,6 +25,7 @@ export const createProduct = (newForm) => async (dispatch) => {
     });
   }
 };
+
 
 // Get All Products of a Shop 
 export const getAllProductsShop = (id) => async (dispatch) => {

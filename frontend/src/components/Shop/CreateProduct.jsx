@@ -37,31 +37,44 @@ const CreateProduct = () => {
     setImages((prevImages) => [...prevImages, ...files]);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!seller?._id) {
-      toast.error("Seller info not loaded yet. Please try again.");
+      toast.error("Seller not loaded");
       return;
     }
 
-    const newForm = new FormData();
-    newForm.append("name", name);
-    newForm.append("description", description);
-    newForm.append("category", category);
-    newForm.append("tags", tags);
-    newForm.append("originalPrice", originalPrice);
-    newForm.append("discountPrice", discountPrice);
-    newForm.append("stock", stock);
-    newForm.append("shopId", seller._id); 
+    // Convert images to base64
+    const convertToBase64 = (file) =>
+      new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = (error) => reject(error);
+      });
 
-    images.forEach((image) => {
-      newForm.append("file", image);
-    });
-    
+    try {
+      const base64Images = await Promise.all(images.map(convertToBase64));
 
-    dispatch(createProduct(newForm));
+      const payload = {
+        name,
+        description,
+        category,
+        tags,
+        originalPrice,
+        discountPrice,
+        stock,
+        shopId: seller._id,
+        images: base64Images,
+      };
+
+      dispatch(createProduct(payload));
+    } catch (err) {
+      toast.error("Failed to process images. Try again.");
+    }
   };
+
   return (
     <div className="w-full max-w-3xl mx-auto bg-white shadow-md h-[85vh] rounded p-6 overflow-y-scroll">
       <h5 className="text-3xl font-semibold text-center mb-6">Create Product</h5>
@@ -177,11 +190,20 @@ const CreateProduct = () => {
             {images.map((image, index) => {
               const imageUrl = URL.createObjectURL(image);
               return (
-                <div key={index} className="relative w-24 h-24 border rounded overflow-hidden">
-                  <img src={imageUrl} alt={`preview-${index}`} className="w-full h-full object-cover" />
+                <div
+                  key={index}
+                  className="relative w-24 h-24 border rounded overflow-hidden"
+                >
+                  <img
+                    src={imageUrl}
+                    alt={`preview-${index}`}
+                    className="w-full h-full object-cover"
+                  />
                   <button
                     type="button"
-                    onClick={() => setImages(images.filter((_, i) => i !== index))}
+                    onClick={() =>
+                      setImages(images.filter((_, i) => i !== index))
+                    }
                     className="absolute top-0 right-0 bg-red-500 text-white rounded-bl px-1 text-xs hover:bg-red-600"
                   >
                     ✕

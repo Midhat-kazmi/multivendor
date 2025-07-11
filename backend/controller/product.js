@@ -9,28 +9,49 @@ const fs = require("fs");
 const router = express.Router();
 
 // Create product with Cloudinary
-router.post("/create-product", upload.array("file", 5), async (req, res, next) => {
+router.post("/create-product", async (req, res, next) => {
   try {
-    const shopId = req.body.shopId;
+    const {
+      name,
+      description,
+      category,
+      tags,
+      originalPrice,
+      discountPrice,
+      stock,
+      shopId,
+      images, // base64 array
+    } = req.body;
+
     const shop = await Shop.findById(shopId);
     if (!shop) {
       return res.status(400).json({ success: false, message: "Invalid shop ID" });
     }
 
     const imagesLinks = [];
-    for (const file of req.files) {
-      const result = await cloudinary.uploader.upload(file.path, {
+
+    for (const base64 of images) {
+      const result = await cloudinary.uploader.upload(base64, {
         folder: "products",
       });
 
-      imagesLinks.push({ public_id: result.public_id, url: result.secure_url });
-      fs.unlinkSync(file.path); // delete local file after upload
+      imagesLinks.push({
+        public_id: result.public_id,
+        url: result.secure_url,
+      });
     }
 
     const productData = {
-      ...req.body,
+      name,
+      description,
+      category,
+      tags,
+      originalPrice,
+      discountPrice,
+      stock,
       images: imagesLinks,
       shop,
+      shopId,
     };
 
     const product = await Product.create(productData);
@@ -38,7 +59,7 @@ router.post("/create-product", upload.array("file", 5), async (req, res, next) =
     res.status(201).json({ success: true, product });
   } catch (error) {
     console.error("Create Product Error:", error);
-    return next(error);
+    return res.status(500).json({ success: false, message: error.message });
   }
 });
 
