@@ -9,8 +9,6 @@ import {
 import { TbAddressBook } from "react-icons/tb";
 import { RxPerson } from "react-icons/rx";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
-import { server } from "../../server";
 import { toast } from "react-toastify";
 import { useSelector, useDispatch } from "react-redux";
 import { logoutUser } from "../../redux/actions/user";
@@ -20,17 +18,15 @@ const ProfileSidebar = ({ setActive, active }) => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.user);
 
-  const logoutHandler = () => {
-    axios
-      .get(`${server}/user/logout`, { withCredentials: true })
-      .then((res) => {
-        toast.success(res.data.message);
-        window.location.reload(true);
-        navigate("/login");
-      })
-      .catch((error) => {
-        console.log(error.response.data.message);
-      });
+  const logoutHandler = async () => {
+    try {
+      await dispatch(logoutUser()); // Call Redux action that does the API request
+      toast.success("Logout successful");
+      navigate("/login");
+    } catch (error) {
+      console.error("Logout failed:", error);
+      toast.error("Logout failed");
+    }
   };
 
   const MenuItem = ({ icon: Icon, label, id, onClick }) => (
@@ -42,7 +38,11 @@ const ProfileSidebar = ({ setActive, active }) => {
       }}
     >
       <Icon size={20} color={active === id ? "red" : "#555"} />
-      <span className={`pl-3 text-sm ${active === id ? "text-red-600" : "text-gray-800"} hidden md:block`}>
+      <span
+        className={`pl-3 text-sm ${
+          active === id ? "text-red-600" : "text-gray-800"
+        } hidden md:block`}
+      >
         {label}
       </span>
     </div>
@@ -73,7 +73,11 @@ const ProfileSidebar = ({ setActive, active }) => {
               size={20}
               color={active === 8 ? "red" : "#555"}
             />
-            <span className={`pl-3 text-sm ${active === 8 ? "text-red-600" : "text-gray-800"} hidden md:block`}>
+            <span
+              className={`pl-3 text-sm ${
+                active === 8 ? "text-red-600" : "text-gray-800"
+              } hidden md:block`}
+            >
               Admin Dashboard
             </span>
           </div>
@@ -85,7 +89,9 @@ const ProfileSidebar = ({ setActive, active }) => {
         onClick={logoutHandler}
       >
         <AiOutlineLogin size={20} color="red" />
-        <span className="pl-3 text-sm text-red-600 hidden md:block">Log out</span>
+        <span className="pl-3 text-sm text-red-600 hidden md:block">
+          Log out
+        </span>
       </div>
     </div>
   );
