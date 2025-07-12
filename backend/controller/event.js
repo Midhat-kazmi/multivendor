@@ -74,7 +74,7 @@ router.get("/get-all-events/:id", async (req, res) => {
 
 
 // ================== DELETE SHOP EVENT ==================
-router.delete("/delete-shop-event/:id", isSeller, async (req, res) => {
+router.delete("/delete-shop-event/:id",  async (req, res) => {
   try {
     const event = await Event.findById(req.params.id);
 
