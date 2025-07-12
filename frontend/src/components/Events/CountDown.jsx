@@ -16,15 +16,17 @@ const CountDown = ({ data }) => {
       ) {
         // If expired and not deleted yet
         axios
-          .delete(`${server}/event/delete-shop-event/${data._id}`)
-          .then(() => {
-            deletedRef.current = true;
-          })
-          .catch((err) => {
-            console.error("Failed to delete expired event:", err);
-          });
-        clearInterval(interval); // Stop interval
-      }
+  .delete(`${server}/event/delete-shop-event/${data._id}`, {
+    withCredentials: true,
+  })
+  .then(() => {
+    deletedRef.current = true;
+  })
+  .catch((err) => {
+    console.error("Failed to delete expired event:", err.response?.data || err.message);
+  });
+        return;
+      } 
 
       setTimeLeft(updatedTimeLeft);
     }, 1000);
@@ -33,7 +35,7 @@ const CountDown = ({ data }) => {
   }, [data]);
 
   function calculateTimeLeft() {
-    const difference = new Date(data.Finish_Date) - new Date();
+    const difference = new Date(data.end_Date) - new Date();
     if (difference <= 0) return {};
 
     return {
