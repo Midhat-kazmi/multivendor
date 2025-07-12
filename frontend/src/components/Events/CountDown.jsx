@@ -1,31 +1,11 @@
-import axios from "axios";
-import React, { useEffect, useState, useRef } from "react";
-import { server } from "../../server";
+import React, { useEffect, useState } from "react";
 
 const CountDown = ({ data }) => {
   const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
-  const deletedRef = useRef(false); // Prevent multiple delete calls
 
   useEffect(() => {
     const interval = setInterval(() => {
       const updatedTimeLeft = calculateTimeLeft();
-
-      if (
-        Object.keys(updatedTimeLeft).length === 0 &&
-        !deletedRef.current
-      ) {
-        // If expired and not deleted yet
-        axios
-          .delete(`${server}/event/delete-shop-event/${data._id}`)
-          .then(() => {
-            deletedRef.current = true;
-          })
-          .catch((err) => {
-            console.error("Failed to delete expired event:", err);
-          });
-        clearInterval(interval); // Stop interval
-      }
-
       setTimeLeft(updatedTimeLeft);
     }, 1000);
 
