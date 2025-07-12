@@ -56,7 +56,7 @@ const Header = ({ activeHeading }) => {
             <img
               src="https://sdmntprwestus.oaiusercontent.com/files/00000000-d23c-6230-9d9f-e7e2c6e72a0b/raw?se=2025-07-12T04%3A32%3A42Z&sp=r&sv=2024-08-04&sr=b&scid=c7e51fbd-98fd-5624-aa08-f8ccc6cb9dcf&skoid=ea0c7534-f237-4ccd-b7ea-766c4ed977ad&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-07-12T00%3A33%3A14Z&ske=2025-07-13T00%3A33%3A14Z&sks=b&skv=2024-08-04&sig=iEpQTzXcv4iHzA0rZDw%2Bom7wz1SQxSZlrppy1IVxreA%3D"
               alt="QuickCart Logo"
-              className="h-[150px] object-contain"
+              className="h-[110px] object-contain"
             />
           </Link>
 
