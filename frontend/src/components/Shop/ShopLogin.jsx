@@ -25,25 +25,24 @@ const ShopLogin = () => {
       );
       console.log("Login response:", res.data);
 
-          await new Promise((resolve) => setTimeout(resolve, 300));
+      // Add small delay
+      await new Promise((resolve) => setTimeout(resolve, 300));
 
-      
-      // Dispatch loadSeller action after successful login
       dispatch({ type: "LoadSellerRequest" });
-      
-      console.log("Fetching shop data...");
+
+      console.log("Fetching seller data...");
       const { data: sellerData } = await axios.get(`${server}/shop/get-seller`, {
         withCredentials: true,
       });
-      console.log("Get shop response:", sellerData);
-      
-      if (!sellerData.shop) {
-        throw new Error("No shop data received");
+      console.log("Get seller response:", sellerData);
+
+      if (!sellerData.seller) {
+        throw new Error("No seller data received");
       }
-      
+
       dispatch({
         type: "LoadSellerSuccess",
-        payload: sellerData.shop,
+        payload: sellerData.seller,
       });
 
       toast.success("Login Success!");
@@ -84,6 +83,7 @@ const ShopLogin = () => {
                 />
               </div>
             </div>
+
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                 Password
@@ -113,6 +113,7 @@ const ShopLogin = () => {
                 )}
               </div>
             </div>
+
             <div className={`${styles.noramlFlex} justify-between`}>
               <div className={`${styles.noramlFlex}`}>
                 <input
@@ -131,6 +132,7 @@ const ShopLogin = () => {
                 </a>
               </div>
             </div>
+
             <div>
               <button
                 type="submit"
@@ -139,6 +141,7 @@ const ShopLogin = () => {
                 Submit
               </button>
             </div>
+
             <div className={`${styles.noramlFlex} w-full`}>
               <h4>Not have any account?</h4>
               <Link to="/signup" className="text-blue-600 pl-2">

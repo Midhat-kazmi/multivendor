@@ -58,6 +58,7 @@ const ShopCreated = () => {
           phoneNumber,
           avatar: base64Avatar,
         },
+        
         { withCredentials: true }
       );
 
