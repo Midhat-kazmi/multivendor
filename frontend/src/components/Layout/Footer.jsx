@@ -25,7 +25,7 @@ const Footer = () => {
             type="email"
             required
             placeholder="Enter your email..."
-            className="w-full sm:w-[60%] px-4 py-2 rounded-md text-black outline-none"
+            className="w-full sm:w-[60%] px-4 py-2 rounded-md text-white outline-none"
           />
           <button className="bg-[#56d879] hover:bg-teal-500 duration-300 px-6 py-2.5 rounded-md text-white font-medium w-full sm:w-auto">
             Submit
