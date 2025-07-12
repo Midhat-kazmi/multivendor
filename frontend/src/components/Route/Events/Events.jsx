@@ -1,34 +1,35 @@
-import React from "react";
-import { useSelector } from "react-redux";
-import styles from "../../../styles/styles";
+import React, { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import styles from "../../styles/styles";
 import EventCard from "./EventCard";
+import { getAllEvents } from "../../redux/actions/event";
 
 const Events = () => {
+  const dispatch = useDispatch();
   const { allEvents, isLoading } = useSelector((state) => state.events);
 
+  useEffect(() => {
+    dispatch(getAllEvents());
+  }, [dispatch]);
+
+  const firstEvent = allEvents?.[0];
+
   return (
-    <div className={`${styles.section} py-12`}>
+    <div>
       {!isLoading && (
-        <>
-          <div className="text-center mb-10">
-            <h1 className="text-4xl font-bold text-gray-800">
-              🌟 Popular Events
-            </h1>
-            <p className="text-gray-500 mt-2 text-lg">
-              Don’t miss these exclusive deals
-            </p>
+        <div className={`${styles.section}`}>
+          <div className={`${styles.heading}`}>
+            <h1>Popular Events</h1>
           </div>
 
-          <div className="w-full grid grid-cols-1 gap-12">
-            {allEvents && allEvents.length > 0 ? (
-              allEvents.map((event, index) => (
-                <EventCard key={event._id || index} data={event} active={true} />
-              ))
+          <div className="w-full grid">
+            {firstEvent ? (
+              <EventCard data={firstEvent} />
             ) : (
-              <h4 className="text-center text-gray-600">No Events Available</h4>
+              <h4>No Events Available</h4>
             )}
           </div>
-        </>
+        </div>
       )}
     </div>
   );
