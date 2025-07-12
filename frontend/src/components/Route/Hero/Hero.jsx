@@ -24,7 +24,7 @@ const Hero = () => {
             Find Your Vibe
           </h1>
           <p className="mt-4 text-white text-[20px] 800px:text-[30px] font-[400] leading-[1.6] max-w-[600px] drop-shadow-md">
-            Discover hand-picked fashion, electronics, and lifestyle products — all
+            Discover hand-picked fashion, electronics, and lifestyle products, all
             delivered fast and with care. QuickCart brings you the best deals every
             day.
           </p>
