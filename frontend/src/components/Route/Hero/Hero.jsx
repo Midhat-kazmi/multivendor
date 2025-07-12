@@ -4,17 +4,19 @@ import styles from "../../../styles/styles";
 
 const Hero = () => {
   return (
-    <div className="border-[4px] border-[#333]">
+    <div className="p-1 bg-[#333]"> {/* Border effect using padding and gray background */}
       <div
         className="relative min-h-[85vh] w-full bg-no-repeat bg-center"
         style={{
           backgroundImage: `url("https://i.pinimg.com/736x/39/0a/39/390a396c996f97f4a30f49e34513bf9c.jpg")`,
-          backgroundSize: "100% auto", // Stretch horizontally, maintain height
+          backgroundSize: "100% auto", // Stretch horizontally
+          backgroundColor: "#000", // fallback background
         }}
       >
-        {/* Overlay for better contrast */}
+        {/* Overlay */}
         <div className="absolute inset-0 bg-black/40 z-0" />
 
+        {/* Hero Content */}
         <div
           className={`${styles.section} relative z-10 w-[90%] 800px:w-[60%] py-16`}
         >
@@ -22,19 +24,17 @@ const Hero = () => {
             Find Your Vibe
           </h1>
           <p className="mt-4 text-white text-[20px] 800px:text-[30px] font-[400] leading-[1.6] max-w-[600px] drop-shadow-md">
-            Discover hand-picked fashion, electronics, and lifestyle products —
-            all delivered fast and with care. QuickCart brings you the best deals
-            every day.
+            Discover hand-picked fashion, electronics, and lifestyle products — all
+            delivered fast and with care. QuickCart brings you the best deals every
+            day.
           </p>
-
           <p className="mt-2 text-white text-[24px] 800px:text-[30px] font-[300] drop-shadow-sm">
-            Trusted by thousands. Loved by all. Explore what makes QuickCart
-            different.
+            Trusted by thousands. Loved by all. Explore what makes QuickCart different.
           </p>
 
           <Link to="/products" className="inline-block">
-            <div className={`${styles.button} mt-6`}>
-              <span className="text-white font-[Poppins] text-[18px]">
+            <div className={`${styles.button} mt-6 bg-white text-black hover:bg-gray-200`}>
+              <span className="font-[Poppins] text-[18px] font-semibold">
                 Shop Now
               </span>
             </div>
