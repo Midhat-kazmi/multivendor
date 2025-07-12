@@ -75,15 +75,15 @@ router.get("/get-all-events/:id", async (req, res) => {
 
 // ================== DELETE SHOP EVENT ==================
 router.delete("/delete-shop-event/:id", isSeller, async (req, res) => {
-  console.log("🔐 Cookies:", req.cookies);
-  console.log("🧪 Deleting Event ID:", req.params.id);
+  console.log("Cookies:", req.cookies);
+  console.log(" Deleting Event ID:", req.params.id);
 
   try {
     const event = await Event.findById(req.params.id);
-    console.log("📋 Event from DB:", event);
+    console.log(" Event from DB:", event);
 
     if (!event) {
-      console.log("❌ Event NOT FOUND for ID:", req.params.id);
+      console.log(" Event NOT FOUND for ID:", req.params.id);
       return res.status(404).json({ success: false, message: "Event not found" });
     }
 
@@ -91,7 +91,7 @@ router.delete("/delete-shop-event/:id", isSeller, async (req, res) => {
       try {
         await cloudinary.uploader.destroy(img.public_id);
       } catch (err) {
-        console.warn("⚠️ Failed to delete image:", img.public_id);
+        console.warn(" Failed to delete image:", img.public_id);
       }
     }
 
@@ -102,7 +102,7 @@ router.delete("/delete-shop-event/:id", isSeller, async (req, res) => {
       message: "Event deleted successfully!",
     });
   } catch (error) {
-    console.error("🔥 Delete error:", error);
+    console.error(" Delete error:", error);
     return res.status(500).json({ success: false, message: "Event deletion failed" });
   }
 });
