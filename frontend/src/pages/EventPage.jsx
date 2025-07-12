@@ -11,8 +11,14 @@ const EventsPage = () => {
   const { allEvents, isLoading } = useSelector((state) => state.events);
 
   useEffect(() => {
-    dispatch(getAllEvents()); 
+    dispatch(getAllEvents());
   }, [dispatch]);
+
+  // ✅ Filter expired events
+  const validEvents = allEvents?.filter(
+    (event) => new Date(event.end_Date) > new Date()
+  );
+
   return (
     <>
       {isLoading ? (
@@ -20,10 +26,12 @@ const EventsPage = () => {
       ) : (
         <div>
           <Header activeHeading={4} />
-          {allEvents && allEvents.length > 0 ? (
-            <EventCard active={true} data={allEvents[0]} />
+          {validEvents && validEvents.length > 0 ? (
+            <EventCard active={true} data={validEvents[0]} />
           ) : (
-            <p className="text-center text-gray-500 text-lg mt-10">No events available</p>
+            <p className="text-center text-gray-500 text-lg mt-10">
+              No active events available
+            </p>
           )}
           <Footer />
         </div>
