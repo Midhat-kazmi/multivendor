@@ -52,11 +52,11 @@ const Header = ({ activeHeading }) => {
       <div className={`${styles.section} py-4`}>
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           {/* Logo */}
-          <Link to="/" className="flex items-center">
+          <Link to="/" className="flex items-center min-h-[80px]">
             <img
               src="https://res.cloudinary.com/dgve6ewpr/image/upload/v1752295853/file-1746084849270-390129813_oeyefc.png"
               alt="QuickCart Logo"
-              className="h-[60px] w-auto object-contain"
+              className="h-[80px] md:h-[100px] w-auto object-contain"
             />
           </Link>
 
@@ -128,7 +128,10 @@ const Header = ({ activeHeading }) => {
               onClick={() => setDropDownVisible(!dropDownVisible)}
               className="h-[48px] w-[240px] flex items-center bg-white pl-10 pr-3 rounded-t-md cursor-pointer relative"
             >
-              <BiMenuAltLeft size={25} className="absolute left-2 top-2.5 text-black" />
+              <BiMenuAltLeft
+                size={25}
+                className="absolute left-2 top-2.5 text-black"
+              />
               <span className="text-sm font-medium text-black">
                 All Categories
               </span>
