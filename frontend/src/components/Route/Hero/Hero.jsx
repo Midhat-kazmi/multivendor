@@ -4,38 +4,39 @@ import styles from "../../../styles/styles";
 
 const Hero = () => {
   return (
-    <div className="relative w-full min-h-[85vh] flex flex-col-reverse lg:flex-row items-center justify-between bg-gradient-to-r from-black via-black to-white overflow-hidden">
-      {/* Left: Text Section */}
+    <div
+      className="relative min-h-[85vh] w-full bg-no-repeat bg-center"
+      style={{
+        backgroundImage: `url("https://i.pinimg.com/736x/39/0a/39/390a396c996f97f4a30f49e34513bf9c.jpg")`,
+        backgroundSize: "100% auto", // ← Stretch horizontally, maintain height
+      }}
+    >
+      {/* Overlay for better contrast */}
+      <div className="absolute inset-0 bg-black/40 z-0" />
+
       <div
-        className={`${styles.section} relative z-10 w-full lg:w-1/2 px-6 py-16 lg:py-0 flex flex-col justify-center`}
+        className={`${styles.section} relative z-10 w-[90%] 800px:w-[60%] py-16`}
       >
-        <h1 className="text-[42px] lg:text-[72px] leading-tight font-bold text-white drop-shadow-md">
+        <h1 className="text-[45px] 800px:text-[200px] leading-[1.2] text-white font-[600] capitalize drop-shadow-lg">
           Find Your Vibe
         </h1>
-        <p className="mt-4 text-white text-[18px] lg:text-[22px] font-[300] leading-[1.6] max-w-[600px] drop-shadow-md">
-          Explore premium fashion, electronics & lifestyle essentials.
-        </p>
-        <p className="mt-2 text-white text-[20px] lg:text-[24px] font-[300] drop-shadow-sm">
-          Curated collections. Seamless shopping. QuickCart delivers, always.
+        <p className="mt-4 text-white text-[20px] 800px:text-[30px] font-[400] leading-[1.6] max-w-[600px] drop-shadow-md">
+          Discover hand-picked fashion, electronics, and lifestyle products — all
+          delivered fast and with care. QuickCart brings you the best deals every
+          day.
         </p>
 
-        <Link to="/products" className="mt-6 inline-block">
-          <div className="bg-white hover:bg-gray-200 text-black font-semibold px-6 py-3 rounded-md transition duration-300 shadow-md">
-            Shop Now →
+        <p className="mt-2 text-white text-[24px] 800px:text-[30px] font-[300] drop-shadow-sm">
+          Trusted by thousands. Loved by all. Explore what makes QuickCart different.
+        </p>
+
+        <Link to="/products" className="inline-block">
+          <div className={`${styles.button} mt-6`}>
+            <span className="text-white font-[Poppins] text-[18px]">
+              Shop Now
+            </span>
           </div>
         </Link>
-      </div>
-
-      {/* Right: Image */}
-      <div className="w-full lg:w-1/2 h-[300px] lg:h-full relative">
-        <img
-          src="https://i.pinimg.com/736x/39/0a/39/390a396c996f97f4a30f49e34513bf9c.jpg"
-          alt="Hero"
-          className="w-full h-full object-cover object-center grayscale lg:grayscale-0"
-          style={{ objectPosition: "right center" }}
-        />
-        {/* Optional overlay for blend effect */}
-        <div className="absolute inset-0 bg-gradient-to-l from-white via-transparent to-transparent opacity-70" />
       </div>
     </div>
   );
