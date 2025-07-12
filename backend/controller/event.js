@@ -1,44 +1,124 @@
-import React, { useEffect, useState } from "react";
+const express = require("express");
+const router = express.Router();
+const fs = require("fs");
+const cloudinary = require("cloudinary").v2;
+const Shop = require("../model/shop");
+const Event = require("../model/event");
+const { isSeller, isAuthenticated, isAdmin } = require("../middleware/auth");
 
-const CountDown = ({ data }) => {
-  const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
+// ================== CREATE EVENT ==================
+router.post("/create-event", isSeller, async (req, res) => {
+  try {
+    const shop = req.seller; // use authenticated shop
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const updatedTimeLeft = calculateTimeLeft();
-      setTimeLeft(updatedTimeLeft);
-    }, 1000);
+    if (!shop) {
+      return res.status(404).json({ success: false, message: "Shop doesn't exist!" });
+    }
 
-    return () => clearInterval(interval);
-  }, [data]);
+    let images = [];
+    if (typeof req.body.images === "string") {
+      images.push(req.body.images);
+    } else {
+      images = req.body.images;
+    }
 
-  function calculateTimeLeft() {
-    const difference = new Date(data.end_Date) - new Date();
-    if (difference <= 0) return {};
+    const imagesLinks = [];
 
-    return {
-      days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-      hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
-      minutes: Math.floor((difference / 1000 / 60) % 60),
-      seconds: Math.floor((difference / 1000) % 60),
+    for (let i = 0; i < images.length; i++) {
+      const result = await cloudinary.uploader.upload(images[i], {
+        folder: "products",
+      });
+
+      imagesLinks.push({
+        public_id: result.public_id,
+        url: result.secure_url,
+      });
+    }
+
+    const eventData = {
+      ...req.body,
+      shopId: shop._id,
+      shop: shop,
+      images: imagesLinks,
     };
+
+    // ✅ LOG the event data before saving
+    console.log("eventData:", eventData);
+
+    const event = await Event.create(eventData);
+
+    res.status(201).json({
+      success: true,
+      event,
+    });
+
+  } catch (error) {
+    // ✅ LOG the actual error
+    console.error("Event creation error:", error.message, error.stack);
+    
+    res.status(500).json({ success: false, message: error.message });
   }
+});
 
-  const timerComponents = Object.keys(timeLeft).map((interval) => (
-    <span key={interval} className="text-[25px] text-[#475ad2]">
-      {timeLeft[interval]} {interval}{" "}
-    </span>
-  ));
+// ================== GET ALL EVENTS OF A SHOP ==================
+router.get("/get-all-events/:id", async (req, res) => {
+  try {
+    console.log("GET EVENTS for Shop ID:", req.params.id); 
+    const events = await Event.find({ shopId: req.params.id });
+    res.status(200).json({ success: true, events });
+  } catch (error) {
+    console.error("Get shop events error:", error.message);
+    res.status(500).json({ success: false, message: "Failed to get shop events" });
+  }
+});
 
-  return (
-    <div>
-      {timerComponents.length > 0 ? (
-        timerComponents
-      ) : (
-        <span className="text-[red] text-[25px]">Time's Up</span>
-      )}
-    </div>
-  );
-};
 
-export default CountDown;
+// ================== DELETE SHOP EVENT ==================
+router.delete("/delete-shop-event/:id", isSeller, async (req, res) => {
+  try {
+    const event = await Event.findById(req.params.id);
+
+    if (!event) {
+      return res.status(404).json({ success: false, message: "Event not found" });
+    }
+
+    // Delete images from Cloudinary
+    for (const img of event.images) {
+      await cloudinary.uploader.destroy(img.public_id);
+    }
+
+    await Event.findByIdAndDelete(req.params.id);
+
+    res.status(200).json({
+      success: true,
+      message: "Event deleted successfully!",
+    });
+  } catch (error) {
+    console.error("Delete event error:", error.message);
+    res.status(500).json({ success: false, message: "Event deletion failed" });
+  }
+});
+
+// ================== GET ALL EVENTS ==================
+router.get("/get-all-events", async (req, res) => {
+  try {
+    const events = await Event.find();
+    res.status(200).json({ success: true, events });
+  } catch (error) {
+    console.error("Get all events error:", error.message);
+    res.status(500).json({ success: false, message: "Failed to fetch events" });
+  }
+});
+
+// ================== ADMIN: GET ALL EVENTS ==================
+router.get("/admin-all-events", isAuthenticated, isAdmin("Admin"), async (req, res) => {
+  try {
+    const events = await Event.find().sort({ createdAt: -1 });
+    res.status(200).json({ success: true, events });
+  } catch (error) {
+    console.error("Admin get events error:", error.message);
+    res.status(500).json({ success: false, message: "Failed to load events" });
+  }
+});
+
+module.exports = router;
