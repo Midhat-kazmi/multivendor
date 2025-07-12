@@ -13,11 +13,13 @@ const AllEvents = () => {
 
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    if (seller?._id) {
-      dispatch(getAllEventsShop(seller._id));
-    }
-  }, [dispatch, seller?._id]);
+useEffect(() => {
+  if (seller?._id) {
+    dispatch(getAllEventsShop(seller._id));
+  }
+}, [seller?._id, dispatch]); // include dispatch
+
+
 
   const handleDelete = (id) => {
     dispatch(deleteEvent(id)).then(() => {
