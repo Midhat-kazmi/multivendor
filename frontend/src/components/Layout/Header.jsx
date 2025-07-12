@@ -49,14 +49,14 @@ const Header = ({ activeHeading }) => {
   return (
     <>
       {/* Top Header */}
-      <div className={`${styles.section}`}>
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between py-4 space-y-3 md:space-y-0">
+      <div className={`${styles.section} py-4`}>
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2">
+          <Link to="/" className="flex items-center">
             <img
               src="https://res.cloudinary.com/dgve6ewpr/image/upload/v1752295853/file-1746084849270-390129813_oeyefc.png"
               alt="QuickCart Logo"
-              className="h-[100px] object-contain"
+              className="h-[60px] w-auto object-contain"
             />
           </Link>
 
