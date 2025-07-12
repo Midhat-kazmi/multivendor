@@ -67,14 +67,14 @@ export const deleteEvent = (eventId) => async (dispatch) => {
 // ================== GET ALL EVENTS (Public) ==================
 export const getAllEvents = () => async (dispatch) => {
   try {
-    dispatch({ type: "getAlleventsRequest" });
+    dispatch({ type: "getAllEventsRequest" });
 
     const { data } = await axios.get(`${server}/event/get-all-events`);
 
-    dispatch({ type: "getAlleventsSuccess", payload: data.events });
+    dispatch({ type: "getAllEventsSuccess", payload: data.events });
   } catch (error) {
     dispatch({
-      type: "getAlleventsFailed",
+      type: "getAllEventsFailed",
       payload: error.response?.data?.message || error.message,
     });
   }
