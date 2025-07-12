@@ -10,23 +10,23 @@ import Loader from "../Layout/Loader";
 const AllEvents = () => {
   const { events, isLoading } = useSelector((state) => state.events);
   const { seller } = useSelector((state) => state.seller);
-
   const dispatch = useDispatch();
 
-useEffect(() => {
-  if (seller?._id) {
-    dispatch(getAllEventsShop(seller._id));
-  }
-}, [seller?._id, dispatch]); // include dispatch
+  // Fetch events when seller is loaded
+  useEffect(() => {
+    if (seller && seller._id) {
+      dispatch(getAllEventsShop(seller._id));
+    }
+  }, [seller, dispatch]);
 
-
-
+  // Delete event and refetch
   const handleDelete = (id) => {
     dispatch(deleteEvent(id)).then(() => {
       dispatch(getAllEventsShop(seller._id));
     });
   };
 
+  // Columns for DataGrid
   const columns = [
     { field: "id", headerName: "Event Id", minWidth: 150, flex: 0.7 },
     { field: "name", headerName: "Name", minWidth: 180, flex: 1.4 },
@@ -61,30 +61,32 @@ useEffect(() => {
     },
   ];
 
-  const rows = events?.map((item) => ({
-    id: item._id,
-    name: item.name,
-    price: "US$ " + item.discountPrice,
-    Stock: item.stock,
-    sold: item.sold_out,
-  })) || [];
+  // Rows data for DataGrid
+  const rows =
+    events?.map((item) => ({
+      id: item._id,
+      name: item.name,
+      price: "US$ " + item.discountPrice,
+      Stock: item.stock,
+      sold: item.sold_out,
+    })) || [];
 
+  // Show loader until seller and events are loaded
+  if (!seller || !seller._id || isLoading) {
+    return <Loader />;
+  }
+
+  // Render DataGrid
   return (
-    <>
-      {isLoading ? (
-        <Loader />
-      ) : (
-        <div className="w-full mx-8 pt-1 mt-10 bg-white">
-          <DataGrid
-            rows={rows}
-            columns={columns}
-            pageSize={10}
-            disableSelectionOnClick
-            autoHeight
-          />
-        </div>
-      )}
-    </>
+    <div className="w-full mx-8 pt-1 mt-10 bg-white">
+      <DataGrid
+        rows={rows}
+        columns={columns}
+        pageSize={10}
+        disableSelectionOnClick
+        autoHeight
+      />
+    </div>
   );
 };
 
