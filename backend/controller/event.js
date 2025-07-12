@@ -42,7 +42,7 @@ router.post("/create-event", isSeller, async (req, res) => {
       images: imagesLinks,
     };
 
-    // ✅ LOG the event data before saving
+    //  LOG the event data before saving
     console.log("eventData:", eventData);
 
     const event = await Event.create(eventData);
@@ -53,7 +53,7 @@ router.post("/create-event", isSeller, async (req, res) => {
     });
 
   } catch (error) {
-    // ✅ LOG the actual error
+    //  LOG the actual error
     console.error("Event creation error:", error.message, error.stack);
     
     res.status(500).json({ success: false, message: error.message });
@@ -76,15 +76,21 @@ router.get("/get-all-events/:id", async (req, res) => {
 // ================== DELETE SHOP EVENT ==================
 router.delete("/delete-shop-event/:id", isSeller, async (req, res) => {
   try {
+    console.log("Deleting Event with ID:", req.params.id);
+
     const event = await Event.findById(req.params.id);
 
     if (!event) {
+      console.log("Event not found for ID:", req.params.id);
       return res.status(404).json({ success: false, message: "Event not found" });
     }
 
-    // Delete images from Cloudinary
     for (const img of event.images) {
-      await cloudinary.uploader.destroy(img.public_id);
+      try {
+        await cloudinary.uploader.destroy(img.public_id);
+      } catch (err) {
+        console.warn(" Cloudinary delete error:", img.public_id);
+      }
     }
 
     await Event.findByIdAndDelete(req.params.id);
@@ -98,6 +104,7 @@ router.delete("/delete-shop-event/:id", isSeller, async (req, res) => {
     res.status(500).json({ success: false, message: "Event deletion failed" });
   }
 });
+
 
 // ================== GET ALL EVENTS ==================
 router.get("/get-all-events", async (req, res) => {
