@@ -49,14 +49,15 @@ const Header = ({ activeHeading }) => {
   return (
     <>
       {/* Top Header */}
-      <div className={`${styles.section} py-4`}>
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div className="w-full bg-white border-b border-gray-200 shadow-sm">
+        <div className={`${styles.section} py-6 flex flex-col md:flex-row md:items-center justify-between gap-6`}>
+          
           {/* Logo */}
-          <Link to="/" className="flex items-center min-h-[80px]">
+          <Link to="/" className="flex items-center">
             <img
               src="https://res.cloudinary.com/dgve6ewpr/image/upload/v1752295853/file-1746084849270-390129813_oeyefc.png"
               alt="QuickCart Logo"
-              className="h-[80px] md:h-[100px] w-auto object-contain"
+              className="h-[90px] md:h-[110px] w-auto object-contain"
             />
           </Link>
 
@@ -67,14 +68,14 @@ const Header = ({ activeHeading }) => {
               placeholder="Search Product..."
               value={searchTerm}
               onChange={handleSearchChange}
-              className="h-[42px] w-full px-3 pr-10 border border-black rounded-md text-black"
+              className="h-[48px] w-full px-4 pr-12 border border-black rounded-md text-black"
             />
             <AiOutlineSearch
               size={22}
-              className="absolute right-3 top-2.5 text-black cursor-pointer"
+              className="absolute right-4 top-[13px] text-black cursor-pointer"
             />
             {searchData && searchData.length > 0 && (
-              <div className="absolute bg-white shadow z-[999] w-full mt-1 max-h-[300px] overflow-y-auto p-2">
+              <div className="absolute bg-white shadow z-[999] w-full mt-1 max-h-[300px] overflow-y-auto p-2 rounded-md">
                 {searchData.map((item, index) => (
                   <Link to={`/product/${item._id}`} key={index}>
                     <div className="flex items-center py-2 hover:bg-gray-100 rounded px-2">
@@ -94,9 +95,9 @@ const Header = ({ activeHeading }) => {
           {/* Seller CTA */}
           <div className="w-full md:w-auto">
             <Link to={isSeller ? "/dashboard" : "/shop-create"}>
-              <div className="bg-black text-white px-4 py-2 rounded hover:opacity-90 transition text-center">
-                <h1 className="flex items-center justify-center text-sm md:text-base">
-                  {isSeller ? "Go to Dashboard" : "Become Seller"}{" "}
+              <div className="bg-black text-white px-6 py-3 rounded hover:opacity-90 transition text-center">
+                <h1 className="flex items-center justify-center text-sm md:text-base font-medium">
+                  {isSeller ? "Go to Dashboard" : "Become Seller"}
                   <IoIosArrowForward className="ml-1" />
                 </h1>
               </div>
@@ -107,17 +108,14 @@ const Header = ({ activeHeading }) => {
 
       {/* Sticky Navigation Bar */}
       <div
-        className={`w-full bg-black h-[60px] z-50 transition ${
-          active ? "fixed top-0 left-0 shadow-sm" : "relative"
+        className={`w-full bg-black z-50 transition duration-300 ${
+          active ? "fixed top-0 left-0 shadow-md" : ""
         }`}
       >
-        <div className={`${styles.section} flex items-center justify-between`}>
+        <div className={`${styles.section} h-[60px] flex items-center justify-between`}>
           {/* Mobile Menu */}
           <div className="block lg:hidden">
-            <div
-              className="cursor-pointer"
-              onClick={() => setDropDown(!dropDown)}
-            >
+            <div className="cursor-pointer" onClick={() => setDropDown(!dropDown)}>
               <BiMenuAltLeft size={30} color="white" />
             </div>
           </div>
@@ -128,21 +126,13 @@ const Header = ({ activeHeading }) => {
               onClick={() => setDropDownVisible(!dropDownVisible)}
               className="h-[48px] w-[240px] flex items-center bg-white pl-10 pr-3 rounded-t-md cursor-pointer relative"
             >
-              <BiMenuAltLeft
-                size={25}
-                className="absolute left-2 top-2.5 text-black"
-              />
-              <span className="text-sm font-medium text-black">
-                All Categories
-              </span>
+              <BiMenuAltLeft size={25} className="absolute left-2 top-2.5 text-black" />
+              <span className="text-sm font-medium text-black">All Categories</span>
               <IoIosArrowDown size={16} className="ml-auto text-black" />
             </div>
             {dropDownVisible && (
-              <div className="absolute top-full left-0 z-50 bg-white w-full shadow">
-                <DropDown
-                  categoriesData={categoriesData}
-                  setDropDown={setDropDownVisible}
-                />
+              <div className="absolute top-full left-0 z-50 bg-white w-full shadow rounded-b-md">
+                <DropDown categoriesData={categoriesData} setDropDown={setDropDownVisible} />
               </div>
             )}
           </div>
@@ -150,10 +140,7 @@ const Header = ({ activeHeading }) => {
           {/* Mobile Dropdown */}
           {dropDown && (
             <div className="lg:hidden absolute top-[60px] left-0 z-40 w-full bg-white shadow-md">
-              <DropDown
-                categoriesData={categoriesData}
-                setDropDown={setDropDown}
-              />
+              <DropDown categoriesData={categoriesData} setDropDown={setDropDown} />
             </div>
           )}
 
@@ -165,10 +152,7 @@ const Header = ({ activeHeading }) => {
           {/* Icons */}
           <div className="flex items-center space-x-4">
             {/* Wishlist */}
-            <div
-              className="relative cursor-pointer"
-              onClick={() => setOpenWishlist(true)}
-            >
+            <div className="relative cursor-pointer" onClick={() => setOpenWishlist(true)}>
               <AiOutlineHeart size={22} color="white" />
               <span className="absolute -top-1 -right-1 bg-white text-black text-xs w-4 h-4 rounded-full flex items-center justify-center">
                 {wishlist?.length}
@@ -176,10 +160,7 @@ const Header = ({ activeHeading }) => {
             </div>
 
             {/* Cart */}
-            <div
-              className="relative cursor-pointer"
-              onClick={() => setOpenCart(true)}
-            >
+            <div className="relative cursor-pointer" onClick={() => setOpenCart(true)}>
               <AiOutlineShoppingCart size={22} color="white" />
               <span className="absolute -top-1 -right-1 bg-white text-black text-xs w-4 h-4 rounded-full flex items-center justify-center">
                 {cart?.length}
