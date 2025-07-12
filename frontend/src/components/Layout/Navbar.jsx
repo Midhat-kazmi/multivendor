@@ -15,12 +15,9 @@ const Navbar = () => {
         const response = await axios.get(`${server}/user/get-user`, {
           withCredentials: true,
         });
-        
+
         const userData = response.data.user;
         setUser(userData);
-        console.log("Navbar", userData);
-
-        // Save full user object in localStorage (not just the name)
         localStorage.setItem("user", JSON.stringify(userData));
       } catch (err) {
         setError(
@@ -32,23 +29,26 @@ const Navbar = () => {
     fetchUserData();
   }, []);
 
-  if (error) return <div>Error: {error}</div>;
+  if (error) return <div className="text-red-500">{error}</div>;
 
   return (
-    <div className="flex items-center gap-6 text-sm font-medium">
-      {/* Navigation Links */}
-      {navItems.map((item) => (
-        <Link
-          key={item.id}
-          to={item.url}
-          className={`hover:text-yellow-400 transition ${
-            location.pathname === item.url ? "text-yellow-400" : "text-white"
-          }`}
-        >
-          {item.title}
-        </Link>
-      ))}
-    </div>
+    <nav className="flex items-center gap-6 text-sm font-medium">
+      {navItems.map((item) => {
+        const isActive = location.pathname === item.url;
+
+        return (
+          <Link
+            key={item.id}
+            to={item.url}
+            className={`relative pb-1 transition duration-150 ease-in-out 
+              ${isActive ? "text-white after:absolute after:left-0 after:bottom-0 after:h-[2px] after:w-full after:bg-white" : "text-white hover:opacity-70"}
+            `}
+          >
+            {item.title}
+          </Link>
+        );
+      })}
+    </nav>
   );
 };
 

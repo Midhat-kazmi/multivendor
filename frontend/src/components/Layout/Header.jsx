@@ -54,11 +54,10 @@ const Header = ({ activeHeading }) => {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2">
             <img
-              src="https://sdmntprwestus.oaiusercontent.com/files/00000000-d23c-6230-9d9f-e7e2c6e72a0b/raw"
+              src="backend/uploads/file-1746084849270-390129813.png"
               alt="QuickCart Logo"
               className="h-[70px] object-contain"
             />
-            <span className="text-xl font-semibold text-black">QuickCart</span>
           </Link>
 
           {/* Search Bar */}
