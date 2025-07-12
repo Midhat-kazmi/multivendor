@@ -6,6 +6,8 @@ import { addToCart } from "../../redux/actions/cart";
 import { toast } from "react-toastify";
 
 const EventCard = ({ active, data }) => {
+  if (!data) return null;
+
   const { cart } = useSelector((state) => state.cart);
   const dispatch = useDispatch();
 
@@ -33,8 +35,8 @@ const EventCard = ({ active, data }) => {
       {/* Image Section */}
       <div className="w-full lg:w-1/2 flex justify-center items-center p-6">
         <img
-          src={data.images[0]?.url}
-          alt={data.name}
+          src={data.images?.[0]?.url || "/default-image.png"}
+          alt={data.name || "Event"}
           className="w-full max-w-sm object-contain rounded-lg"
         />
       </div>
