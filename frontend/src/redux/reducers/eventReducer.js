@@ -8,6 +8,7 @@ const initialState = {
   event: null,
   error: null,
   success: false,
+ allEvents: [],
 };
 
 export const eventReducer = createReducer(initialState, (builder) => {
