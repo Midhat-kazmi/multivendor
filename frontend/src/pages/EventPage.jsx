@@ -15,10 +15,10 @@ const EventsPage = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    console.log('🔥 allEvents after fetch:', allEvents);
+    console.log(' allEvents after fetch:', allEvents);
   }, [allEvents]);
 
-  // ✅ Filter expired events
+  //  Filter expired events
   const validEvents = allEvents?.filter(
     (event) => new Date(event.end_Date) > new Date()
   );

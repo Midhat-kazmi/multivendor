@@ -54,7 +54,11 @@ export const deleteEvent = (eventId) => async (dispatch) => {
       withCredentials: true,
     });
 
-    dispatch({ type: "deleteEventSuccess", payload: { id: eventId } });
+    if (data?.success) {
+      dispatch({ type: "deleteEventSuccess", payload: { id: eventId } });
+    } else {
+      throw new Error("Unauthorized or failed deletion");
+    }
   } catch (error) {
     dispatch({
       type: "deleteEventFail",
@@ -62,6 +66,7 @@ export const deleteEvent = (eventId) => async (dispatch) => {
     });
   }
 };
+
 
 // ================== GET ALL EVENTS (Public) ==================
 export const getAllEvents = () => async (dispatch) => {
