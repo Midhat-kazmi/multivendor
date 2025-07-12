@@ -1,5 +1,3 @@
-// backend/controller/shop.js
-
 const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
@@ -48,8 +46,6 @@ router.post("/create-shop", async (req, res) => {
     };
 
     const activationToken = createActivationToken(seller);
-
-    //  Use env variable for frontend link
     const activationUrl = `https://multivendor-five.vercel.app/activation/${activationToken}`;
 
     await sendMail({
@@ -67,6 +63,31 @@ router.post("/create-shop", async (req, res) => {
   }
 });
 
+// ✅ ========== Activate Seller Account ==========
+router.post("/activation", async (req, res) => {
+  try {
+    const { activation_token } = req.body;
+
+    if (!activation_token) {
+      return res.status(400).json({ success: false, message: "No activation token provided" });
+    }
+
+    const newSeller = jwt.verify(activation_token, process.env.ACTIVATION_SECRET);
+    if (!newSeller) {
+      return res.status(400).json({ success: false, message: "Invalid token" });
+    }
+
+    const existingSeller = await Shop.findOne({ email: newSeller.email });
+    if (existingSeller) {
+      return res.status(400).json({ success: false, message: "Seller already exists" });
+    }
+
+    const seller = await Shop.create(newSeller);
+    sendShopToken(seller, 201, res);
+  } catch (error) {
+    return res.status(500).json({ success: false, message: "Token expired or invalid" });
+  }
+});
 
 // ========== Login Seller ==========
 router.post("/login-shop", async (req, res) => {
@@ -107,9 +128,9 @@ router.get("/logout", async (req, res) => {
   try {
     res.cookie("shop_token", "", {
       expires: new Date(Date.now()),
-       secure: true,       // Ensures the cookie is sent only over HTTPS
-     sameSite: "none",
       httpOnly: true,
+      secure: true,
+      sameSite: "none",
     });
     res.status(200).json({ success: true, message: "Logged out successfully" });
   } catch (error) {
@@ -196,20 +217,16 @@ router.delete("/admin-delete-seller/:id", isAuthenticated, isAdmin("Admin"), asy
       return res.status(404).json({ success: false, message: "Seller not found" });
     }
 
-    //  Delete avatar from Cloudinary if it exists
     if (seller.avatar?.public_id) {
       await cloudinary.uploader.destroy(seller.avatar.public_id);
     }
 
-    // Delete the seller from the database
     await Shop.findByIdAndDelete(req.params.id);
-
     res.status(200).json({ success: true, message: "Seller deleted successfully" });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 });
-
 
 // ========== Seller: Update Withdraw Method ==========
 router.put("/update-payment-methods", isSeller, async (req, res) => {
