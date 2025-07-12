@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import styles from "../../styles/styles";
+import styles from "../../../styles/styles";
 import EventCard from "./EventCard";
-import { getAllEvents } from "../../redux/actions/event";
+import { getAllEvents } from "../../../redux/actions/event";
 
 const Events = () => {
   const dispatch = useDispatch();
