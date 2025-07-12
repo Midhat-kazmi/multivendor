@@ -42,17 +42,18 @@ export const eventReducer = createReducer(initialState, (builder) => {
     })
 
     // Delete event
-    .addCase("deleteEventRequest", (state) => {
+       .addCase("deleteEventRequest", (state) => {
       state.isLoading = true;
     })
     .addCase("deleteEventSuccess", (state, action) => {
       state.isLoading = false;
-      state.events = state.events.filter((event) => event._id !== action.payload.id);
+      state.message = action.payload;
     })
     .addCase("deleteEventFail", (state, action) => {
       state.isLoading = false;
       state.error = action.payload;
     })
+
 
     // ✅ FIXED: Get all events (public)
     .addCase("getAllEventsRequest", (state) => {

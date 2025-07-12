@@ -45,27 +45,31 @@ export const getAllEventsShop = (shopId) => async (dispatch) => {
   }
 };
 
-// ================== DELETE EVENT ==================
-export const deleteEvent = (eventId) => async (dispatch) => {
+export const deleteEvent = (id) => async (dispatch) => {
   try {
-    dispatch({ type: "deleteEventRequest" });
-
-    const { data } = await axios.delete(`${server}/event/delete-shop-event/${eventId}`, {
-      withCredentials: true,
+    dispatch({
+      type: "deleteEventRequest",
     });
 
-    if (data?.success) {
-      dispatch({ type: "deleteEventSuccess", payload: { id: eventId } });
-    } else {
-      throw new Error("Unauthorized or failed deletion");
-    }
+    const { data } = await axios.delete(
+      `${server}/event/delete-shop-event/${eventId}`,
+      {
+        withCredentials: true,
+      }
+    );
+
+    dispatch({
+      type: "deleteEventSuccess",
+      payload: data.message,
+    });
   } catch (error) {
     dispatch({
       type: "deleteEventFail",
-      payload: error.response?.data?.message || error.message,
+      payload: error.response.data.message,
     });
   }
 };
+
 
 
 // ================== GET ALL EVENTS (Public) ==================
