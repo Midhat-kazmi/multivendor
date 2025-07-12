@@ -13,7 +13,7 @@ const CountDown = ({ data }) => {
   }, [data]);
 
   function calculateTimeLeft() {
-    const difference = new Date(data.end_Date) - new Date(); // ✅ use `end_Date` not Finish_Date
+    const difference = new Date(data.end_Date) - new Date();
     if (difference <= 0) return {};
 
     return {
