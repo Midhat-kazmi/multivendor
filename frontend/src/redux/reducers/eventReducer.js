@@ -1,5 +1,4 @@
-// Fix reducer: use consistent action names
-
+// src/redux/reducers/eventReducer.js
 import { createReducer } from "@reduxjs/toolkit";
 
 const initialState = {
@@ -8,7 +7,7 @@ const initialState = {
   event: null,
   error: null,
   success: false,
- allEvents: [],
+  allEvents: [],
 };
 
 export const eventReducer = createReducer(initialState, (builder) => {
@@ -48,7 +47,6 @@ export const eventReducer = createReducer(initialState, (builder) => {
     })
     .addCase("deleteEventSuccess", (state, action) => {
       state.isLoading = false;
-      // Remove deleted event from events array
       state.events = state.events.filter((event) => event._id !== action.payload.id);
     })
     .addCase("deleteEventFail", (state, action) => {
@@ -56,15 +54,15 @@ export const eventReducer = createReducer(initialState, (builder) => {
       state.error = action.payload;
     })
 
-    // Get all events (public)
-    .addCase("getAlleventsRequest", (state) => {
+    // ✅ FIXED: Get all events (public)
+    .addCase("getAllEventsRequest", (state) => {
       state.isLoading = true;
     })
-    .addCase("getAlleventsSuccess", (state, action) => {
+    .addCase("getAllEventsSuccess", (state, action) => {
       state.isLoading = false;
       state.allEvents = action.payload;
     })
-    .addCase("getAlleventsFailed", (state, action) => {
+    .addCase("getAllEventsFailed", (state, action) => {
       state.isLoading = false;
       state.error = action.payload;
     })

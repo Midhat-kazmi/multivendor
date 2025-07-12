@@ -1,3 +1,4 @@
+// src/redux/actions/event.js
 import axios from "axios";
 import { server } from "../../server";
 
@@ -27,14 +28,13 @@ export const createEvent = (formData) => async (dispatch) => {
 // ================== GET EVENTS BY SHOP ==================
 export const getAllEventsShop = (shopId) => async (dispatch) => {
   try {
-    if (!shopId) return; // ✅ Guard against undefined shopId
+    if (!shopId) return;
 
     dispatch({ type: "getAllEventsShopRequest" });
 
-    const { data } = await axios.get(
-      `${server}/event/get-all-events/${shopId}`,
-      { withCredentials: true }
-    );
+    const { data } = await axios.get(`${server}/event/get-all-events/${shopId}`, {
+      withCredentials: true,
+    });
 
     dispatch({ type: "getAllEventsShopSuccess", payload: data.events });
   } catch (error) {
@@ -50,10 +50,9 @@ export const deleteEvent = (eventId) => async (dispatch) => {
   try {
     dispatch({ type: "deleteEventRequest" });
 
-    const { data } = await axios.delete(
-      `${server}/event/delete-shop-event/${eventId}`,
-      { withCredentials: true }
-    );
+    const { data } = await axios.delete(`${server}/event/delete-shop-event/${eventId}`, {
+      withCredentials: true,
+    });
 
     dispatch({ type: "deleteEventSuccess", payload: { id: eventId } });
   } catch (error) {
