@@ -7,8 +7,9 @@ const Hero = () => {
     <div
       className={`relative min-h-[70vh] 800px:min-h-[80vh] w-full bg-no-repeat ${styles.noramlFlex}`}
       style={{
-        backgroundImage:
-          "https://i.pinimg.com/736x/39/0a/39/390a396c996f97f4a30f49e34513bf9c.jpg",
+       
+           backgroundImage: `url("https://i.pinimg.com/736x/39/0a/39/390a396c996f97f4a30f49e34513bf9c.jpg")`,
+
       }}
     >
       <div className={`${styles.section} w-[90%] 800px:w-[60%]`}>
