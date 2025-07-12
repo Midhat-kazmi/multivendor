@@ -1,30 +1,35 @@
 import axios from "axios";
-import React, { useEffect } from "react";
-import { useState } from "react";
-import { useParams } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { server } from "../server";
+import { toast } from "react-toastify";
 
 const ActivationPage = () => {
   const { activation_token } = useParams();
+  const navigate = useNavigate();
   const [error, setError] = useState(false);
 
   useEffect(() => {
     if (activation_token) {
-      const sendRequest = async () => {
-        await axios
-          .post(`${server}/user/activation`, {
+      const activateAccount = async () => {
+        try {
+          const res = await axios.post(`${server}/user/activation`, {
             activation_token,
-          })
-          .then((res) => {
-            console.log(res);
-          })
-          .catch((err) => {
-            setError(true);
-          });
+          }, { withCredentials: true });
+
+          toast.success("Account activated successfully!");
+          setTimeout(() => {
+            navigate("/login");
+          }, 2000);
+        } catch (err) {
+          setError(true);
+          toast.error(err.response?.data?.message || "Activation failed");
+        }
       };
-      sendRequest();
+
+      activateAccount();
     }
-  }, []);
+  }, [activation_token, navigate]);
 
   return (
     <div
@@ -34,12 +39,14 @@ const ActivationPage = () => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
+        fontSize: "20px",
+        fontWeight: "bold",
       }}
     >
       {error ? (
-        <p>Your token is expired!</p>
+        <p>Your token is expired or invalid.</p>
       ) : (
-        <p>Your account has been created successfully!</p>
+        <p>Activating your account, please wait...</p>
       )}
     </div>
   );

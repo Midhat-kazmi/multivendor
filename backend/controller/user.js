@@ -62,6 +62,34 @@ const createActivationToken = (user) => {
     expiresIn: "5m",
   });
 };
+// ✅ Activate user account
+router.post("/activation", async (req, res) => {
+  try {
+    const { activation_token } = req.body;
+
+    if (!activation_token) {
+      return res.status(400).json({ success: false, message: "No activation token provided" });
+    }
+
+    const newUser = jwt.verify(activation_token, process.env.ACTIVATION_SECRET);
+
+    if (!newUser) {
+      return res.status(400).json({ success: false, message: "Invalid token" });
+    }
+
+    const existingUser = await User.findOne({ email: newUser.email });
+
+    if (existingUser) {
+      return res.status(400).json({ success: false, message: "User already exists" });
+    }
+
+    const user = await User.create(newUser);
+    sendToken(user, 201, res);
+  } catch (error) {
+    console.error("Activation error:", error.message);
+    return res.status(500).json({ success: false, message: "Token expired or invalid" });
+  }
+});
 
 // =============== Login ===============
 router.post("/login-user", async (req, res) => {
