@@ -18,7 +18,8 @@ const Footer = () => {
       {/* Subscribe Section */}
       <div className="md:flex md:justify-between md:items-center px-4 sm:px-12 bg-[#FFF0F2] py-8 border-b border-[#FADADD]">
         <h1 className="text-2xl lg:text-4xl font-semibold md:w-2/5 leading-snug mb-4 md:mb-0 text-center md:text-left">
-          <span className="text-[#E75480]">Subscribe</span> to get news, events, and offers
+          <span className="text-[#E75480]">Subscribe</span> to get news, events,
+          and offers
         </h1>
         <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-[50%]">
           <input
@@ -39,17 +40,29 @@ const Footer = () => {
         <div className="text-center sm:text-left">
           <img
             src="https://res.cloudinary.com/dgve6ewpr/image/upload/v1752370095/bfdf69bf-b02a-44ad-bb0d-8475856940bd-fotor-bg-remover-2025071362557_rrm0n5.png"
-            alt="QuickCart Logo"
+            alt="Shopora Logo"
             className="h-[60px] mx-auto sm:mx-0 mb-4"
           />
           <p className="text-gray-600 text-sm">
             The home and elements needed to create beautiful products.
           </p>
           <div className="flex items-center justify-center sm:justify-start mt-4 space-x-4">
-            <AiFillFacebook size={24} className="hover:text-[#E75480] cursor-pointer" />
-            <AiOutlineTwitter size={24} className="hover:text-[#E75480] cursor-pointer" />
-            <AiFillInstagram size={24} className="hover:text-[#E75480] cursor-pointer" />
-            <AiFillYoutube size={24} className="hover:text-[#E75480] cursor-pointer" />
+            <AiFillFacebook
+              size={24}
+              className="hover:text-[#E75480] cursor-pointer"
+            />
+            <AiOutlineTwitter
+              size={24}
+              className="hover:text-[#E75480] cursor-pointer"
+            />
+            <AiFillInstagram
+              size={24}
+              className="hover:text-[#E75480] cursor-pointer"
+            />
+            <AiFillYoutube
+              size={24}
+              className="hover:text-[#E75480] cursor-pointer"
+            />
           </div>
         </div>
 
