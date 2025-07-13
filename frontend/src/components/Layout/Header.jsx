@@ -140,7 +140,7 @@ const Header = ({ activeHeading }) => {
             {/* Seller Button */}
             <Link to={isSeller ? "/dashboard" : "/shop-create"}>
               <div className="bg-pink-500 text-white px-4 py-2 rounded-full hover:bg-pink-600 transition font-semibold text-xs">
-                {isSeller ? "Dashboard" : "Become Seller"}
+                {isSeller ? "Shop Dashboard" : "Become Seller"}
               </div>
             </Link>
 
