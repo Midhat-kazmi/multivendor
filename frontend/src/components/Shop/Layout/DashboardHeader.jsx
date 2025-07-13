@@ -17,7 +17,7 @@ const DashboardHeader = () => {
         <div className="flex justify-center sm:justify-start">
           <Link to="/dashboard">
             <img
-              src="https://shopo.quomodothemes.website/assets/images/logo.svg"
+              src="https://res.cloudinary.com/dgve6ewpr/image/upload/v1752370095/bfdf69bf-b02a-44ad-bb0d-8475856940bd-fotor-bg-remover-2025071362557_rrm0n5.png"
               alt="Shopo Logo"
               className="h-[40px] sm:h-[50px]"
             />
