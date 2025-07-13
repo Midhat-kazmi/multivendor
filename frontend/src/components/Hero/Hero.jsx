@@ -8,7 +8,7 @@ const Hero = () => {
       <div className={`${styles.section} grid grid-cols-1 md:grid-cols-2 gap-12 items-center`}>
         {/* Text Content */}
         <div>
-          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 leading-tight mb-4">
+          <h1 className="text-4xl md:text-6xl font-bold text-gray-700 leading-tight mb-4">
             Find Your Vibe
           </h1>
           <p className="text-lg text-gray-700 mb-4">
