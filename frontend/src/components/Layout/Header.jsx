@@ -188,12 +188,11 @@ const Header = ({ activeHeading }) => {
           </div>
 
           {/* Navbar Links (Right-Aligned) */}
-          <div className="flex-1 flex justify-end">
-            <div className="flex items-center gap-6">
+          <div className="flex-1 flex justify-start pl-6">
               <Navbar active={activeHeading} noRounded />
             </div>
           </div>
-        </div>
+        
       </section>
 
       {/* Modals */}
