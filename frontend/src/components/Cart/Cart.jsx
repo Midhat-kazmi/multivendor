@@ -72,7 +72,7 @@ const Cart = ({ setOpenCart }) => {
             <div className="mt-6">
               <Link to="/checkout">
                 <button
-                  className="w-full bg-[#e44343] text-white py-2 rounded font-semibold text-[18px]"
+                  className="w-full bg-[#E75480] text-white py-2 rounded font-semibold text-[18px]"
                   onClick={() => setOpenCart(false)}
                 >
                   Checkout Now (USD${totalPrice})
