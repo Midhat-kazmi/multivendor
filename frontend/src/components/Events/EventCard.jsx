@@ -71,7 +71,7 @@ const EventCard = ({ active, data }) => {
             </button>
           </Link>
           <button
-            className="bg-black text-white px-4 py-2 rounded ml-4 hover:opacity-90 transition"
+            className="bg-pink-500 text-white px-4 py-2 rounded ml-4 hover:opacity-90 transition"
             onClick={() => addToCartHandler(data)}
           >
             Add to cart
