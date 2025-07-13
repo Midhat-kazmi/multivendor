@@ -1,44 +1,32 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import styles from "../../styles/styles";
+import styles from "../../../styles/styles";
 
 const Hero = () => {
   return (
-    <div className="p-1 bg-[#333]"> {/* Border effect using padding and gray background */}
-      <div
-        className="relative min-h-[85vh] w-full bg-no-repeat bg-center"
-        style={{
-          backgroundImage: `url("https://i.pinimg.com/736x/39/0a/39/390a396c996f97f4a30f49e34513bf9c.jpg")`,
-          backgroundSize: "100% auto", // Stretch horizontally
-          backgroundColor: "#000", // fallback background
-        }}
-      >
-        {/* Overlay */}
-        <div className="absolute inset-0 bg-black/40 z-0" />
-
-        {/* Hero Content */}
-        <div
-          className={`${styles.section} relative z-10 w-[90%] 800px:w-[60%] py-16`}
-        >
-          <h1 className="text-[45px] 800px:text-[200px] leading-[1.2] text-white font-[600] capitalize drop-shadow-lg">
+    <div className="w-full bg-white py-16">
+      <div className={`${styles.section} grid grid-cols-1 md:grid-cols-2 gap-12 items-center`}>
+        {/* Text Content */}
+        <div>
+          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 leading-tight mb-4">
             Find Your Vibe
           </h1>
-          <p className="mt-4 text-white text-[20px] 800px:text-[30px] font-[400] leading-[1.6] max-w-[600px] drop-shadow-md">
-            Discover hand-picked fashion, electronics, and lifestyle products, all
-            delivered fast and with care. QuickCart brings you the best deals every
-            day.
+          <p className="text-lg text-gray-700 mb-4">
+            Discover hand-picked fashion, electronics, and lifestyle products — delivered fast and with care.
           </p>
-          <p className="mt-2 text-white text-[24px] 800px:text-[30px] font-[300] drop-shadow-sm">
+          <p className="text-md text-gray-600">
             Trusted by thousands. Loved by all. Explore what makes QuickCart different.
           </p>
-
-          <Link to="/products" className="inline-block">
-            <div className={`${styles.button} mt-6 bg-white text-black hover:bg-gray-200`}>
-              <span className="font-[Poppins] text-[18px] font-semibold">
-                Shop Now
-              </span>
-            </div>
+          <Link to="/products">
+            <button className="mt-6 bg-black text-white px-6 py-3 rounded-full text-base font-medium hover:bg-gray-800 transition">
+              Shop Now
+            </button>
           </Link>
+        </div>
+
+        {/* Placeholder / Future Image Block */}
+        <div className="w-full h-[300px] md:h-[400px] bg-gray-100 border border-dashed border-gray-300 flex items-center justify-center rounded-xl">
+          <span className="text-gray-400 text-lg">[ Image or Illustration Here ]</span>
         </div>
       </div>
     </div>
