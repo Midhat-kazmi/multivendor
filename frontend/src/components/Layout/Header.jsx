@@ -189,7 +189,7 @@ const Header = ({ activeHeading }) => {
 
 
      {/* Navbar Links (Left but more to the right) */}
-<div className="flex-1 flex justify-start lg:pl-130">
+<div className="flex-1 flex justify-start lg:pl-90">
   <Navbar active={activeHeading} noRounded />
 </div>
 

@@ -5,25 +5,49 @@ import styles from "../../styles/styles";
 const Hero = () => {
   return (
     <div className="w-full bg-white py-16">
-      <div className={`${styles.section} grid grid-cols-1 md:grid-cols-2 gap-12 items-center`}>
+      <div
+        className={`${styles.section} grid grid-cols-1 md:grid-cols-2 gap-12 items-center`}
+      >
         {/* Text Content */}
         <div>
-          <h1 className="text-4xl md:text-6xl font-extrabold text-[#E75480] leading-tight mb-6">
+          <h1 className="text-4xl md:text-6xl font-extrabold text-pink-500 leading-tight mb-6">
             Find Your Vibe
           </h1>
           <p className="text-lg text-gray-700 mb-4">
-            Discover hand-picked <span className="text-[#E75480] font-semibold">fashion</span>, electronics,
-            and lifestyle products — delivered fast and with care.
+            Discover hand-picked{" "}
+            <span className="text-pink-500 font-semibold">fashion</span>,
+            electronics, and lifestyle products — delivered fast and with care.
           </p>
           <p className="text-md text-gray-600">
-            Trusted by thousands. Loved by all. Explore what makes <span className="font-medium text-[#E75480]">Shopora</span> different.
+            Trusted by thousands. Loved by all. Explore what makes{" "}
+            <span className="font-medium text-pink-500">Shopora</span>{" "}
+            different.
           </p>
 
           <Link to="/products">
-            <button className="mt-6 bg-[#E75480] text-white px-6 py-3 rounded-full text-base font-medium hover:bg-[#d7426e] transition">
+            <button className="mt-6 bg-pink-500 text-white px-6 py-3 rounded-full text-base font-medium hover:bg-pink-600 transition">
               Shop Now
             </button>
           </Link>
+
+          {/* Trust Indicators */}
+          <div className="mt-8 space-y-3 text-sm text-gray-700">
+            <p className="flex items-center gap-2">
+              <span className="text-pink-500 text-lg">🎉</span>
+              <span>
+                <span className="text-pink-500 font-semibold">5,000+</span>{" "}
+                Happy Clients
+              </span>
+            </p>
+            <p className="flex items-center gap-2">
+              <span className="text-pink-500 text-lg">🚚</span>
+              Fast Delivery Across Pakistan
+            </p>
+            <p className="flex items-center gap-2">
+              <span className="text-pink-500 text-lg">💯</span>
+              100% Genuine & Trusted Products
+            </p>
+          </div>
         </div>
 
         {/* Image Block */}
