@@ -46,7 +46,7 @@ const EventCard = ({ active, data }) => {
 
         <div className="flex items-center justify-between py-2">
           <div className="flex items-center space-x-2">
-            <h5 className="text-red-500 line-through text-lg font-medium">
+            <h5 className="text-pink-500 line-through text-lg font-medium">
               ${data.originalPrice}
             </h5>
             <h5 className="text-gray-800 text-xl font-bold">
@@ -68,7 +68,7 @@ const EventCard = ({ active, data }) => {
           </Link>
           <button
             onClick={() => addToCartHandler(data)}
-            className="bg-[#E94560] text-white px-5 py-2 rounded hover:bg-[#d0334f] transition"
+            className="bg-pink-500 text-white px-5 py-2 rounded hover:bg-pink-500 transition"
           >
             Add to Cart
           </button>
