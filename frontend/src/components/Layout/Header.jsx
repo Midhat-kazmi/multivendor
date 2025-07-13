@@ -61,7 +61,7 @@ const Header = ({ activeHeading }) => {
             <img
               src={LOGO_URL}
               alt="Logo"
-              className="h-20 object-contain max-w-[240px]"
+              className="h-30 object-contain max-w-[240px]"
             />
           </Link>
 

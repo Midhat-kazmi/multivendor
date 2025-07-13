@@ -10,6 +10,7 @@ import {
   footercompanyLinks,
   footerProductLinks,
   footerSupportLinks,
+
 } from "../../static/data";
 
 const Footer = () => {
@@ -18,7 +19,7 @@ const Footer = () => {
       {/* Subscribe Section */}
       <div className="md:flex md:justify-between md:items-center px-4 sm:px-12 bg-[#FFF0F2] py-8 border-b border-[#FADADD]">
         <h1 className="text-2xl lg:text-4xl font-semibold md:w-2/5 leading-snug mb-4 md:mb-0 text-center md:text-left">
-          <span className="text-[#E75480]">Subscribe</span> to get news, events,
+          <span className="text-pink-500">Subscribe</span> to get news, events,
           and offers
         </h1>
         <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-[50%]">
@@ -28,7 +29,7 @@ const Footer = () => {
             placeholder="Enter your email..."
             className="w-full sm:w-[60%] px-4 py-2 rounded-md border border-[#FADADD] focus:ring-2 focus:ring-[#E75480] text-[#333] outline-none"
           />
-          <button className="bg-[#E75480] hover:bg-[#fa97ac] duration-300 px-6 py-2.5 rounded-md text-white font-medium w-full sm:w-auto">
+          <button className="bg-pink-500 hover:bg-pink-500 duration-300 px-6 py-2.5 rounded-md text-white font-medium w-full sm:w-auto">
             Submit
           </button>
         </div>
@@ -68,13 +69,13 @@ const Footer = () => {
 
         {/* Company */}
         <div className="text-center sm:text-left">
-          <h2 className="font-semibold mb-4 text-[#E75480]">Company</h2>
+          <h2 className="font-semibold mb-4 text-pink-500">Company</h2>
           <ul>
             {footerProductLinks.map((link, index) => (
               <li key={index} className="mb-2">
                 <Link
                   to={link.link}
-                  className="text-gray-600 text-sm hover:text-[#E75480] transition"
+                  className="text-gray-600 text-sm hover:text-pink-500 transition"
                 >
                   {link.name}
                 </Link>
@@ -85,13 +86,13 @@ const Footer = () => {
 
         {/* Shop */}
         <div className="text-center sm:text-left">
-          <h2 className="font-semibold mb-4 text-[#E75480]">Shop</h2>
+          <h2 className="font-semibold mb-4 text-pink-500">Shop</h2>
           <ul>
             {footercompanyLinks.map((link, index) => (
               <li key={index} className="mb-2">
                 <Link
                   to={link.link}
-                  className="text-gray-600 text-sm hover:text-[#E75480] transition"
+                  className="text-gray-600 text-sm hover:text-pink-500 transition"
                 >
                   {link.name}
                 </Link>
@@ -102,7 +103,7 @@ const Footer = () => {
 
         {/* Support */}
         <div className="text-center sm:text-left">
-          <h2 className="font-semibold mb-4 text-[#E75480]">Support</h2>
+          <h2 className="font-semibold mb-4 text-pink-500">Support</h2>
           <ul>
             {footerSupportLinks.map((link, index) => (
               <li key={index} className="mb-2">
@@ -121,7 +122,7 @@ const Footer = () => {
       {/* Bottom Footer */}
       <div className="border-t border-[#FADADD] px-6 sm:px-12 py-6 text-center text-sm text-gray-500 bg-[#FFF0F2]">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 items-center">
-          <span>© {new Date().getFullYear()} Shopora.Made by Midhat.</span>
+          <span>© {new Date().getFullYear()} Shopora.Design by Midhat.</span>
           <span className="text-xs">Terms · Privacy Policy</span>
           <div className="flex justify-center sm:justify-end">
             <img
