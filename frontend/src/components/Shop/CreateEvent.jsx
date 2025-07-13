@@ -241,7 +241,7 @@ const CreateEvent = () => {
         {/* Image Upload */}
         <div>
           <label className="block font-medium">
-            Upload Images <span className="text-red-500">*</span>
+            Upload Images <span className="text-pink-500">*</span>
           </label>
           <input
             type="file"
@@ -253,7 +253,7 @@ const CreateEvent = () => {
           />
           <label
             htmlFor="upload"
-            className="cursor-pointer inline-flex items-center space-x-2 text-blue-600 mt-2 hover:underline"
+            className="cursor-pointer inline-flex items-center space-x-2 text-pink-500 mt-2 hover:underline"
           >
             <AiOutlinePlusCircle size={24} />
             <span>Choose Images</span>
@@ -274,7 +274,7 @@ const CreateEvent = () => {
         <div>
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded-md font-semibold hover:bg-blue-700 transition"
+            className="w-full bg-pink-500 text-white py-2 rounded-md font-semibold hover:bg-pink-500 transition"
           >
             Create Event
           </button>
