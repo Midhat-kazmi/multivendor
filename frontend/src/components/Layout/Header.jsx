@@ -54,7 +54,7 @@ const Header = ({ activeHeading }) => {
           {/* Logo */}
           <Link to="/" className="flex items-center min-h-[120px]">
             <img
-              src="https://res.cloudinary.com/dgve6ewpr/image/upload/v1752295853/file-1746084849270-390129813_oeyefc.png"
+              src=""
               alt="QuickCart Logo"
               className="h-[140px] md:h-[160px] w-auto object-contain transition-all duration-300"
               style={{ maxWidth: "340px" }}
