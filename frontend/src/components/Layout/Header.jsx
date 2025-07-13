@@ -50,23 +50,23 @@ const Header = ({ activeHeading }) => {
   return (
     <>
       <header
-        className={`w-full bg-[#FFDDE1] border-b border-[#FADADD] ${
+        className={`w-full bg-white border-b ${
           active ? "fixed top-0 left-0 shadow-md" : ""
         } z-50`}
       >
-        {/* Row 1: Logo, Search, Icons */}
-        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between px-4 py-3 gap-y-4">
+        {/* Row 1 */}
+        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between px-4 py-4 gap-y-4">
           {/* Logo */}
-          <Link to="/" className="flex items-center min-w-[120px]">
+          <Link to="/" className="flex items-center min-w-[140px]">
             <img
               src={LOGO_URL}
               alt="Logo"
-              className="h-16 w-auto object-contain"
-              style={{ maxWidth: "180px" }}
+              className="h-20 w-auto object-contain"
+              style={{ maxWidth: "220px" }}
             />
           </Link>
 
-          {/* Search Bar */}
+          {/* Search */}
           <div className="flex-1 w-full sm:w-auto flex justify-center px-2 order-3 sm:order-none">
             <div className="relative w-full max-w-md">
               <input
@@ -74,14 +74,14 @@ const Header = ({ activeHeading }) => {
                 placeholder="Search"
                 value={searchTerm}
                 onChange={handleSearchChange}
-                className="w-full h-11 pl-5 pr-10 rounded-full bg-[#FADADD] text-black placeholder:text-[#E75480] border-none focus:ring-2 focus:ring-[#E75480] shadow-sm"
+                className="w-full h-11 pl-5 pr-10 rounded-full bg-[#f3f3f3] text-black placeholder:text-gray-500 border border-gray-300 focus:ring-2 focus:ring-[#E75480] shadow-sm"
               />
               <AiOutlineSearch
                 size={20}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-[#E75480] cursor-pointer"
               />
               {searchData && searchData.length > 0 && (
-                <div className="absolute left-0 right-0 bg-white shadow z-[999] mt-2 max-h-[300px] overflow-y-auto p-2 rounded-lg border border-[#FADADD]">
+                <div className="absolute left-0 right-0 bg-white shadow z-[999] mt-2 max-h-[300px] overflow-y-auto p-2 rounded-lg border border-gray-200">
                   {searchData.map((item, index) => (
                     <Link to={`/product/${item._id}`} key={index}>
                       <div className="flex items-center py-2 hover:bg-[#FADADD] rounded px-2">
@@ -103,7 +103,7 @@ const Header = ({ activeHeading }) => {
           <div className="flex items-center space-x-3">
             {/* Wishlist */}
             <button
-              className="relative p-2 rounded-full hover:bg-[#FADADD] transition"
+              className="relative p-2 rounded-full hover:bg-[#f9e3e6] transition"
               onClick={() => setOpenWishlist(true)}
             >
               <AiOutlineHeart size={22} color="#E75480" />
@@ -114,7 +114,7 @@ const Header = ({ activeHeading }) => {
 
             {/* Cart */}
             <button
-              className="relative p-2 rounded-full hover:bg-[#FADADD] transition"
+              className="relative p-2 rounded-full hover:bg-[#f9e3e6] transition"
               onClick={() => setOpenCart(true)}
             >
               <AiOutlineShoppingCart size={22} color="#E75480" />
@@ -156,7 +156,7 @@ const Header = ({ activeHeading }) => {
                 <BiMenuAltLeft size={22} color="#E75480" />
               </button>
               {dropDown && (
-                <div className="absolute top-[60px] right-0 z-40 w-60 bg-[#FFDDE1] shadow-md rounded-b-lg">
+                <div className="absolute top-[60px] right-0 z-40 w-60 bg-white shadow-md rounded-b-lg border">
                   <DropDown
                     categoriesData={categoriesData}
                     setDropDown={setDropDown}
@@ -168,13 +168,13 @@ const Header = ({ activeHeading }) => {
         </div>
 
         {/* Row 2: Categories & Navbar */}
-        <div className="bg-[#FFDDE1] w-full">
-          <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between px-4 py-2 gap-4">
+        <div className="bg-[#fff] w-full border-t border-gray-200 shadow-sm">
+          <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between px-4 py-3 gap-4">
             {/* Categories Button */}
             <div className="hidden lg:flex items-center">
               <button
                 onClick={() => setDropDownVisible(!dropDownVisible)}
-                className="flex items-center bg-white text-[#E75480] px-5 py-2 rounded-full font-semibold shadow hover:bg-[#FFF0F2] transition"
+                className="flex items-center bg-[#FFF0F2] text-[#E75480] px-5 py-2 rounded-full font-semibold shadow-sm hover:bg-[#FFEFF1] transition"
               >
                 <BiMenuAltLeft size={22} className="mr-2" />
                 Categories
