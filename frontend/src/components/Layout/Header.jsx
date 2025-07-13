@@ -49,54 +49,52 @@ const Header = ({ activeHeading }) => {
 
   return (
     <>
+      {/* Sticky Header */}
       <header
-        className={`w-full bg-white border-b ${
+        className={`w-full bg-white border-b z-50 ${
           active ? "fixed top-0 left-0 shadow-md" : ""
-        } z-50`}
+        }`}
       >
-        {/* Row 1 */}
-        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between px-4 py-4 gap-y-4">
+        <div className="max-w-7xl mx-auto flex items-center justify-between px-4 py-4">
           {/* Logo */}
-          <Link to="/" className="flex items-center min-w-[140px]">
+          <Link to="/" className="min-w-[140px]">
             <img
               src={LOGO_URL}
-              alt="Logo"
-              className="h-20 w-auto object-contain"
-              style={{ maxWidth: "220px" }}
+              alt="Shopora Logo"
+              className="h-24 object-contain"
+              style={{ maxWidth: "260px" }}
             />
           </Link>
 
-          {/* Search */}
-          <div className="flex-1 w-full sm:w-auto flex justify-center px-2 order-3 sm:order-none">
-            <div className="relative w-full max-w-md">
-              <input
-                type="text"
-                placeholder="Search"
-                value={searchTerm}
-                onChange={handleSearchChange}
-                className="w-full h-11 pl-5 pr-10 rounded-full bg-[#f3f3f3] text-black placeholder:text-gray-500 border border-gray-300 focus:ring-2 focus:ring-[#E75480] shadow-sm"
-              />
-              <AiOutlineSearch
-                size={20}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-[#E75480] cursor-pointer"
-              />
-              {searchData && searchData.length > 0 && (
-                <div className="absolute left-0 right-0 bg-white shadow z-[999] mt-2 max-h-[300px] overflow-y-auto p-2 rounded-lg border border-gray-200">
-                  {searchData.map((item, index) => (
-                    <Link to={`/product/${item._id}`} key={index}>
-                      <div className="flex items-center py-2 hover:bg-[#FADADD] rounded px-2">
-                        <img
-                          src={item.images[0]?.url || "/no-image.png"}
-                          alt={item.name}
-                          className="w-[36px] h-[36px] mr-3 object-cover rounded"
-                        />
-                        <h1 className="text-sm text-black">{item.name}</h1>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </div>
+          {/* Search Bar */}
+          <div className="flex-1 mx-4 max-w-xl relative">
+            <input
+              type="text"
+              placeholder="Search"
+              value={searchTerm}
+              onChange={handleSearchChange}
+              className="w-full h-11 pl-5 pr-10 rounded-full bg-[#f3f3f3] text-black placeholder:text-gray-500 border border-gray-300 focus:ring-2 focus:ring-[#E75480] shadow-sm"
+            />
+            <AiOutlineSearch
+              size={20}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-[#E75480] cursor-pointer"
+            />
+            {searchData && searchData.length > 0 && (
+              <div className="absolute left-0 right-0 bg-white shadow z-[999] mt-2 max-h-[300px] overflow-y-auto p-2 rounded-lg border border-gray-200">
+                {searchData.map((item, index) => (
+                  <Link to={`/product/${item._id}`} key={index}>
+                    <div className="flex items-center py-2 hover:bg-[#FADADD] rounded px-2">
+                      <img
+                        src={item.images[0]?.url || "/no-image.png"}
+                        alt={item.name}
+                        className="w-[36px] h-[36px] mr-3 object-cover rounded"
+                      />
+                      <h1 className="text-sm text-black">{item.name}</h1>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Icons */}
@@ -166,39 +164,36 @@ const Header = ({ activeHeading }) => {
             </div>
           </div>
         </div>
+      </header>
 
-        {/* Row 2: Categories & Navbar */}
-        <div className="bg-[#fff] w-full border-t border-gray-200 shadow-sm">
-          <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between px-4 py-3 gap-4">
-            {/* Categories Button */}
-            <div className="hidden lg:flex items-center">
-              <button
-                onClick={() => setDropDownVisible(!dropDownVisible)}
-                className="flex items-center bg-[#FFF0F2] text-[#E75480] px-5 py-2 rounded-full font-semibold shadow-sm hover:bg-[#FFEFF1] transition"
-              >
-                <BiMenuAltLeft size={22} className="mr-2" />
-                Categories
-              </button>
-              {dropDownVisible && (
-                <div className="absolute top-[100%] left-6 z-50">
-                  <DropDown
-                    categoriesData={categoriesData}
-                    setDropDown={setDropDownVisible}
-                  />
-                </div>
-              )}
-            </div>
+      {/* Navigation Row */}
+      <section className="w-full bg-white border-t border-gray-200 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center">
+          {/* Categories Button */}
+          <div className="hidden lg:flex items-center">
+            <button
+              onClick={() => setDropDownVisible(!dropDownVisible)}
+              className="flex items-center bg-[#FFF0F2] text-[#E75480] px-5 py-2 rounded-full font-semibold shadow-sm hover:bg-[#FFEFF1] transition"
+            >
+              <BiMenuAltLeft size={22} className="mr-2" />
+              Categories
+            </button>
+            {dropDownVisible && (
+              <div className="absolute top-[100%] left-6 z-50">
+                <DropDown
+                  categoriesData={categoriesData}
+                  setDropDown={setDropDownVisible}
+                />
+              </div>
+            )}
+          </div>
 
-            {/* Navbar Centered */}
-            <div className="w-full flex justify-center">
-              <Navbar active={activeHeading} />
-            </div>
-
-            {/* Spacer */}
-            <div className="hidden lg:block w-[180px]" />
+          {/* Navbar */}
+          <div className="flex-1 w-full">
+            <Navbar active={activeHeading} />
           </div>
         </div>
-      </header>
+      </section>
 
       {/* Popups */}
       {openCart && <Cart setOpenCart={setOpenCart} />}
