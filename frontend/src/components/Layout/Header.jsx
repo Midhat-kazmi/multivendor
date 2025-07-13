@@ -49,31 +49,30 @@ const Header = ({ activeHeading }) => {
 
   return (
     <>
-      {/* Sticky Header */}
+      {/* Header */}
       <header
-        className={`w-full bg-white border-b z-50 ${
+        className={`w-full bg-[#FFDDE1] border-b z-50 ${
           active ? "fixed top-0 left-0 shadow-md" : ""
         }`}
       >
-        <div className="max-w-7xl mx-auto flex items-center justify-between px-4 py-4">
+        <div className="max-w-7xl mx-auto flex items-center justify-between px-4 py-3 flex-wrap md:flex-nowrap gap-4">
           {/* Logo */}
-          <Link to="/" className="min-w-[140px]">
+          <Link to="/" className="min-w-[100px]">
             <img
               src={LOGO_URL}
               alt="Shopora Logo"
-              className="h-24 object-contain"
-              style={{ maxWidth: "260px" }}
+              className="h-20 object-contain max-w-[220px]"
             />
           </Link>
 
           {/* Search Bar */}
-          <div className="flex-1 mx-4 max-w-xl relative">
+          <div className="flex-grow w-full md:w-auto relative">
             <input
               type="text"
               placeholder="Search"
               value={searchTerm}
               onChange={handleSearchChange}
-              className="w-full h-11 pl-5 pr-10 rounded-full bg-[#f3f3f3] text-black placeholder:text-gray-500 border border-gray-300 focus:ring-2 focus:ring-[#E75480] shadow-sm"
+              className="w-full h-11 pl-5 pr-10 rounded-full bg-white text-black placeholder:text-gray-500 border border-gray-300 focus:ring-2 focus:ring-[#E75480] shadow-sm"
             />
             <AiOutlineSearch
               size={20}
@@ -97,8 +96,8 @@ const Header = ({ activeHeading }) => {
             )}
           </div>
 
-          {/* Icons */}
-          <div className="flex items-center space-x-3">
+          {/* Action Icons */}
+          <div className="flex items-center gap-2 flex-shrink-0">
             {/* Wishlist */}
             <button
               className="relative p-2 rounded-full hover:bg-[#f9e3e6] transition"
@@ -140,13 +139,13 @@ const Header = ({ activeHeading }) => {
 
             {/* Seller Button */}
             <Link to={isSeller ? "/dashboard" : "/shop-create"}>
-              <div className="bg-[#E75480] text-white px-4 py-2 rounded-full hover:bg-[#FADADD] hover:text-[#E75480] transition font-semibold text-xs ml-2">
+              <div className="bg-[#E75480] text-white px-4 py-2 rounded-full hover:bg-white hover:text-[#E75480] border border-[#E75480] transition font-semibold text-xs">
                 {isSeller ? "Dashboard" : "Become Seller"}
               </div>
             </Link>
 
             {/* Mobile Menu */}
-            <div className="block lg:hidden ml-2">
+            <div className="block md:hidden">
               <button
                 className="bg-[#FADADD] p-2 rounded-full"
                 onClick={() => setDropDown(!dropDown)}
@@ -154,7 +153,7 @@ const Header = ({ activeHeading }) => {
                 <BiMenuAltLeft size={22} color="#E75480" />
               </button>
               {dropDown && (
-                <div className="absolute top-[60px] right-0 z-40 w-60 bg-white shadow-md rounded-b-lg border">
+                <div className="absolute top-[60px] right-2 z-40 w-60 bg-white shadow-md rounded-b-lg border">
                   <DropDown
                     categoriesData={categoriesData}
                     setDropDown={setDropDown}
@@ -167,10 +166,10 @@ const Header = ({ activeHeading }) => {
       </header>
 
       {/* Navigation Row */}
-      <section className="w-full bg-white border-t border-gray-200 shadow-sm">
+      <section className="w-full bg-[#FFDDE1] border-t border-[#E75480] shadow-sm">
         <div className="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center">
           {/* Categories Button */}
-          <div className="hidden lg:flex items-center">
+          <div className="hidden md:flex items-center">
             <button
               onClick={() => setDropDownVisible(!dropDownVisible)}
               className="flex items-center bg-[#FFF0F2] text-[#E75480] px-5 py-2 rounded-full font-semibold shadow-sm hover:bg-[#FFEFF1] transition"
@@ -188,7 +187,7 @@ const Header = ({ activeHeading }) => {
             )}
           </div>
 
-          {/* Navbar */}
+          {/* Navbar Links */}
           <div className="flex-1 w-full">
             <Navbar active={activeHeading} />
           </div>
