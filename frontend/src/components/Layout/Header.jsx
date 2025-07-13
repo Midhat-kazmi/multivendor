@@ -167,12 +167,12 @@ const Header = ({ activeHeading }) => {
 
       {/* Navigation Row */}
       <section className="w-full bg-white border-t border-gray-200 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 py-2 flex flex-wrap justify-between items-center">
-          {/* Categories Button (visible on lg) */}
+        <div className="max-w-7xl mx-auto px-4 py-2 flex items-center justify-between flex-wrap gap-4">
+          {/* Categories Button */}
           <div className="hidden lg:flex items-center">
             <button
               onClick={() => setDropDownVisible(!dropDownVisible)}
-              className="flex items-center bg-pink-50 text-pink-600 px-5 py-2 rounded-full font-semibold shadow-sm hover:bg-pink-100 transition"
+              className="flex items-center text-pink-600 px-4 py-2 font-semibold hover:text-pink-700 transition"
             >
               <BiMenuAltLeft size={22} className="mr-2" />
               Categories
@@ -187,9 +187,11 @@ const Header = ({ activeHeading }) => {
             )}
           </div>
 
-          {/* Main Navbar */}
-          <div className="flex-1 w-full">
-            <Navbar active={activeHeading} />
+          {/* Navbar Links (Right-Aligned) */}
+          <div className="flex-1 flex justify-end">
+            <div className="flex items-center gap-6">
+              <Navbar active={activeHeading} noRounded />
+            </div>
           </div>
         </div>
       </section>
