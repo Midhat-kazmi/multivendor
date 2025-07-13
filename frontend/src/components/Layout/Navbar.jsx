@@ -32,7 +32,7 @@ const Navbar = () => {
   if (error) return <div className="text-red-500">{error}</div>;
 
   return (
-    <nav className="flex items-center gap-6 text-sm font-medium">
+    <nav className="flex items-center gap-6 text-base font-medium bg-[#FFF0F2] px-4 py-2 rounded-full shadow-sm border border-[#FADADD]">
       {navItems.map((item) => {
         const isActive = location.pathname === item.url;
 
@@ -40,8 +40,12 @@ const Navbar = () => {
           <Link
             key={item.id}
             to={item.url}
-            className={`relative pb-1 transition duration-150 ease-in-out 
-              ${isActive ? "text-white after:absolute after:left-0 after:bottom-0 after:h-[2px] after:w-full after:bg-white" : "text-white hover:opacity-70"}
+            className={`relative px-3 py-1 rounded-full transition duration-150 ease-in-out
+              ${
+                isActive
+                  ? "bg-[#FADADD] text-[#E75480] font-semibold"
+                  : "text-[#E75480] hover:bg-[#FADADD] hover:text-[#E75480]"
+              }
             `}
           >
             {item.title}
