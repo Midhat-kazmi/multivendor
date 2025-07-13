@@ -50,14 +50,14 @@ const Header = ({ activeHeading }) => {
   return (
     <>
       <header
-        className={`w-full bg-[#FFF0F2] border-b border-[#FADADD] ${
+        className={`w-full bg-[#FFDDE1] border-b border-[#FADADD] ${
           active ? "fixed top-0 left-0 shadow-md" : ""
         } z-50`}
       >
         {/* Row 1: Logo, Search, Icons */}
-        <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-3">
+        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between px-4 py-3 gap-y-4">
           {/* Logo */}
-          <Link to="/" className="flex items-center min-w-[140px]">
+          <Link to="/" className="flex items-center min-w-[120px]">
             <img
               src={LOGO_URL}
               alt="Logo"
@@ -67,7 +67,7 @@ const Header = ({ activeHeading }) => {
           </Link>
 
           {/* Search Bar */}
-          <div className="flex-1 flex justify-center px-4">
+          <div className="flex-1 w-full sm:w-auto flex justify-center px-2 order-3 sm:order-none">
             <div className="relative w-full max-w-md">
               <input
                 type="text"
@@ -156,7 +156,7 @@ const Header = ({ activeHeading }) => {
                 <BiMenuAltLeft size={22} color="#E75480" />
               </button>
               {dropDown && (
-                <div className="absolute top-[60px] right-0 z-40 w-60 bg-[#FFF0F2] shadow-md rounded-b-lg">
+                <div className="absolute top-[60px] right-0 z-40 w-60 bg-[#FFDDE1] shadow-md rounded-b-lg">
                   <DropDown
                     categoriesData={categoriesData}
                     setDropDown={setDropDown}
@@ -168,8 +168,8 @@ const Header = ({ activeHeading }) => {
         </div>
 
         {/* Row 2: Categories & Navbar */}
-        <div className="bg-[#FADADD] w-full">
-          <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between px-6 py-2 gap-4">
+        <div className="bg-[#FFDDE1] w-full">
+          <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between px-4 py-2 gap-4">
             {/* Categories Button */}
             <div className="hidden lg:flex items-center">
               <button
@@ -194,7 +194,7 @@ const Header = ({ activeHeading }) => {
               <Navbar active={activeHeading} />
             </div>
 
-            {/* Optional Spacer */}
+            {/* Spacer */}
             <div className="hidden lg:block w-[180px]" />
           </div>
         </div>
