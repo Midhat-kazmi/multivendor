@@ -14,6 +14,9 @@ import { useSelector } from "react-redux";
 import Cart from "../Cart/Cart";
 import Wishlist from "../Wishlist/Wishlist";
 
+const LOGO_URL =
+  "https://res.cloudinary.com/dgve6ewpr/image/upload/v1752368016/bfdf69bf-b02a-44ad-bb0d-8475856940bd_tdjvhk.png";
+
 const Header = ({ activeHeading }) => {
   const { isAuthenticated, user } = useSelector((state) => state.user);
   const { isSeller } = useSelector((state) => state.seller);
@@ -46,36 +49,25 @@ const Header = ({ activeHeading }) => {
 
   return (
     <>
-      <header className={`w-full bg-[#FFF0F2] border-b border-[#FADADD] ${active ? "fixed top-0 left-0 shadow" : ""} z-50`}>
-        <div className="max-w-7xl mx-auto flex items-center justify-between px-4 py-3">
-          {/* Left: Categories Dropdown (Desktop) */}
-          <div className="hidden lg:flex items-center relative">
-            <button
-              onClick={() => setDropDownVisible(!dropDownVisible)}
-              className="flex items-center bg-[#FADADD] text-[#E75480] px-5 py-2 rounded-full font-semibold shadow-sm hover:bg-[#FFF0F2] transition"
-            >
-              <BiMenuAltLeft size={22} className="mr-2" />
-              Categories
-            </button>
-            {dropDownVisible && (
-              <div className="absolute top-full left-0 z-50">
-                <DropDown
-                  categoriesData={categoriesData}
-                  setDropDown={setDropDownVisible}
-                />
-              </div>
-            )}
-          </div>
-
-          {/* Center: Navbar */}
-          <div className="flex-1 flex justify-center">
-            <Navbar active={activeHeading} />
-          </div>
-
-          {/* Right: Search and Icons */}
-          <div className="flex items-center space-x-3">
-            {/* Search Bar */}
-            <div className="relative hidden md:block w-64">
+      <header
+        className={`w-full bg-[#FFF0F2] border-b border-[#FADADD] ${
+          active ? "fixed top-0 left-0 shadow" : ""
+        } z-50`}
+      >
+        {/* Row 1: Logo, Search, Icons */}
+        <div className="max-w-7xl mx-auto flex items-center justify-between px-4 py-2">
+          {/* Logo */}
+          <Link to="/" className="flex items-center min-w-[120px]">
+            <img
+              src={LOGO_URL}
+              alt="Logo"
+              className="h-12 w-auto object-contain"
+              style={{ maxWidth: "160px" }}
+            />
+          </Link>
+          {/* Search Bar */}
+          <div className="flex-1 flex justify-center px-4">
+            <div className="relative w-full max-w-md">
               <input
                 type="text"
                 placeholder="Search"
@@ -104,6 +96,9 @@ const Header = ({ activeHeading }) => {
                 </div>
               )}
             </div>
+          </div>
+          {/* Icons */}
+          <div className="flex items-center space-x-3">
             {/* Wishlist */}
             <button
               className="relative p-2 rounded-full hover:bg-[#FADADD] transition"
@@ -164,6 +159,33 @@ const Header = ({ activeHeading }) => {
               )}
             </div>
           </div>
+        </div>
+        {/* Row 2: Categories Dropdown & Navbar */}
+        <div className="max-w-7xl mx-auto flex items-center justify-between px-4 py-0 border-t border-[#FADADD]">
+          {/* Categories Dropdown (Desktop) */}
+          <div className="hidden lg:flex items-center relative">
+            <button
+              onClick={() => setDropDownVisible(!dropDownVisible)}
+              className="flex items-center bg-[#FADADD] text-[#E75480] px-5 py-2 rounded-full font-semibold shadow-sm hover:bg-[#FFF0F2] transition"
+            >
+              <BiMenuAltLeft size={22} className="mr-2" />
+              Categories
+            </button>
+            {dropDownVisible && (
+              <div className="absolute top-full left-0 z-50">
+                <DropDown
+                  categoriesData={categoriesData}
+                  setDropDown={setDropDownVisible}
+                />
+              </div>
+            )}
+          </div>
+          {/* Navbar */}
+          <div className="flex-1 flex justify-center">
+            <Navbar active={activeHeading} />
+          </div>
+          {/* Spacer for alignment */}
+          <div className="hidden lg:block w-[180px]" />
         </div>
       </header>
       {/* Popups */}
