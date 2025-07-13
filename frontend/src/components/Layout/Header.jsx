@@ -49,36 +49,36 @@ const Header = ({ activeHeading }) => {
   return (
     <>
       {/* Top Header */}
-      <div className={`${styles.section} py-2 bg-white`}>
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-y-4 md:gap-y-0">
+      <div className={`${styles.section} py-0 bg-[#FADADD]`}>
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-0 md:gap-8 pt-6 pb-2">
           {/* Logo */}
-          <Link to="/" className="flex items-center justify-center md:justify-start">
+          <Link to="/" className="flex items-center min-h-[120px]">
             <img
               src="https://res.cloudinary.com/dgve6ewpr/image/upload/v1752295853/file-1746084849270-390129813_oeyefc.png"
               alt="QuickCart Logo"
-              className="h-[100px] w-auto object-contain"
-              style={{ maxWidth: "300px" }}
+              className="h-[140px] md:h-[160px] w-auto object-contain transition-all duration-300"
+              style={{ maxWidth: "340px" }}
             />
           </Link>
 
           {/* Search Bar */}
-          <div className="w-full md:w-[50%] relative">
+          <div className="w-full md:w-[50%] relative flex items-center justify-center">
             <input
               type="text"
               placeholder="Search Product..."
               value={searchTerm}
               onChange={handleSearchChange}
-              className="h-[48px] w-full px-4 pr-12 border border-gray-400 rounded-md text-black focus:outline-none"
+              className="h-[48px] w-full px-4 pr-12 border border-[#FADADD] rounded-lg text-black shadow focus:outline-none focus:border-[#FFF0F2] bg-[#FFF0F2]"
             />
             <AiOutlineSearch
-              size={22}
-              className="absolute right-4 top-[13px] text-black cursor-pointer"
+              size={26}
+              className="absolute right-5 top-3 text-[#E75480] cursor-pointer"
             />
             {searchData && searchData.length > 0 && (
-              <div className="absolute bg-white shadow z-[999] w-full mt-2 max-h-[300px] overflow-y-auto p-2 rounded-md border border-gray-200">
+              <div className="absolute bg-[#FFF0F2] shadow z-[999] w-full mt-2 max-h-[300px] overflow-y-auto p-2 rounded-lg border border-[#FADADD]">
                 {searchData.map((item, index) => (
                   <Link to={`/product/${item._id}`} key={index}>
-                    <div className="flex items-center py-2 hover:bg-gray-100 rounded px-2">
+                    <div className="flex items-center py-2 hover:bg-[#FADADD] rounded px-2">
                       <img
                         src={item.images[0]?.url || "/no-image.png"}
                         alt={item.name}
@@ -95,9 +95,11 @@ const Header = ({ activeHeading }) => {
           {/* Seller Button */}
           <div className="w-full md:w-auto flex justify-center md:justify-end">
             <Link to={isSeller ? "/dashboard" : "/shop-create"}>
-              <div className="bg-black text-white px-5 py-3 rounded-md hover:bg-gray-900 transition-all text-sm md:text-base font-medium flex items-center justify-center">
-                {isSeller ? "Go to Dashboard" : "Become Seller"}
-                <IoIosArrowForward className="ml-2" />
+              <div className="bg-[#E75480] text-white px-6 py-3 rounded-lg hover:bg-[#FADADD] transition text-center shadow">
+                <h1 className="flex items-center justify-center text-base md:text-lg font-semibold">
+                  {isSeller ? "Go to Dashboard" : "Become Seller"}{" "}
+                  <IoIosArrowForward className="ml-2" />
+                </h1>
               </div>
             </Link>
           </div>
@@ -106,8 +108,8 @@ const Header = ({ activeHeading }) => {
 
       {/* Sticky Navigation Bar */}
       <div
-        className={`w-full bg-black h-[60px] z-50 transition-all ${
-          active ? "fixed top-0 left-0 shadow-md" : "relative"
+        className={`w-full bg-[#E75480] h-[64px] z-50 transition ${
+          active ? "fixed top-0 left-0 shadow-lg" : "relative"
         }`}
       >
         <div className={`${styles.section} flex items-center justify-between h-full`}>
@@ -117,27 +119,24 @@ const Header = ({ activeHeading }) => {
               className="cursor-pointer"
               onClick={() => setDropDown(!dropDown)}
             >
-              <BiMenuAltLeft size={30} color="white" />
+              <BiMenuAltLeft size={32} color="#FFF0F2" />
             </div>
           </div>
 
-          {/* Category Dropdown */}
+          {/* Categories Dropdown */}
           <div className="hidden lg:block relative">
             <div
               onClick={() => setDropDownVisible(!dropDownVisible)}
-              className="h-[45px] w-[240px] flex items-center bg-white pl-10 pr-4 rounded-t-md cursor-pointer relative"
+              className="h-[52px] w-[260px] flex items-center bg-[#FFF0F2] pl-12 pr-4 rounded-t-lg cursor-pointer relative shadow"
             >
-              <BiMenuAltLeft
-                size={24}
-                className="absolute left-3 top-2 text-black"
-              />
-              <span className="text-sm font-medium text-black">
+              <BiMenuAltLeft size={28} className="absolute left-3 top-3 text-[#E75480]" />
+              <span className="text-base font-medium text-[#E75480]">
                 All Categories
               </span>
-              <IoIosArrowDown size={16} className="ml-auto text-black" />
+              <IoIosArrowDown size={18} className="ml-auto text-[#E75480]" />
             </div>
             {dropDownVisible && (
-              <div className="absolute top-full left-0 z-50 bg-white w-full shadow rounded-b-md">
+              <div className="absolute top-full left-0 z-50 bg-[#FFF0F2] w-full shadow rounded-b-lg">
                 <DropDown
                   categoriesData={categoriesData}
                   setDropDown={setDropDownVisible}
@@ -148,7 +147,7 @@ const Header = ({ activeHeading }) => {
 
           {/* Mobile Dropdown */}
           {dropDown && (
-            <div className="lg:hidden absolute top-[60px] left-0 z-40 w-full bg-white shadow-md">
+            <div className="lg:hidden absolute top-[64px] left-0 z-40 w-full bg-[#FFF0F2] shadow-md rounded-b-lg">
               <DropDown
                 categoriesData={categoriesData}
                 setDropDown={setDropDown}
@@ -162,14 +161,14 @@ const Header = ({ activeHeading }) => {
           </div>
 
           {/* Icons */}
-          <div className="flex items-center space-x-5">
+          <div className="flex items-center space-x-6">
             {/* Wishlist */}
             <div
               className="relative cursor-pointer"
               onClick={() => setOpenWishlist(true)}
             >
-              <AiOutlineHeart size={22} color="white" />
-              <span className="absolute -top-2 -right-2 bg-white text-black text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-semibold">
+              <AiOutlineHeart size={26} color="#FFF0F2" />
+              <span className="absolute -top-2 -right-2 bg-[#FFF0F2] text-[#E75480] text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold border border-[#E75480]">
                 {wishlist?.length}
               </span>
             </div>
@@ -179,8 +178,8 @@ const Header = ({ activeHeading }) => {
               className="relative cursor-pointer"
               onClick={() => setOpenCart(true)}
             >
-              <AiOutlineShoppingCart size={22} color="white" />
-              <span className="absolute -top-2 -right-2 bg-white text-black text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-semibold">
+              <AiOutlineShoppingCart size={26} color="#FFF0F2" />
+              <span className="absolute -top-2 -right-2 bg-[#FFF0F2] text-[#E75480] text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold border border-[#E75480]">
                 {cart?.length}
               </span>
             </div>
@@ -191,13 +190,13 @@ const Header = ({ activeHeading }) => {
                 <Link to="/profile">
                   <img
                     src={user?.avatar?.url || "/default-avatar.png"}
-                    className="w-[36px] h-[36px] rounded-full object-cover border-2 border-white"
+                    className="w-[40px] h-[40px] rounded-full object-cover border-2 border-[#FFF0F2]"
                     alt="User Avatar"
                   />
                 </Link>
               ) : (
                 <Link to="/login">
-                  <CgProfile size={22} color="white" />
+                  <CgProfile size={26} color="#FFF0F2" />
                 </Link>
               )}
             </div>
