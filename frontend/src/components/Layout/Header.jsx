@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import styles from "../../styles/styles";
 import { categoriesData } from "../../static/data";
 import {
   AiOutlineHeart,
@@ -50,11 +49,9 @@ const Header = ({ activeHeading }) => {
     <>
       {/* Top Header */}
       <div className="w-full bg-[#FADADD] py-0">
-        <div className="max-w-none w-full flex flex-col md:flex-row md:items-center justify-between px-4 md:px-12 gap-0 md:gap-8 pt-6 pb-2">
-          {/* No Logo for now */}
-
+        <div className="max-w-none w-full flex flex-col md:flex-row md:items-center justify-between px-0 md:px-0 gap-0 md:gap-8 pt-6 pb-2">
           {/* Search Bar */}
-          <div className="w-full md:w-[50%] relative flex items-center justify-center">
+          <div className="w-full md:w-[50%] relative flex items-center justify-center px-4 md:px-12">
             <input
               type="text"
               placeholder="Search Product..."
@@ -85,50 +82,37 @@ const Header = ({ activeHeading }) => {
           </div>
 
           {/* Seller Button */}
-          <div className="w-full md:w-auto flex justify-center md:justify-end">
+          <div className="w-full md:w-auto flex justify-center md:justify-end px-4 md:px-12 mt-4 md:mt-0">
             <Link to={isSeller ? "/dashboard" : "/shop-create"}>
-              <div className="bg-[#E75480] text-white px-6 py-3 rounded-lg hover:bg-[#FADADD] transition text-center shadow">
-                <h1 className="flex items-center justify-center text-base md:text-lg font-semibold">
-                  {isSeller ? "Go to Dashboard" : "Become Seller"}{" "}
-                  <IoIosArrowForward className="ml-2" />
-                </h1>
+              <div className="bg-[#E75480] text-white px-6 py-3 rounded-full hover:bg-[#FADADD] transition text-center shadow-lg font-bold text-base flex items-center justify-center">
+                {isSeller ? "Go to Dashboard" : "Become Seller"}
+                <IoIosArrowForward className="ml-2" />
               </div>
             </Link>
           </div>
         </div>
       </div>
 
-      {/* Sticky Navigation Bar */}
-      <div
-        className={`w-full bg-[#E75480] h-[64px] z-50 transition ${
+      {/* Modern Navbar */}
+      <nav
+        className={`w-full bg-[#FFF0F2] h-[70px] z-50 transition ${
           active ? "fixed top-0 left-0 shadow-lg" : "relative"
-        }`}
+        } flex items-center`}
+        style={{ borderBottom: "2px solid #FADADD" }}
       >
-        <div className="max-w-none w-full flex items-center justify-between px-4 md:px-12 h-full">
-          {/* Mobile Menu */}
-          <div className="block lg:hidden">
-            <div
-              className="cursor-pointer"
-              onClick={() => setDropDown(!dropDown)}
-            >
-              <BiMenuAltLeft size={32} color="#FFF0F2" />
-            </div>
-          </div>
-
-          {/* Categories Dropdown */}
-          <div className="hidden lg:block relative">
-            <div
+        <div className="w-full max-w-7xl mx-auto flex items-center justify-between px-4 md:px-12 h-full">
+          {/* Left: Categories Dropdown */}
+          <div className="hidden lg:flex items-center relative">
+            <button
               onClick={() => setDropDownVisible(!dropDownVisible)}
-              className="h-[52px] w-[260px] flex items-center bg-[#FFF0F2] pl-12 pr-4 rounded-t-lg cursor-pointer relative shadow"
+              className="flex items-center bg-[#FADADD] text-[#E75480] px-5 py-2 rounded-full font-semibold shadow hover:bg-[#FFF0F2] transition"
             >
-              <BiMenuAltLeft size={28} className="absolute left-3 top-3 text-[#E75480]" />
-              <span className="text-base font-medium text-[#E75480]">
-                All Categories
-              </span>
-              <IoIosArrowDown size={18} className="ml-auto text-[#E75480]" />
-            </div>
+              <BiMenuAltLeft size={24} className="mr-2" />
+              All Categories
+              <IoIosArrowDown size={16} className="ml-2" />
+            </button>
             {dropDownVisible && (
-              <div className="absolute top-full left-0 z-50 bg-[#FFF0F2] w-full shadow rounded-b-lg">
+              <div className="absolute top-full left-0 z-50 bg-[#FFF0F2] w-[220px] shadow rounded-lg mt-2">
                 <DropDown
                   categoriesData={categoriesData}
                   setDropDown={setDropDownVisible}
@@ -137,30 +121,20 @@ const Header = ({ activeHeading }) => {
             )}
           </div>
 
-          {/* Mobile Dropdown */}
-          {dropDown && (
-            <div className="lg:hidden absolute top-[64px] left-0 z-40 w-full bg-[#FFF0F2] shadow-md rounded-b-lg">
-              <DropDown
-                categoriesData={categoriesData}
-                setDropDown={setDropDown}
-              />
-            </div>
-          )}
-
-          {/* Navbar Links */}
-          <div className="hidden lg:block">
+          {/* Center: Navbar Links */}
+          <div className="flex-1 flex justify-center">
             <Navbar active={activeHeading} />
           </div>
 
-          {/* Icons */}
+          {/* Right: Icons */}
           <div className="flex items-center space-x-6">
             {/* Wishlist */}
             <div
               className="relative cursor-pointer"
               onClick={() => setOpenWishlist(true)}
             >
-              <AiOutlineHeart size={26} color="#FFF0F2" />
-              <span className="absolute -top-2 -right-2 bg-[#FFF0F2] text-[#E75480] text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold border border-[#E75480]">
+              <AiOutlineHeart size={26} color="#E75480" />
+              <span className="absolute -top-2 -right-2 bg-[#FADADD] text-[#E75480] text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold border border-[#E75480]">
                 {wishlist?.length}
               </span>
             </div>
@@ -170,8 +144,8 @@ const Header = ({ activeHeading }) => {
               className="relative cursor-pointer"
               onClick={() => setOpenCart(true)}
             >
-              <AiOutlineShoppingCart size={26} color="#FFF0F2" />
-              <span className="absolute -top-2 -right-2 bg-[#FFF0F2] text-[#E75480] text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold border border-[#E75480]">
+              <AiOutlineShoppingCart size={26} color="#E75480" />
+              <span className="absolute -top-2 -right-2 bg-[#FADADD] text-[#E75480] text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold border border-[#E75480]">
                 {cart?.length}
               </span>
             </div>
@@ -182,19 +156,37 @@ const Header = ({ activeHeading }) => {
                 <Link to="/profile">
                   <img
                     src={user?.avatar?.url || "/default-avatar.png"}
-                    className="w-[40px] h-[40px] rounded-full object-cover border-2 border-[#FFF0F2]"
+                    className="w-[40px] h-[40px] rounded-full object-cover border-2 border-[#FADADD]"
                     alt="User Avatar"
                   />
                 </Link>
               ) : (
                 <Link to="/login">
-                  <CgProfile size={26} color="#FFF0F2" />
+                  <CgProfile size={26} color="#E75480" />
                 </Link>
               )}
             </div>
           </div>
+
+          {/* Mobile: Hamburger */}
+          <div className="block lg:hidden ml-4">
+            <button
+              className="bg-[#FADADD] p-2 rounded-full"
+              onClick={() => setDropDown(!dropDown)}
+            >
+              <BiMenuAltLeft size={28} color="#E75480" />
+            </button>
+            {dropDown && (
+              <div className="absolute top-[70px] left-0 z-40 w-full bg-[#FFF0F2] shadow-md rounded-b-lg">
+                <DropDown
+                  categoriesData={categoriesData}
+                  setDropDown={setDropDown}
+                />
+              </div>
+            )}
+          </div>
         </div>
-      </div>
+      </nav>
 
       {/* Popups */}
       {openCart && <Cart setOpenCart={setOpenCart} />}
