@@ -8,25 +8,31 @@ const Hero = () => {
       <div className={`${styles.section} grid grid-cols-1 md:grid-cols-2 gap-12 items-center`}>
         {/* Text Content */}
         <div>
-          <h1 className="text-4xl md:text-6xl font-bold text-gray-700 leading-tight mb-4">
+          <h1 className="text-4xl md:text-6xl font-extrabold text-[#E75480] leading-tight mb-6">
             Find Your Vibe
           </h1>
           <p className="text-lg text-gray-700 mb-4">
-            Discover hand-picked fashion, electronics, and lifestyle products delivered fast and with care.
+            Discover hand-picked <span className="text-[#E75480] font-semibold">fashion</span>, electronics,
+            and lifestyle products — delivered fast and with care.
           </p>
           <p className="text-md text-gray-600">
-            Trusted by thousands. Loved by all. Explore what makes QuickCart different.
+            Trusted by thousands. Loved by all. Explore what makes <span className="font-medium text-[#E75480]">Shopora</span> different.
           </p>
+
           <Link to="/products">
-            <button className="mt-6 bg-black text-white px-6 py-3 rounded-full text-base font-medium hover:bg-gray-800 transition">
+            <button className="mt-6 bg-[#E75480] text-white px-6 py-3 rounded-full text-base font-medium hover:bg-[#d7426e] transition">
               Shop Now
             </button>
           </Link>
         </div>
 
-        {/* Placeholder / Future Image Block */}
-        <div className="w-full h-[300px] md:h-[400px] bg-gray-100 border border-dashed border-gray-300 flex items-center justify-center rounded-xl">
-          <span className="text-gray-400 text-lg">[ Image or Illustration Here ]</span>
+        {/* Image Block */}
+        <div className="w-full h-[300px] md:h-[420px]">
+          <img
+            src="https://res.cloudinary.com/dgve6ewpr/image/upload/v1733920104/samples/ecommerce/accessories-bag.jpg"
+            alt="Hero Visual"
+            className="w-full h-full object-cover rounded-xl shadow-md"
+          />
         </div>
       </div>
     </div>
