@@ -196,7 +196,7 @@ const ShopCreated = () => {
             <div>
               <button
                 type="submit"
-                className="w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+                className="w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-pink-500 hover:bg-blue-700"
               >
                 Create Shop
               </button>
@@ -204,7 +204,7 @@ const ShopCreated = () => {
 
             <div className={`${styles.noramlFlex} w-full justify-center`}>
               <h4 className="text-sm text-gray-600">Already have an account?</h4>
-              <Link to="/shop-login" className="text-blue-600 pl-2 text-sm">
+              <Link to="/shop-login" className="text-pink-500 pl-2 text-sm">
                 Sign in
               </Link>
             </div>

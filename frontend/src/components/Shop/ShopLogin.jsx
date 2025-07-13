@@ -127,7 +127,7 @@ const ShopLogin = () => {
                 </label>
               </div>
               <div className="text-sm">
-                <a href=".forgot-password" className="font-medium text-blue-600 hover:text-blue-500">
+                <a href=".forgot-password" className="font-medium text-pink-500 hover:text-blue-500">
                   Forgot your password?
                 </a>
               </div>
@@ -136,7 +136,7 @@ const ShopLogin = () => {
             <div>
               <button
                 type="submit"
-                className="group relative w-full h-[40px] flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+                className="group relative w-full h-[40px] flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-pink-500"
               >
                 Submit
               </button>
@@ -144,7 +144,7 @@ const ShopLogin = () => {
 
             <div className={`${styles.noramlFlex} w-full`}>
               <h4>Not have any account?</h4>
-              <Link to="/signup" className="text-blue-600 pl-2">
+              <Link to="/signup" className="text-pink-500 pl-2">
                 Sign Up
               </Link>
             </div>
