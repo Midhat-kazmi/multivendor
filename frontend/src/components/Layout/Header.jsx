@@ -51,20 +51,21 @@ const Header = ({ activeHeading }) => {
     <>
       <header
         className={`w-full bg-[#FFF0F2] border-b border-[#FADADD] ${
-          active ? "fixed top-0 left-0 shadow" : ""
+          active ? "fixed top-0 left-0 shadow-md" : ""
         } z-50`}
       >
         {/* Row 1: Logo, Search, Icons */}
-        <div className="max-w-7xl mx-auto flex items-center justify-between px-4 py-2">
+        <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-3">
           {/* Logo */}
-          <Link to="/" className="flex items-center min-w-[120px]">
+          <Link to="/" className="flex items-center min-w-[140px]">
             <img
               src={LOGO_URL}
               alt="Logo"
-              className="h-12 w-auto object-contain"
-              style={{ maxWidth: "160px" }}
+              className="h-16 w-auto object-contain"
+              style={{ maxWidth: "180px" }}
             />
           </Link>
+
           {/* Search Bar */}
           <div className="flex-1 flex justify-center px-4">
             <div className="relative w-full max-w-md">
@@ -73,7 +74,7 @@ const Header = ({ activeHeading }) => {
                 placeholder="Search"
                 value={searchTerm}
                 onChange={handleSearchChange}
-                className="w-full h-10 pl-5 pr-10 rounded-full bg-[#FADADD] text-black placeholder:text-[#E75480] border-none focus:ring-2 focus:ring-[#E75480] shadow-none"
+                className="w-full h-11 pl-5 pr-10 rounded-full bg-[#FADADD] text-black placeholder:text-[#E75480] border-none focus:ring-2 focus:ring-[#E75480] shadow-sm"
               />
               <AiOutlineSearch
                 size={20}
@@ -97,6 +98,7 @@ const Header = ({ activeHeading }) => {
               )}
             </div>
           </div>
+
           {/* Icons */}
           <div className="flex items-center space-x-3">
             {/* Wishlist */}
@@ -104,44 +106,48 @@ const Header = ({ activeHeading }) => {
               className="relative p-2 rounded-full hover:bg-[#FADADD] transition"
               onClick={() => setOpenWishlist(true)}
             >
-              <AiOutlineHeart size={20} color="#E75480" />
+              <AiOutlineHeart size={22} color="#E75480" />
               <span className="absolute -top-1 -right-1 bg-[#FADADD] text-[#E75480] text-xs w-4 h-4 rounded-full flex items-center justify-center font-bold border border-[#E75480]">
                 {wishlist?.length}
               </span>
             </button>
+
             {/* Cart */}
             <button
               className="relative p-2 rounded-full hover:bg-[#FADADD] transition"
               onClick={() => setOpenCart(true)}
             >
-              <AiOutlineShoppingCart size={20} color="#E75480" />
+              <AiOutlineShoppingCart size={22} color="#E75480" />
               <span className="absolute -top-1 -right-1 bg-[#FADADD] text-[#E75480] text-xs w-4 h-4 rounded-full flex items-center justify-center font-bold border border-[#E75480]">
                 {cart?.length}
               </span>
             </button>
+
             {/* Profile */}
             <div className="cursor-pointer">
               {isAuthenticated ? (
                 <Link to="/profile">
                   <img
                     src={user?.avatar?.url || "/default-avatar.png"}
-                    className="w-[32px] h-[32px] rounded-full object-cover border-2 border-[#FADADD]"
+                    className="w-[36px] h-[36px] rounded-full object-cover border-2 border-[#FADADD]"
                     alt="User Avatar"
                   />
                 </Link>
               ) : (
                 <Link to="/login">
-                  <CgProfile size={20} color="#E75480" />
+                  <CgProfile size={22} color="#E75480" />
                 </Link>
               )}
             </div>
+
             {/* Seller Button */}
             <Link to={isSeller ? "/dashboard" : "/shop-create"}>
-              <div className="bg-[#E75480] text-white px-4 py-2 rounded-full hover:bg-[#FADADD] hover:text-[#E75480] transition text-center font-bold text-xs flex items-center justify-center ml-2">
+              <div className="bg-[#E75480] text-white px-4 py-2 rounded-full hover:bg-[#FADADD] hover:text-[#E75480] transition font-semibold text-xs ml-2">
                 {isSeller ? "Dashboard" : "Become Seller"}
               </div>
             </Link>
-            {/* Mobile: Hamburger */}
+
+            {/* Mobile Menu */}
             <div className="block lg:hidden ml-2">
               <button
                 className="bg-[#FADADD] p-2 rounded-full"
@@ -160,34 +166,40 @@ const Header = ({ activeHeading }) => {
             </div>
           </div>
         </div>
-        {/* Row 2: Categories Dropdown & Navbar */}
-        <div className="max-w-7xl mx-auto flex items-center justify-between px-4 py-0 border-t border-[#FADADD]">
-          {/* Categories Dropdown (Desktop) */}
-          <div className="hidden lg:flex items-center relative">
-            <button
-              onClick={() => setDropDownVisible(!dropDownVisible)}
-              className="flex items-center bg-[#FADADD] text-[#E75480] px-5 py-2 rounded-full font-semibold shadow-sm hover:bg-[#FFF0F2] transition"
-            >
-              <BiMenuAltLeft size={22} className="mr-2" />
-              Categories
-            </button>
-            {dropDownVisible && (
-              <div className="absolute top-full left-0 z-50">
-                <DropDown
-                  categoriesData={categoriesData}
-                  setDropDown={setDropDownVisible}
-                />
-              </div>
-            )}
+
+        {/* Row 2: Categories & Navbar */}
+        <div className="bg-[#FADADD] w-full">
+          <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between px-6 py-2 gap-4">
+            {/* Categories Button */}
+            <div className="hidden lg:flex items-center">
+              <button
+                onClick={() => setDropDownVisible(!dropDownVisible)}
+                className="flex items-center bg-white text-[#E75480] px-5 py-2 rounded-full font-semibold shadow hover:bg-[#FFF0F2] transition"
+              >
+                <BiMenuAltLeft size={22} className="mr-2" />
+                Categories
+              </button>
+              {dropDownVisible && (
+                <div className="absolute top-[100%] left-6 z-50">
+                  <DropDown
+                    categoriesData={categoriesData}
+                    setDropDown={setDropDownVisible}
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* Navbar Centered */}
+            <div className="w-full flex justify-center">
+              <Navbar active={activeHeading} />
+            </div>
+
+            {/* Optional Spacer */}
+            <div className="hidden lg:block w-[180px]" />
           </div>
-          {/* Navbar */}
-          <div className="flex-1 flex justify-center">
-            <Navbar active={activeHeading} />
-          </div>
-          {/* Spacer for alignment */}
-          <div className="hidden lg:block w-[180px]" />
         </div>
       </header>
+
       {/* Popups */}
       {openCart && <Cart setOpenCart={setOpenCart} />}
       {openWishlist && <Wishlist setOpenWishlist={setOpenWishlist} />}
