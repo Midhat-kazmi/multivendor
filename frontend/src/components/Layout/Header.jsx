@@ -169,28 +169,30 @@ const Header = ({ activeHeading }) => {
       <section className="w-full bg-white border-t border-gray-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 py-2 flex items-center justify-between flex-wrap gap-4">
           {/* Categories Button */}
-          <div className="hidden lg:flex items-center">
-            <button
-              onClick={() => setDropDownVisible(!dropDownVisible)}
-              className="flex items-center text-pink-600 px-4 py-2 font-semibold hover:text-pink-700 transition"
-            >
-              <BiMenuAltLeft size={22} className="mr-2" />
-              Categories
-            </button>
-            {dropDownVisible && (
-              <div className="absolute top-[100%] left-6 z-50">
-                <DropDown
-                  categoriesData={categoriesData}
-                  setDropDown={setDropDownVisible}
-                />
-              </div>
-            )}
-          </div>
+          <div className="hidden lg:flex items-center relative">
+  <button
+    onClick={() => setDropDownVisible(!dropDownVisible)}
+    className="flex items-center text-pink-600 px-4 py-2 font-semibold hover:text-pink-700 transition"
+  >
+    <BiMenuAltLeft size={22} className="mr-2" />
+    Categories
+  </button>
+  {dropDownVisible && (
+    <div className="absolute top-[110%] left-0 z-50 bg-white shadow-md rounded-md border p-4">
+      <DropDown
+        categoriesData={categoriesData}
+        setDropDown={setDropDownVisible}
+      />
+    </div>
+  )}
+</div>
+
 
           {/* Navbar Links (Right-Aligned) */}
-          <div className="flex-1 flex justify-start pl-6">
-              <Navbar active={activeHeading} noRounded />
-            </div>
+         <div className="flex-1 flex justify-start lg:pl-12">
+  <Navbar active={activeHeading} noRounded />
+</div>
+
           </div>
         
       </section>
