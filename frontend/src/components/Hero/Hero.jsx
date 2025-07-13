@@ -24,7 +24,7 @@ const Hero = () => {
           </p>
 
           {/* Trust Indicators */}
-          <div className="mt-8 space-y-3 text-sm text-gray-700">
+    <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             <p className="flex items-center gap-2">
               <span className="text-pink-500 text-lg">🎉</span>
               <span>
