@@ -4,9 +4,9 @@ import styles from "../../../styles/styles";
 
 const Hero = () => {
   return (
-    <div className="w-full bg-white pt-4 pb-12">
+    <div className="w-full bg-white py-16">
       <div
-        className={`${styles.section} grid grid-cols-1 md:grid-cols-2 gap-12 items-start`}
+        className={`${styles.section} grid grid-cols-1 md:grid-cols-2 gap-12 items-center`}
       >
         {/* Text Content */}
         <div>
@@ -20,12 +20,30 @@ const Hero = () => {
           </p>
           <p className="text-md text-gray-600">
             Trusted by thousands. Loved by all. Explore what makes{" "}
-            <span className="font-medium text-pink-500">Shopora</span>{" "}
-            different.
+            <span className="font-medium text-pink-500">Shopora</span> different.
           </p>
 
+          {/* Trust Indicators */}
+          <div className="mt-8 space-y-3 text-sm text-gray-700">
+            <p className="flex items-center gap-2">
+              <span className="text-pink-500 text-lg">🎉</span>
+              <span>
+                <span className="text-pink-500 font-semibold">5000+</span> Happy Clients
+              </span>
+            </p>
+            <p className="flex items-center gap-2">
+              <span className="text-pink-500 text-lg">🚚</span>
+              Fast Delivery Across Pakistan
+            </p>
+            <p className="flex items-center gap-2">
+              <span className="text-pink-500 text-lg">💯</span>
+              100% Genuine & Trusted Products
+            </p>
+          </div>
+
+          {/* CTA Button at Bottom */}
           <Link to="/products">
-            <button className="mt-6 bg-pink-500 text-white px-6 py-3 rounded-full text-base font-medium hover:bg-[#d7426e] transition">
+            <button className="mt-8 bg-pink-500 text-white px-6 py-3 rounded-full text-base font-medium hover:bg-pink-600 transition">
               Shop Now
             </button>
           </Link>
