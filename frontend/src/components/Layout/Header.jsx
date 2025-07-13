@@ -49,17 +49,9 @@ const Header = ({ activeHeading }) => {
   return (
     <>
       {/* Top Header */}
-      <div className={`${styles.section} py-0 bg-[#FADADD]`}>
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-0 md:gap-8 pt-6 pb-2">
-          {/* Logo */}
-          <Link to="/" className="flex items-center min-h-[120px]">
-            <img
-              src=""
-              alt="QuickCart Logo"
-              className="h-[140px] md:h-[160px] w-auto object-contain transition-all duration-300"
-              style={{ maxWidth: "340px" }}
-            />
-          </Link>
+      <div className="w-full bg-[#FADADD] py-0">
+        <div className="max-w-none w-full flex flex-col md:flex-row md:items-center justify-between px-4 md:px-12 gap-0 md:gap-8 pt-6 pb-2">
+          {/* No Logo for now */}
 
           {/* Search Bar */}
           <div className="w-full md:w-[50%] relative flex items-center justify-center">
@@ -112,7 +104,7 @@ const Header = ({ activeHeading }) => {
           active ? "fixed top-0 left-0 shadow-lg" : "relative"
         }`}
       >
-        <div className={`${styles.section} flex items-center justify-between h-full`}>
+        <div className="max-w-none w-full flex items-center justify-between px-4 md:px-12 h-full">
           {/* Mobile Menu */}
           <div className="block lg:hidden">
             <div
