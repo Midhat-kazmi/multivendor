@@ -15,7 +15,7 @@ import Cart from "../Cart/Cart";
 import Wishlist from "../Wishlist/Wishlist";
 
 const LOGO_URL =
-  "https://res.cloudinary.com/dgve6ewpr/image/upload/v1752368016/bfdf69bf-b02a-44ad-bb0d-8475856940bd_tdjvhk.png";
+  "https://res.cloudinary.com/dgve6ewpr/image/upload/v1752370095/bfdf69bf-b02a-44ad-bb0d-8475856940bd-fotor-bg-remover-2025071362557_rrm0n5.png";
 
 const Header = ({ activeHeading }) => {
   const { isAuthenticated, user } = useSelector((state) => state.user);
