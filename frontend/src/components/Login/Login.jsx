@@ -90,14 +90,14 @@ const Login = () => {
                   type="checkbox"
                   name="remember-me"
                   id="remember-me"
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  className="h-4 w-4 text-pink-500 focus:ring-blue-500 border-gray-300 rounded"
                 />
                 <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
                   Remember me
                 </label>
               </div>
               <div className="text-sm">
-                <a href=".forgot-password" className="font-medium text-blue-600 hover:text-blue-500">
+                <a href=".forgot-password" className="font-medium text-pink-500 hover:text-pink-500">
                   Forgot your password?
                 </a>
               </div>
@@ -112,7 +112,7 @@ const Login = () => {
             </div>
             <div className={`${styles.noramlFlex} w-full`}>
               <h4>Not have any account?</h4>
-              <Link to="/signup" className="text-blue-600 pl-2">
+              <Link to="/signup" className="text-pink-500 pl-2">
                 Sign Up
               </Link>
             </div>
