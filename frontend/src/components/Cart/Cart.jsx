@@ -75,7 +75,7 @@ const Cart = ({ setOpenCart }) => {
                   className="w-full bg-[#E75480] text-white py-2 rounded font-semibold text-[18px]"
                   onClick={() => setOpenCart(false)}
                 >
-                  Checkout Now (USD${totalPrice})
+                  Checkout NOW (USD${totalPrice})
                 </button>
               </Link>
             </div>
