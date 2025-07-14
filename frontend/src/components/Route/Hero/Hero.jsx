@@ -26,17 +26,17 @@ const Hero = () => {
           {/* Trust Indicators */}
           <div className="mt-8 space-y-3 text-sm text-gray-700">
             <p className="flex items-center gap-2">
-              <span className="text-pink-500 text-lg">🎉</span>
+              <span className="text-pink-500 text-lg"></span>
               <span>
                 <span className="text-pink-500 font-semibold">5000+</span> Happy Clients
               </span>
             </p>
             <p className="flex items-center gap-2">
-              <span className="text-pink-500 text-lg">🚚</span>
+              <span className="text-pink-500 text-lg"></span>
               Fast Delivery Across Pakistan
             </p>
             <p className="flex items-center gap-2">
-              <span className="text-pink-500 text-lg">💯</span>
+              <span className="text-pink-500 text-lg"></span>
               100% Genuine & Trusted Products
             </p>
           </div>
