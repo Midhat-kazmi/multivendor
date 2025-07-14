@@ -47,7 +47,7 @@ const Hero = () => {
         {/* Image */}
         <div className="w-full h-[300px] md:h-[420px]">
           <img
-            src="https://res.cloudinary.com/dgve6ewpr/image/upload/v1752436701/1b9be805bbb1ed47412cabd81ee649a0_y5lvrl.jpg"
+            src="https://res.cloudinary.com/dgve6ewpr/image/upload/v1752437066/e1190932bf61714b26fb1262bc9f4637_viq863.jpg"
             alt="Hero Visual"
             className="w-full h-full object-cover rounded-xl shadow-md"
           />
