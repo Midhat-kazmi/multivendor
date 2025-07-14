@@ -52,7 +52,7 @@ const Hero = () => {
         {/* Image Block */}
         <div className="w-full h-[300px] md:h-[420px]">
           <img
-            src="https://res.cloudinary.com/dgve6ewpr/image/upload/v1733920104/samples/ecommerce/accessories-bag.jpg"
+            src="https://res.cloudinary.com/dgve6ewpr/image/upload/v1752435898/c4b12e0f753927baf980b46482645cb4_x7sceo.jpg"
             alt="Hero Visual"
             className="w-full h-full object-cover rounded-xl shadow-md"
           />
