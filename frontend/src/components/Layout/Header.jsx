@@ -14,8 +14,7 @@ import { useSelector } from "react-redux";
 import Cart from "../Cart/Cart";
 import Wishlist from "../Wishlist/Wishlist";
 
-const LOGO_URL =
-  "https://res.cloudinary.com/dgve6ewpr/image/upload/v1752370095/bfdf69bf-b02a-44ad-bb0d-8475856940bd-fotor-bg-remover-2025071362557_rrm0n5.png";
+
 
 const Header = ({ activeHeading }) => {
   const { isAuthenticated, user } = useSelector((state) => state.user);
@@ -57,13 +56,12 @@ const Header = ({ activeHeading }) => {
       >
         <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between px-4 py-3 gap-4">
           {/* Logo */}
-          <Link to="/" className="shrink-0">
-            <img
-              src={LOGO_URL}
-              alt="Logo"
-              className="h-30 object-contain max-w-[240px]"
-            />
-          </Link>
+          <Link
+  to="/"
+  className="text-2xl font-extrabold tracking-tight text-pink-500 font-[Poppins] lowercase"
+>
+  shopora
+</Link>
 
           {/* Search Bar */}
           <div className="w-full max-w-xl relative">
