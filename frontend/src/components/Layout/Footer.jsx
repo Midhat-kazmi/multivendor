@@ -100,7 +100,7 @@ const Footer = () => {
       {/* Bottom Footer */}
       <div className="border-t border-[#FADADD] px-6 sm:px-12 py-6 text-center text-sm text-gray-500 bg-[#FFF0F2]">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 items-center">
-          <span>© {new Date().getFullYear()} Shopora.Design by Midhat.</span>
+          <span>© {new Date().getFullYear()} Shopora.Designed by Midhat.</span>
           <span className="text-xs">Terms · Privacy Policy</span>
           <div className="flex justify-center sm:justify-end">
             <img
