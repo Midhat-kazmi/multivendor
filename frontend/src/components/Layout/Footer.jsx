@@ -38,34 +38,12 @@ const Footer = () => {
       {/* Links & Info */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 px-6 sm:px-12 py-16">
         {/* Logo & Social */}
-        <div className="text-center sm:text-left">
-          <img
-            src="https://res.cloudinary.com/dgve6ewpr/image/upload/v1752370095/bfdf69bf-b02a-44ad-bb0d-8475856940bd-fotor-bg-remover-2025071362557_rrm0n5.png"
-            alt="Shopora Logo"
-            className="h-[60px] mx-auto sm:mx-0 mb-4"
-          />
-          <p className="text-gray-600 text-sm">
-            The home and elements needed to create beautiful products.
-          </p>
-          <div className="flex items-center justify-center sm:justify-start mt-4 space-x-4">
-            <AiFillFacebook
-              size={24}
-              className="hover:text-[#E75480] cursor-pointer"
-            />
-            <AiOutlineTwitter
-              size={24}
-              className="hover:text-[#E75480] cursor-pointer"
-            />
-            <AiFillInstagram
-              size={24}
-              className="hover:text-[#E75480] cursor-pointer"
-            />
-            <AiFillYoutube
-              size={24}
-              className="hover:text-[#E75480] cursor-pointer"
-            />
-          </div>
-        </div>
+                  <Link
+          to="/"
+          className="text-2xl font-extrabold tracking-tight text-pink-500 font-[Poppins] lowercase"
+        >
+          shopora
+        </Link>
 
         {/* Company */}
         <div className="text-center sm:text-left">
