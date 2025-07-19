@@ -7,7 +7,6 @@ import { server } from "../../server";
 const Navbar = () => {
   const location = useLocation();
   const [user, setUser] = useState(null);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -20,16 +19,12 @@ const Navbar = () => {
         setUser(userData);
         localStorage.setItem("user", JSON.stringify(userData));
       } catch (err) {
-        setError(
-          err.response ? err.response.data.message : "An error occurred"
-        );
+        // Error is silently caught — no UI rendering
       }
     };
 
     fetchUserData();
   }, []);
-
-  if (error) return <div className="text-red-500">{error}</div>;
 
   return (
     <nav className="flex items-center gap-6 text-base font-medium">
