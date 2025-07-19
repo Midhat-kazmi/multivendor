@@ -120,7 +120,7 @@ const SidebarItem = ({ to, icon, label, active }) => (
       })}
       <h5
         className={`ml-3 text-[16px] font-medium ${
-          active ? "text-[crimson]" : "text-[#555]"
+          active ? "text-pink-500" : "text-[#555]"
         }`}
       >
         {label}

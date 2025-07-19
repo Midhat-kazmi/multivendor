@@ -37,7 +37,7 @@ const ShopProfileData = ({ isOwner }) => {
             >
               <h5
                 className={`font-[600] text-[20px] ${
-                  active === index + 1 ? "text-red-500" : "text-[#333]"
+                  active === index + 1 ? "text-pink-500" : "text-[#333]"
                 } cursor-pointer pr-[20px]`}
               >
                 {label}

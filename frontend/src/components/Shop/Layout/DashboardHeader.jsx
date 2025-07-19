@@ -15,13 +15,12 @@ const DashboardHeader = () => {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         {/* Logo */}
         <div className="flex justify-center sm:justify-start">
-          <Link to="/dashboard">
-            <img
-              src="https://res.cloudinary.com/dgve6ewpr/image/upload/v1752370095/bfdf69bf-b02a-44ad-bb0d-8475856940bd-fotor-bg-remover-2025071362557_rrm0n5.png"
-              alt="Shopo Logo"
-              className="h-[80px] sm:h-[80px] w-auto"
-            />
-          </Link>
+         <Link
+               to="/"
+               className="text-3xl font-extrabold tracking-tight text-pink-500 font-[Poppins] lowercase"
+             >
+               shopora
+             </Link>
         </div>
 
         {/* Icon Navigation */}
