@@ -8,24 +8,30 @@ const Navbar = () => {
   const location = useLocation();
   const [user, setUser] = useState(null);
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await axios.get(`${server}/user/get-user`, {
-          withCredentials: true,
-        });
+ useEffect(() => {
+  const fetchUserData = async () => {
+    const tokenExists = document.cookie.includes("token");
 
-        const userData = response.data.user;
-        setUser(userData);
-        localStorage.setItem("user", JSON.stringify(userData));
-      } catch (err) {
-        // silently fail if no user found
-        // console.log("No logged-in user");
-      }
-    };
+    if (!tokenExists) {
+      return;
+    }
 
-    fetchUserData();
-  }, []);
+    try {
+      const response = await axios.get(`${server}/user/get-user`, {
+        withCredentials: true,
+      });
+
+      const userData = response.data.user;
+      setUser(userData);
+      localStorage.setItem("user", JSON.stringify(userData));
+    } catch (err) {
+      console.log("Failed to fetch user:", err.response?.data?.message);
+    }
+  };
+
+  fetchUserData();
+}, []);
+
 
   return (
     <nav className="flex items-center gap-6 text-base font-medium">

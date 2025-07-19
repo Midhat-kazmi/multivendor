@@ -115,6 +115,10 @@ router.post("/login-user", async (req, res) => {
 // =============== Load User ==============
 router.get("/get-user", isAuthenticated, async (req, res) => {
   try {
+    if (!req.user || !req.user._id) {
+      return res.status(401).json({ success: false, message: "Not logged in" });
+    }
+
     const user = await User.findById(req.user._id);
     if (!user) return res.status(404).json({ success: false, message: "User not found!" });
 
