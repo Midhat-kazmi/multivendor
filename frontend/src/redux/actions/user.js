@@ -111,6 +111,9 @@ export const logoutUser = () => async (dispatch) => {
       withCredentials: true,
     });
 
+    // Clear localStorage
+    localStorage.removeItem("user");
+
     dispatch({
       type: "LogoutSuccess",
       payload: data.message,
@@ -122,6 +125,7 @@ export const logoutUser = () => async (dispatch) => {
     });
   }
 };
+
 
 // Get all users (admin)
 export const getAllUsers = () => async (dispatch) => {
