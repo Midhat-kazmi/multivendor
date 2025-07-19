@@ -131,14 +131,15 @@ router.get("/get-user", isAuthenticated, async (req, res) => {
 // =============== Logout ===============
 router.get("/logout", isAuthenticated, (req, res) => {
   res.cookie("token", "", {
-    expires: new Date(Date.now()),
     httpOnly: true,
-     secure: true,       // Ensures the cookie is sent only over HTTPS
-   sameSite: "none",
+    secure: true,
+    sameSite: "none",
+    expires: new Date(0), 
   });
 
   res.status(200).json({ success: true, message: "Logged out successfully!" });
 });
+
 
 // =============== Update User Info ===============
 router.put("/update-user-info", isAuthenticated, async (req, res) => {
