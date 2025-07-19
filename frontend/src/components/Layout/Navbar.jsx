@@ -19,7 +19,8 @@ const Navbar = () => {
         setUser(userData);
         localStorage.setItem("user", JSON.stringify(userData));
       } catch (err) {
-        // Error is silently caught — no UI rendering
+        // silently fail if no user found
+        // console.log("No logged-in user");
       }
     };
 
