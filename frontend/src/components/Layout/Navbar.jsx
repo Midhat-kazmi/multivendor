@@ -11,7 +11,7 @@ const Navbar = () => {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      const tokenExists = document.cookie.includes("user_token"); // Match your backend cookie name
+      const tokenExists = document.cookie.includes("token"); // Match your backend cookie name
 
       if (!tokenExists) {
         return;
