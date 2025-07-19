@@ -129,15 +129,18 @@ router.get("/get-user", isAuthenticated, async (req, res) => {
 });
 
 // =============== Logout ===============
-router.get("/logout", isAuthenticated, (req, res) => {
+router.get("/logout", (req, res) => {
   res.cookie("token", "", {
     httpOnly: true,
-    secure: true,
-    sameSite: "none",
-    expires: new Date(0), 
+    expires: new Date(0),
+    sameSite: "lax", // or "none" if you're using cross-site cookies
+    secure: process.env.NODE_ENV === "production",
   });
 
-  res.status(200).json({ success: true, message: "Logged out successfully!" });
+  res.status(200).json({
+    success: true,
+    message: "Logged out successfully",
+  });
 });
 
 
