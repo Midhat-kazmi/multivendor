@@ -2,20 +2,29 @@ import axios from "axios";
 import { server } from "../../server";
 
 // Load user
+// Load user
 export const loadUser = () => async (dispatch) => {
   try {
     dispatch({ type: "LoadUserRequest" });
+
     const { data } = await axios.get(`${server}/user/get-user`, {
       withCredentials: true,
     });
+
     dispatch({ type: "LoadUserSuccess", payload: data.user });
   } catch (error) {
-    dispatch({
-      type: "LoadUserFail",
-      payload: error.response?.data?.message || "Failed to load user",
-    });
+    // Suppress 401 errors silently (no user logged in yet)
+    if (error.response?.status === 401) {
+      dispatch({ type: "LoadUserFail", payload: null });
+    } else {
+      dispatch({
+        type: "LoadUserFail",
+        payload: error.response?.data?.message || "Failed to load user",
+      });
+    }
   }
 };
+
 
 
 

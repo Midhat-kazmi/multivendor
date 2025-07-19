@@ -19,11 +19,14 @@ const userReducer = createReducer(initialState, (builder) => {
       state.loading = false;
       state.user = action.payload;
     })
-    .addCase("LoadUserFail", (state, action) => {
-      state.loading = false;
-      state.error = action.payload;
-      state.isAuthenticated = false;
-    })
+   .addCase("LoadUserFail", (state, action) => {
+  state.loading = false;
+  state.isAuthenticated = false;
+  state.user = null;
+
+  // Only set error if there's a real message
+  state.error = action.payload ?? null;
+})
 
     // Update user info
     .addCase("updateUserInfoRequest", (state) => {
