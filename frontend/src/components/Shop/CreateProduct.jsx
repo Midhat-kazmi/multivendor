@@ -223,7 +223,7 @@ const CreateProduct = () => {
         {/* Submit Button */}
         <button
           type="submit"
-          className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 w-full"
+          className="bg-pink-500 text-white py-2 px-4 rounded hover:bg-pink-500 w-full"
         >
           Create Product
         </button>

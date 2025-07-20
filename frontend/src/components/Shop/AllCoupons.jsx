@@ -147,7 +147,7 @@ const AllCoupons = () => {
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="Coupon name"
-                      className="mt-1 block w-full border border-gray-300 rounded px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="mt-1 block w-full border border-gray-300 rounded px-3 py-2 focus:ring-pink-500 focus:border-pink-500"
                     />
                   </div>
 

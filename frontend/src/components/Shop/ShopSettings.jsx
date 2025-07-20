@@ -68,7 +68,7 @@ const ShopSettings = () => {
           <img
             src={avatar || seller?.avatar?.url}
             alt="Shop Avatar"
-            className="w-[150px] h-[150px] rounded-full object-cover border-4 border-blue-500 shadow-md"
+            className="w-[150px] h-[150px] rounded-full object-cover border-4 border-pink-500 shadow-md"
           />
           <label
             htmlFor="image"
@@ -148,7 +148,7 @@ const ShopSettings = () => {
           <div className="pt-4">
             <button
               type="submit"
-              className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
+              className="w-full bg-pink-500 text-white py-2 rounded-md hover:bg-pink-500 transition"
             >
               Update Shop
             </button>

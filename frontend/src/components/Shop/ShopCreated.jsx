@@ -96,7 +96,7 @@ const ShopCreated = () => {
                 required
                 value={shopName}
                 onChange={(e) => setShopName(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm focus:ring-pink-500 focus:border-pink-500"
               />
             </div>
 
@@ -107,7 +107,7 @@ const ShopCreated = () => {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm focus:ring-pink-500 focus:border-ble-500"
               />
             </div>
 
@@ -119,7 +119,7 @@ const ShopCreated = () => {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500"
+                  className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm focus:ring-pink-500 focus:border-pink-500"
                 />
                 <div
                   onClick={() => setShowPassword(!showPassword)}
@@ -137,7 +137,7 @@ const ShopCreated = () => {
                 required
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm focus:ring-pink-500 focus:border-pink-500"
               />
             </div>
 
@@ -148,7 +148,7 @@ const ShopCreated = () => {
                 required
                 value={zipCode}
                 onChange={(e) => setZipCode(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm focus:ring-pink-500 focus:border-pink-500"
               />
             </div>
 
@@ -159,7 +159,7 @@ const ShopCreated = () => {
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
                 rows={3}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm focus:ring-pink-500 focus:border-pink-500"
               />
             </div>
 
@@ -196,7 +196,7 @@ const ShopCreated = () => {
             <div>
               <button
                 type="submit"
-                className="w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-pink-500 hover:bg-blue-700"
+                className="w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-pink-500 hover:bg-pink-500"
               >
                 Create Shop
               </button>

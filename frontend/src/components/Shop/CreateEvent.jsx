@@ -125,7 +125,7 @@ const CreateEvent = () => {
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full border border-gray-300 rounded-md px-4 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border border-gray-300 rounded-md px-4 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-pink-500"
             placeholder="Event name"
           />
         </div>
@@ -139,7 +139,7 @@ const CreateEvent = () => {
             rows="5"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="w-full border border-gray-300 rounded-md px-4 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border border-gray-300 rounded-md px-4 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-pink-500"
             placeholder="Description..."
           />
         </div>
@@ -150,7 +150,7 @@ const CreateEvent = () => {
             Category <span className="text-red-500">*</span>
           </label>
           <select
-            className="w-full border border-gray-300 rounded-md px-4 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border border-gray-300 rounded-md px-4 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-pink-500"
             value={category}
             onChange={(e) => setCategory(e.target.value)}
           >
@@ -170,7 +170,7 @@ const CreateEvent = () => {
             type="text"
             value={tags}
             onChange={(e) => setTags(e.target.value)}
-            className="w-full border border-gray-300 rounded-md px-4 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border border-gray-300 rounded-md px-4 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-pink-500"
             placeholder="Tags..."
           />
         </div>
@@ -183,18 +183,18 @@ const CreateEvent = () => {
               type="number"
               value={originalPrice}
               onChange={(e) => setOriginalPrice(e.target.value)}
-              className="w-full border border-gray-300 rounded-md px-4 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-gray-300 rounded-md px-4 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-pink-500"
             />
           </div>
           <div>
             <label className="block font-medium">
-              Discount Price <span className="text-red-500">*</span>
+              Discount Price <span className="text-pink-500">*</span>
             </label>
             <input
               type="number"
               value={discountPrice}
               onChange={(e) => setDiscountPrice(e.target.value)}
-              className="w-full border border-gray-300 rounded-md px-4 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-gray-300 rounded-md px-4 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-pink-500"
             />
           </div>
           <div>
@@ -205,7 +205,7 @@ const CreateEvent = () => {
               type="number"
               value={stock}
               onChange={(e) => setStock(e.target.value)}
-              className="w-full border border-gray-300 rounded-md px-4 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-gray-300 rounded-md px-4 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-pink-500"
             />
           </div>
         </div>
@@ -221,7 +221,7 @@ const CreateEvent = () => {
               min={today}
               value={startDate ? startDate.toISOString().slice(0, 10) : ""}
               onChange={handleStartDateChange}
-              className="w-full border border-gray-300 rounded-md px-4 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-gray-300 rounded-md px-4 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-pink-500"
             />
           </div>
           <div>
@@ -233,7 +233,7 @@ const CreateEvent = () => {
               min={minEndDate}
               value={endDate ? endDate.toISOString().slice(0, 10) : ""}
               onChange={handleEndDateChange}
-              className="w-full border border-gray-300 rounded-md px-4 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-gray-300 rounded-md px-4 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-pink-500"
             />
           </div>
         </div>

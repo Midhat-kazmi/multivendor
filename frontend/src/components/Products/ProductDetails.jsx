@@ -133,7 +133,7 @@ const ProductDetails = ({ data }) => {
                   alt={`thumbnail-${idx}`}
                   className={`h-[80px] w-[80px] object-cover border-2 rounded cursor-pointer ${
                     select === idx
-                      ? "border-blue-500"
+                      ? "border-pink-500"
                       : "border-transparent hover:border-gray-300"
                   }`}
                   onClick={() => setSelect(idx)}
