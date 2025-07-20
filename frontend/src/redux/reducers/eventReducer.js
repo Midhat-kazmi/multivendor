@@ -55,7 +55,7 @@ export const eventReducer = createReducer(initialState, (builder) => {
     })
 
 
-    // ✅ FIXED: Get all events (public)
+    // FIXED: Get all events (public)
     .addCase("getAllEventsRequest", (state) => {
       state.isLoading = true;
     })

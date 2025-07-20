@@ -45,7 +45,7 @@ const ShopSettings = () => {
       .put(
         `${server}/shop/update-seller-info`,
         {
-          shopName: name, // ✅ Fix: use name as shopName
+          shopName: name, 
           address,
           zipCode,
           phoneNumber,

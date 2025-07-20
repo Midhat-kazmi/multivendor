@@ -56,13 +56,13 @@ router.post("/create-user", async (req, res) => {
   }
 });
 
-// 🔐 Create Activation Token Helper
+//  Create Activation Token Helper
 const createActivationToken = (user) => {
   return jwt.sign(user, process.env.ACTIVATION_SECRET, {
     expiresIn: "5m",
   });
 };
-// ✅ Activate user account
+// Activate user account
 router.post("/activation", async (req, res) => {
   try {
     const { activation_token } = req.body;

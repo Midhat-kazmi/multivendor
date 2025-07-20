@@ -63,7 +63,7 @@ router.post("/create-shop", async (req, res) => {
   }
 });
 
-// ✅ ========== Activate Seller Account ==========
+//  ========== Activate Seller Account ==========
 router.post("/activation", async (req, res) => {
   try {
     const { activation_token } = req.body;
