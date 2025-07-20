@@ -12,7 +12,7 @@ const Events = () => {
         <>
           <div className="text-center mb-10">
             <h1 className="text-4xl font-bold text-gray-800">
-              🌟 Popular Events
+               Popular Events
             </h1>
             <p className="text-gray-500 mt-2 text-lg">
               Don’t miss these exclusive deals
