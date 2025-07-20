@@ -75,7 +75,7 @@ const ProfileSidebar = ({ setActive, active }) => {
             />
             <span
               className={`pl-3 text-sm ${
-                active === 8 ? "text-red-600" : "text-gray-800"
+                active === 8 ? "text-pink-500" : "text-gray-800"
               } hidden md:block`}
             >
               Admin Dashboard

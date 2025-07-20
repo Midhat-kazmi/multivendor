@@ -151,7 +151,7 @@ const UserOrderDetails = () => {
 
             {/* ratings */}
             <h5 className="pl-3 text-[20px] font-[500]">
-              Give a Rating <span className="text-red-500">*</span>
+              Give a Rating <span className="text-pink-500">*</span>
             </h5>
             <div className="flex w-full ml-2 pt-1">
               {[1, 2, 3, 4, 5].map((i) =>
