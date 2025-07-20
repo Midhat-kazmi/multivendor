@@ -69,7 +69,7 @@ const Header = ({ activeHeading }) => {
                 placeholder="Search"
                 value={searchTerm}
                 onChange={handleSearchChange}
-                className="w-full h-11 pl-5 pr-10 rounded-full bg-gray-100 text-black placeholder:text-gray-500 border border-gray-300 focus:ring-2 focus:ring-pink-400 shadow-sm"
+                className="w-full h-10 pl-5 pr-10 rounded-full bg-gray-100 text-black placeholder:text-gray-500 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-400 hover:bg-gray-200 transition"
               />
               <AiOutlineSearch
                 size={20}
@@ -143,9 +143,9 @@ const Header = ({ activeHeading }) => {
                 )}
               </div>
 
-              {/* Seller */}
+              {/* Seller CTA */}
               <Link to={isSeller ? "/dashboard" : "/shop-create"}>
-                <div className="bg-pink-500 text-white px-4 py-2 rounded-full hover:bg-pink-600 transition font-semibold text-xs">
+                <div className="bg-pink-500 text-white px-5 py-2 rounded-full hover:bg-pink-600 hover:-translate-y-[1px] transition-all duration-150 font-semibold text-sm shadow">
                   {isSeller ? "Shop Dashboard" : "Become Seller"}
                 </div>
               </Link>
@@ -195,7 +195,7 @@ const Header = ({ activeHeading }) => {
           </div>
 
           {/* Navbar Links */}
-<div className="flex-1 flex justify-center">
+          <div className="flex-1 flex justify-center">
             <Navbar active={activeHeading} noRounded />
           </div>
         </div>

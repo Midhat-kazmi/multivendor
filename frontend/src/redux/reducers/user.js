@@ -1,17 +1,18 @@
 import { createReducer } from "@reduxjs/toolkit";
 
 const initialState = {
-  isAuthenticated: false,
-  user: null,
-  loading: false,
-  error: null,
-  successMessage: null,
+  isAuthenticated: false,   //when the user is logged in
+  user: null,           // user data, name, email, etc.
+  loading: false,       // loading state for async actions, api calls
+  error: null,           //storing error messages
+  successMessage: null,   // success message for actions like update, delete
 };
 
 const userReducer = createReducer(initialState, (builder) => {
   builder
     // Load user
-    .addCase("LoadUserRequest", (state) => {
+    .addCase("LoadUserRequest", (state) => {     //Each addCase("ACTION_TYPE", callback)
+                                        //  tells the reducer how to change state when a specific action is dispatched.
       state.loading = true;
     })
     .addCase("LoadUserSuccess", (state, action) => {
