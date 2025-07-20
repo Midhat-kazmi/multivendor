@@ -89,7 +89,7 @@ const AllCoupons = () => {
       sortable: false,
       renderCell: (params) => (
         <Button onClick={() => handleDelete(params.id)}>
-          <AiOutlineDelete size={20} className="text-red-600" />
+          <AiOutlineDelete size={20} className="text-pink-500" />
         </Button>
       ),
     },
@@ -111,7 +111,7 @@ const AllCoupons = () => {
             <h2 className="text-xl font-semibold text-gray-700">All Coupons</h2>
             <button
               onClick={() => setOpen(true)}
-              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+              className="bg-pink-500 text-white px-4 py-2 rounded hover:bg-pink-500 transition"
             >
               Create Coupon
             </button>
@@ -153,7 +153,7 @@ const AllCoupons = () => {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700">
-                      Discount Percentage <span className="text-red-500">*</span>
+                      Discount Percentage <span className="text-pink-500">*</span>
                     </label>
                     <input
                       type="number"
@@ -212,7 +212,7 @@ const AllCoupons = () => {
 
                   <button
                     type="submit"
-                    className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 transition"
+                    className="w-full bg-pink-500 text-white py-2 rounded hover:bg-pink-500 transition"
                   >
                     Create Coupon
                   </button>
