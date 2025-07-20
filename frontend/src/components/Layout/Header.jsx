@@ -195,9 +195,18 @@ const Header = ({ activeHeading }) => {
           </div>
 
           {/* Navbar Links */}
-<div className="flex-1 flex justify-center">
-            <Navbar active={activeHeading} noRounded />
-          </div>
+<div className="w-full flex flex-wrap justify-center gap-4 px-4 py-2">
+  {navItems.map((item, index) => (
+    <Link
+      key={index}
+      to={item.url}
+      className="text-sm font-medium hover:text-pink-500 transition-all"
+    >
+      {item.title}
+    </Link>
+  ))}
+</div>
+
         </div>
       </section>
 
